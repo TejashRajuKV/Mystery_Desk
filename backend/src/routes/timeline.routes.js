@@ -1,0 +1,6 @@
+import { Router } from 'express';
+import * as c from '../controllers/case.controller.js';
+
+const router = Router();
+router.get('/cases/:caseId/timeline', c.listTimeline);
+export default router;

@@ -1,0 +1,87 @@
+[
+  {
+    "id": "S01",
+    "name": "Dr. Maren Voss",
+    "alias": "The Architect",
+    "age": 44,
+    "role": "Chief Engineer",
+    "department": "Research & Development",
+    "background": "Designed the Argus-7 over six years. Brilliant, guarded, and famously protective of her work. Holds a share of the patent.",
+    "motive": "The board has quietly agreed to sell Halden. Voss has said she would rather see the Argus-7 destroyed than handed to a competitor.",
+    "opportunity": "Authorised for Storage Room B and knew the prototype's routine better than anyone.",
+    "personality": "Precise, proud, short-tempered. Answers questions with questions.",
+    "accessLevel": "Level 4 (all labs, Storage Room B)",
+    "locationIds": ["L01", "L03", "L06"],
+    "relationships": [
+      { "suspectId": "S02", "note": "Supervises Alex. Trusts his calibration work." },
+      { "suspectId": "S03", "note": "Openly at odds with Lang over the sale." }
+    ]
+  },
+  {
+    "id": "S02",
+    "name": "Alex Reyes",
+    "alias": "The Technician",
+    "age": 29,
+    "role": "Senior Lab Technician",
+    "department": "Research & Development",
+    "background": "Joined Halden four years ago. Reliable, quiet, always first to volunteer for late calibration shifts. Holds a Level 3 card with Storage Room B access.",
+    "motive": "Recently behind on a personal loan. Colleagues have noticed him checking his watch and taking calls in the stairwell.",
+    "opportunity": "Level 3 card opens Storage Room B. Knows the camera and lock systems from years of lab maintenance.",
+    "personality": "Polite, helpful, unremarkable. Nobody has a bad word to say about him.",
+    "accessLevel": "Level 3 (Lab 2, Storage Room B)",
+    "locationIds": ["L01", "L03", "L05", "L06"],
+    "relationships": [
+      { "suspectId": "S01", "note": "Reports to Voss." },
+      { "suspectId": "S05", "note": "Occasionally files maintenance requests that Cho carries out." }
+    ]
+  },
+  {
+    "id": "S03",
+    "name": "Victor Lang",
+    "alias": "The Chairman",
+    "age": 58,
+    "role": "Managing Director",
+    "department": "Executive",
+    "background": "Built Halden from a garage workshop into a 400-person firm. Sharp, charming, and heavily in debt to the bank that funds the expansion.",
+    "motive": "Is negotiating a confidential sale of the company to Kessler-Ward Corp. He needs the Argus-7 demonstrated on Monday to close the deal.",
+    "opportunity": "Master card opens every door in the building.",
+    "personality": "Smooth, evasive, prone to speeches. Never answers a question directly.",
+    "accessLevel": "Level 5 (master card)",
+    "locationIds": ["L04", "L05"],
+    "relationships": [
+      { "suspectId": "S01", "note": "Voss opposes his plan to sell." }
+    ]
+  },
+  {
+    "id": "S04",
+    "name": "Nina Okafor",
+    "alias": "The Night Watch",
+    "age": 36,
+    "role": "Night Security Officer",
+    "department": "Security",
+    "background": "Ex-police dispatcher. Eight years on the night desk. By the book, and proud of a clean record.",
+    "motive": "None obvious. A single mother with a sick child and a mortgage.",
+    "opportunity": "Controls the lobby desk. If anything moves through the building at night, she should see it.",
+    "personality": "Calm, watchful, tired. Speaks in short, factual sentences.",
+    "accessLevel": "Level 2 (lobby, corridors, master keys in desk safe)",
+    "locationIds": ["L06"],
+    "relationships": []
+  },
+  {
+    "id": "S05",
+    "name": "Daniel Cho",
+    "alias": "The Wire",
+    "age": 33,
+    "role": "Communications Technician",
+    "department": "Facilities & Systems",
+    "background": "Keeps the switchboard, modems and CCTV recorders running. Works from home when he can. Talks in acronyms.",
+    "motive": "Passed over for promotion twice. Holds a grudge against management.",
+    "opportunity": "Can pause or reset the CCTV recorders remotely, and knows exactly how.",
+    "personality": "Nervous, defensive, quick to over-explain.",
+    "accessLevel": "Level 3 (Communications Room, remote dial-in)",
+    "locationIds": ["L02"],
+    "relationships": [
+      { "suspectId": "S02", "note": "Carries out Alex's maintenance work orders." }
+    ]
+  }
+]

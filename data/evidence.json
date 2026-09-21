@@ -1,0 +1,258 @@
+[
+  {
+    "id": "E001",
+    "type": "physical",
+    "title": "Empty Prototype Case",
+    "timestamp": "1984-03-10T07:30:00",
+    "locationId": "L03",
+    "personIds": ["S01"],
+    "summary": "The Argus-7 case, found open and empty on the shelf.",
+    "details": "Foam-lined transit case, catalogue no. AR7-C. Latches undamaged. The foam cut-out is intact and undisturbed, as though the unit was lifted out carefully by someone who knew how it seated. Found by Dr. Voss at 07:30 Saturday.",
+    "source": "Recovered by Dr. M. Voss",
+    "facts": [],
+    "relatedEvidenceIds": ["E002", "E013"]
+  },
+  {
+    "id": "E002",
+    "type": "forensic",
+    "title": "Storage Room Door Report",
+    "timestamp": "1984-03-10T09:05:00",
+    "locationId": "L03",
+    "personIds": [],
+    "summary": "No forced entry. Door opened only by a valid magnetic card.",
+    "details": "Locksmith's inspection of the Storage Room B door. Strike plate, deadbolt and hinges undamaged. The magnetic-card reader shows no tampering. Conclusion: the door was opened with a valid card. The reader keeps a log of every card used.",
+    "source": "Halden Facilities / contract locksmith",
+    "facts": [],
+    "relatedEvidenceIds": ["E014"]
+  },
+  {
+    "id": "E003",
+    "type": "access_log",
+    "title": "Lobby Turnstile Log",
+    "timestamp": "1984-03-09T19:34:00",
+    "locationId": "L06",
+    "personIds": ["S01", "S02"],
+    "summary": "Card exits from the lobby turnstile, Friday evening.",
+    "details": "Printout of the lobby turnstile for Friday 9 March, 19:00 to 23:00.\n\n19:34  OUT  Voss, M.  (card 0217)\n21:00  OUT  Reyes, A.  (card 0331)\n\nNo further entries or exits through the turnstile after 21:00.",
+    "source": "Lobby turnstile printer roll",
+    "facts": [
+      { "personId": "S01", "action": "exit", "target": "L06", "timestamp": "1984-03-09T19:34:00" },
+      { "personId": "S02", "action": "exit", "target": "L06", "timestamp": "1984-03-09T21:00:00" }
+    ],
+    "relatedEvidenceIds": ["E004", "E007"]
+  },
+  {
+    "id": "E004",
+    "type": "photo",
+    "title": "Lobby Camera Still, 21:00",
+    "timestamp": "1984-03-09T21:00:00",
+    "locationId": "L06",
+    "personIds": ["S02"],
+    "summary": "Still frame of Alex Reyes leaving through the lobby.",
+    "details": "Frame pulled from the lobby camera tape at 21:00. Reyes is seen leaving, jacket on, carrying a large canvas duffel bag that hangs loosely and looks empty. The night desk behind him is occupied.",
+    "source": "Lobby CCTV tape 3",
+    "facts": [],
+    "relatedEvidenceIds": ["E003", "E011"]
+  },
+  {
+    "id": "E005",
+    "type": "cctv_log",
+    "title": "Storage Room Recorder Timer Log",
+    "timestamp": "1984-03-09T21:10:00",
+    "locationId": "L03",
+    "personIds": [],
+    "summary": "The Storage Room camera recorded nothing for thirty minutes.",
+    "details": "Timer log from the CCTV recorder for Storage Room B.\n\n21:10  Recorder switched to SERVICE MODE (remote)\n21:40  Recorder returned to RECORD\n\nThe tape for the intervening thirty minutes is blank. Service mode is normally used only for scheduled maintenance.",
+    "source": "Communications Room recorder log",
+    "facts": [
+      { "personId": null, "action": "camera_offline", "target": "L03", "timestamp": "1984-03-09T21:10:00" }
+    ],
+    "relatedEvidenceIds": ["E006", "E010"]
+  },
+  {
+    "id": "E006",
+    "type": "work_order",
+    "title": "Maintenance Work Order #2291",
+    "timestamp": "1984-03-09T17:30:00",
+    "locationId": "L01",
+    "personIds": ["S02", "S05"],
+    "summary": "A request to service the Storage Room camera recorder at 21:10.",
+    "details": "Facilities work order #2291, submitted 17:30 Friday from the Lab 2 desk.\n\nRequested by: REYES, A.\nWork: Service check of CCTV recorder, Storage Room B.\nRequested time: 21:10 tonight.\nNote: \"Timing is important. Recorder must be in service mode by 21:10.\"\n\nRouted to Communications for remote action.",
+    "source": "Facilities work-order file",
+    "facts": [
+      { "personId": "S02", "action": "filed_request", "target": "camera_system", "timestamp": "1984-03-09T17:30:00" }
+    ],
+    "relatedEvidenceIds": ["E005", "E010"]
+  },
+  {
+    "id": "E007",
+    "type": "access_log",
+    "title": "Garage Stairwell Door Log",
+    "timestamp": "1984-03-09T21:07:00",
+    "locationId": "L05",
+    "personIds": ["S02"],
+    "summary": "Card 0331 opened the garage stairwell door after hours.",
+    "details": "Reader log for the garage stairwell door, which opens into the ground-floor corridor beside Storage Room B.\n\n21:07  IN  card 0331  (Reyes, A.)\n\nThis door is not covered by the lobby turnstile or the lobby camera.",
+    "source": "Garage door reader",
+    "facts": [
+      { "personId": "S02", "action": "enter", "target": "L05", "timestamp": "1984-03-09T21:07:00" }
+    ],
+    "relatedEvidenceIds": ["E003", "E014"]
+  },
+  {
+    "id": "E008",
+    "type": "access_log",
+    "title": "Garage Barrier Log, Executive Bay",
+    "timestamp": "1984-03-09T20:55:00",
+    "locationId": "L05",
+    "personIds": ["S03"],
+    "summary": "Victor Lang's car left the garage at 20:55.",
+    "details": "Exit ticket log for the garage barrier.\n\n20:55  EXIT  permit E-001  (Lang, V.)\n\nNo re-entry recorded for permit E-001 that night.",
+    "source": "Garage barrier ticket roll",
+    "facts": [
+      { "personId": "S03", "action": "exit", "target": "L05", "timestamp": "1984-03-09T20:55:00" }
+    ],
+    "relatedEvidenceIds": ["E009"]
+  },
+  {
+    "id": "E009",
+    "type": "document",
+    "title": "Letter to Kessler-Ward Corp.",
+    "timestamp": "1984-03-09T16:12:00",
+    "locationId": "L04",
+    "personIds": ["S03"],
+    "summary": "Lang's carbon copy of a confidential letter about the sale.",
+    "details": "Carbon copy from Lang's outbox, dated Friday 16:12, addressed to Kessler-Ward Corp.\n\n\"...I confirm that the Argus-7 will be demonstrated on Monday at 10:00 as agreed. Please treat all discussions of terms as strictly confidential until the board has signed...\"\n\nLang was meeting Kessler-Ward's counsel that evening. He needed the prototype in place for Monday.",
+    "source": "Executive Office, Lang's files",
+    "facts": [],
+    "relatedEvidenceIds": ["E008", "E017"]
+  },
+  {
+    "id": "E010",
+    "type": "comms_log",
+    "title": "Modem Dial-In Log",
+    "timestamp": "1984-03-09T21:09:00",
+    "locationId": "L02",
+    "personIds": ["S05"],
+    "summary": "A remote dial-in from Daniel Cho's home line at 21:09.",
+    "details": "Modem bank log, Communications Room.\n\n21:09  CONNECT  line 4  (caller ID: residential, Cho D.)\n21:10  Command: SET RECORDER 03 SERVICE\n21:11  DISCONNECT\n\nCho later confirmed he was carrying out work order #2291.",
+    "source": "Communications Room modem log",
+    "facts": [
+      { "personId": "S05", "action": "remote_login", "target": "camera_system", "timestamp": "1984-03-09T21:09:00" }
+    ],
+    "relatedEvidenceIds": ["E005", "E006"]
+  },
+  {
+    "id": "E011",
+    "type": "access_log",
+    "title": "Garage Barrier Log, Permit A-117",
+    "timestamp": "1984-03-09T21:44:00",
+    "locationId": "L05",
+    "personIds": ["S02"],
+    "summary": "Alex Reyes's car left the garage at 21:44.",
+    "details": "Exit ticket log and barrier-camera still.\n\n21:44  EXIT  permit A-117  (Reyes, A.)\n\nThe barrier-camera still shows the driver alone, and a dark canvas duffel bag on the passenger seat. The bag looks noticeably fuller than it did in the lobby still.",
+    "source": "Garage barrier ticket roll and camera",
+    "facts": [
+      { "personId": "S02", "action": "vehicle_exit", "target": "L05", "timestamp": "1984-03-09T21:44:00" }
+    ],
+    "relatedEvidenceIds": ["E004", "E007"]
+  },
+  {
+    "id": "E012",
+    "type": "sensor",
+    "title": "Lobby Desk Pressure-Mat Report",
+    "timestamp": "1984-03-09T21:05:00",
+    "locationId": "L06",
+    "personIds": ["S04"],
+    "summary": "The night desk was unattended from 21:05 to 21:25.",
+    "details": "Printout from the pressure mat under the night guard's chair.\n\n21:05  CHAIR EMPTY\n21:25  CHAIR OCCUPIED\n\nThe desk was unmanned for twenty minutes. No entry was made in the shift log for that period.",
+    "source": "Security desk sensor printout",
+    "facts": [
+      { "personId": "S04", "action": "leave_post", "target": "L06", "timestamp": "1984-03-09T21:05:00" },
+      { "personId": "S04", "action": "return_post", "target": "L06", "timestamp": "1984-03-09T21:25:00" }
+    ],
+    "relatedEvidenceIds": ["E018"]
+  },
+  {
+    "id": "E013",
+    "type": "forensic",
+    "title": "Fingerprint Report",
+    "timestamp": "1984-03-10T11:20:00",
+    "locationId": "L03",
+    "personIds": ["S01", "S02"],
+    "summary": "Prints on the case: Voss's, and a fresh partial that matches Reyes.",
+    "details": "Latent print examination of the Argus-7 case.\n\n- Multiple prints matching Dr. M. Voss (expected: she handles the unit daily).\n- One clear, fresh partial print on the inside latch, matching A. Reyes. Reyes's last logged handling of the case was Thursday afternoon, but the print sits over a smear consistent with a glove.\n\nNo other prints of value.",
+    "source": "Police forensic bureau",
+    "facts": [],
+    "relatedEvidenceIds": ["E001", "E014"]
+  },
+  {
+    "id": "E014",
+    "type": "keycard",
+    "title": "Keycard Access",
+    "timestamp": "1984-03-09T21:14:00",
+    "locationId": "L03",
+    "personIds": ["S02"],
+    "summary": "Card 0331 opened Storage Room B at 21:14.",
+    "details": "Card reader log for Storage Room B.\n\n21:14  OPEN  card 0331  (Reyes, A.)\n21:19  CLOSE\n\nNo other card was used on this door between 18:00 Friday and 07:30 Saturday.",
+    "source": "Storage Room B card reader",
+    "facts": [
+      { "personId": "S02", "action": "enter", "target": "L03", "timestamp": "1984-03-09T21:14:00" }
+    ],
+    "relatedEvidenceIds": ["E002", "E007", "E013"]
+  },
+  {
+    "id": "E015",
+    "type": "financial",
+    "title": "Loan Default Notice",
+    "timestamp": "1984-03-05T00:00:00",
+    "locationId": null,
+    "personIds": ["S02"],
+    "summary": "Reyes owes $38,500 with a deadline of Monday 12 March.",
+    "details": "Final notice from Ridgeway Savings & Loan, dated Monday 5 March, addressed to A. Reyes.\n\n\"Failure to remit the outstanding balance of $38,500 by close of business Monday 12 March will result in foreclosure on the collateralised property.\"\n\nFound in Reyes's locker at Halden.",
+    "source": "Reyes's locker, Lab 2",
+    "facts": [],
+    "relatedEvidenceIds": ["E016"]
+  },
+  {
+    "id": "E016",
+    "type": "phone_records",
+    "title": "Telephone Company Call Records",
+    "timestamp": "1984-03-08T00:00:00",
+    "locationId": null,
+    "personIds": ["S02"],
+    "summary": "Five calls from Reyes's home number to a Kessler-Ward line.",
+    "details": "Call detail records from the telephone company for Reyes's home number, 26 Feb to 8 March.\n\nFive calls to (555) 0147, the business development line of Kessler-Ward Corp., totalling 41 minutes. Two calls were made after 22:00.",
+    "source": "Telephone company, by subpoena",
+    "facts": [],
+    "relatedEvidenceIds": ["E015", "E017"]
+  },
+  {
+    "id": "E017",
+    "type": "document",
+    "title": "Voss's Lab Notebook",
+    "timestamp": "1984-03-06T00:00:00",
+    "locationId": "L01",
+    "personIds": ["S01"],
+    "summary": "Voss knew about Kessler-Ward and opposed the sale.",
+    "details": "Pages from Dr. Voss's personal notebook.\n\n6 March: \"Lang wants to hand the Argus-7 to Kessler-Ward. I would smash it first. They will strip it for parts and bury it.\"\n\nThe notebook shows Voss knew about the Kessler-Ward negotiations, contradicting her claim to investigators that she had \"never heard of\" the company.",
+    "source": "Lab 2, Voss's desk",
+    "facts": [
+      { "personId": "S01", "action": "knows_of", "target": "kessler_ward", "timestamp": "1984-03-06T00:00:00" }
+    ],
+    "relatedEvidenceIds": ["E009", "E016"]
+  },
+  {
+    "id": "E018",
+    "type": "message",
+    "title": "Switchboard Message Slip",
+    "timestamp": "1984-03-09T21:04:00",
+    "locationId": "L06",
+    "personIds": ["S04"],
+    "summary": "A hospital called the switchboard for Nina Okafor at 21:04.",
+    "details": "Handwritten message slip from the switchboard log.\n\n21:04  For: OKAFOR, N.\nFrom: St. Mary's Hospital Emergency\nMessage: \"Your son has been admitted with a fever. Please call back.\"\n\nThe hospital confirms the call-back at 21:06, lasting eighteen minutes.",
+    "source": "Switchboard message log; hospital confirmation",
+    "facts": [],
+    "relatedEvidenceIds": ["E012"]
+  }
+]

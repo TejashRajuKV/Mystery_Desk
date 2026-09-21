@@ -1,0 +1,5 @@
+.progress { display: flex; flex-direction: column; gap: 8px; width: 300px; max-width: 100%; }
+.progress__head { display: flex; justify-content: space-between; }
+.progress__ticks { display: flex; gap: 3px; }
+.progress__tick { flex: 1; height: 14px; background: var(--line-subtle); transition: background 0.3s ease; }
+.progress__tick--on { background: var(--white); }

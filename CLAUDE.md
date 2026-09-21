@@ -1,0 +1,257 @@
+# MysteryDesk
+
+A single-case detective game on the web. The player works Case #047, "The Missing
+Prototype": reads evidence, opens suspect files, rebuilds the timeline, links clues
+on a board, questions an investigation assistant, then submits a conclusion and gets
+a report.
+
+Five suspects, 18 evidence items, 6 locations, one timeline of 12 events. One case
+only — don't generalise the schema for a multi-case product we aren't building.
+`:caseId` is always `047`; anything else is a 404. No accounts: one player, one
+investigation.
+
+Set in March 1984 at Halden Dynamics. Keycards, CCTV recorders, modem dial-in,
+telephone records. The look is a 1970s/80s black-and-white noir, strictly grayscale.
+
+It should look like a game and behave like a normal web app underneath.
+
+## The rule that matters most
+
+**Do not build a frontend mockup.** Every screen gets its data from the backend. A
+suspect name, an evidence ID or a timestamp typed into a `.jsx` file is a bug, not a
+placeholder, in every phase. Same for investigation progress — that lives in the
+database, not in React state. If a screen needs an endpoint that doesn't exist yet,
+build the endpoint first. Don't stub it in the UI.
+
+The one thing that is not investigation state: board layout (which cards are pinned
+and where). That is per-viewer UI state in `localStorage`. The connections themselves
+are backend state.
+
+Two sources of truth:
+
+- Figma — how it looks
+- `docs/PRD.md` — how it works
+
+When they disagree, stop and ask. Don't split the difference.
+
+Figma access is through the Figma MCP. File:
+`https://www.figma.com/design/ufl4VjdfurnEuqTLLM68fF` ("MysteryDesk — Case #047").
+Page "Design System": colour variables, text styles, components. Page "Screens":
+`01 · Case Entry`, `02 · Dashboard`, `03 · Evidence Room`, `04 · Suspects`.
+Timeline, InvestigationBoard, Assistant and FinalReport have **no Figma frame** (the
+Figma MCP plan limit was reached); they were designed in code from the same tokens.
+Don't present them as Figma-derived, and diff them when access returns. Before any
+screen, pull colours, type and spacing into `frontend/src/styles/tokens.css`;
+component CSS uses tokens, not raw values.
+
+Type: Playfair Display Black Italic (display), Bebas Neue (headings), Special Elite
+(body), Courier Prime (labels, data).
+
+## Stack
+
+```
+frontend/   React (plain JS, not TS) + Vite + react-router-dom, hand-written CSS
+backend/    Node 22.13+ + Express, SQLite via built-in node:sqlite, REST
+data/       seed JSON: case, locations, suspects, evidence, timeline, statements, solution
+```
+
+No TypeScript, no Tailwind, no component library, no ORM, no native database driver —
+the UI is bespoke enough that a framework's defaults fight the Figma file. Approved:
+react, react-dom, react-router-dom, vite, @vitejs/plugin-react, express. `node --watch`
+replaces nodemon. CORS is unnecessary (the Vite proxy makes every call same-origin).
+Ask before adding anything else.
+
+## Commands
+
+```
+npm run dev      # in frontend/ — Vite on :5173
+npm run dev      # in backend/  — node --watch on :4000
+npm run seed     # in backend/  — reloads data/*.json into SQLite; player progress is kept
+```
+
+Frontend proxies `/api` to :4000; never call the backend on an absolute URL. If :4000
+is taken, put `API_TARGET=http://localhost:4001` in `frontend/.env.local` (gitignored)
+and start the backend with `PORT=4001`. The backend also reseeds on every start, so
+edits to `data/` show up after a restart. To wipe progress, stop the backend and
+delete `backend/storage/mysterydesk.sqlite` (and its `-wal`/`-shm` files). The SQLite
+file is disposable — if the schema changes, delete it rather than writing a migration.
+
+## Layout
+
+```
+frontend/src/   components/  pages/  services/api.js  hooks/  utils/  styles/tokens.css
+backend/src/    routes/  controllers/  services/  models/  database/  middleware/
+                config/  server.js
+```
+
+Component and page names are the ones in the PRD's folder structure — use them as
+written. `services/api.js` is the only file that calls `fetch()`. One folder per
+component holding `Name.jsx` + `Name.css`. `components/Layout` (the shell) and
+`components/ui` (Button, Stamp, Loading, ErrorState, EmptyState, PageTitle, Field) are
+shared. `AssistantPanel` renders one chat turn; the conversation lives in
+`pages/Assistant`. `hooks/useCase.jsx` loads the case once and exposes the
+investigation actions. Routes stay thin — they parse the request and call a service.
+Logic goes in `services/`, never in a route handler. `middleware/` holds the error and
+404 handlers. `config/` holds the port, database path and the single case id.
+
+## IDs
+
+Fixed prefixes, used everywhere including the seed files and the URLs:
+
+```
+E014 evidence   S02 suspect   T08 timeline event   L03 location
+ST02 statement  ST02-A a claim inside it   C07 connection (public ID, since connections can be deleted)
+```
+
+These are the join keys for the whole app. No other identifier scheme, no exposed
+SQLite rowids, no renumbering.
+
+## Seed data the logic depends on
+
+Full shapes are in the PRD §6. In short:
+
+- Evidence carries `personIds`, `locationId`, `timestamp` and a `facts` list. Each fact
+  places one person (or nothing) at a target at a time. `locationId` and `timestamp`
+  can be null. `facts` are backend-only. Join on IDs, never on names.
+- A statement is one suspect's interview with a list of `assertions`, each a testable
+  claim with its own ID (`ST02-A`).
+- Claim kinds: `departed_by`, `present_until`, `stayed_at_post`, `did_not_perform`.
+  Add another only when the case data needs one.
+- Times are local ISO strings (`1984-03-09T21:14:00`) in data; the API also returns a
+  `time` string (`"21:14"`). Evidence spans several days, so it is not one evening.
+
+`data/solution.json` is the answer key: culprit, required evidence, required
+connections. It loads into its own table and only `validateConclusion` reads it. No
+route returns it, `GET /cases/:caseId` leaves it out, the assistant never sees it,
+and rejection reasons never name what's missing ("not enough evidence linked to
+this suspect", not "you need E011").
+
+## API shape
+
+```
+GET    /api/cases/:caseId
+GET    /api/cases/:caseId/evidence        GET /api/evidence/:id
+GET    /api/cases/:caseId/suspects        GET /api/suspects/:id
+GET    /api/cases/:caseId/statements
+GET    /api/cases/:caseId/timeline
+GET    /api/cases/:caseId/connections
+POST   /api/cases/:caseId/connections     DELETE /api/connections/:id
+GET    /api/cases/:caseId/investigation
+POST   /api/cases/:caseId/viewed          { type: "evidence"|"suspect"|"event", id }
+PUT    /api/cases/:caseId/theory          { text }
+POST   /api/cases/:caseId/contradictions  { assertionId, evidenceId }
+POST   /api/cases/:caseId/conclusion      { suspectId, evidenceIds }
+GET    /api/cases/:caseId/report
+POST   /api/assistant/query               { question }
+```
+
+GET never changes state; opening an evidence card is a `POST /viewed`. Responses are
+the resource itself, not wrapped in `{ data: ... }`. Errors are `{ error: "message" }`
+with a real status: 400 malformed, 404 unknown, 422 well-formed but rejected by the
+game rules (including a report requested before a conclusion is accepted).
+`POST /viewed` and `PUT /theory` return the whole investigation state. Every response
+shape the frontend reads is in the PRD §7; adding a field is fine, renaming one breaks
+the UI.
+
+A connection:
+
+```json
+{ "id": "C07", "source": "E014", "target": "S02", "relationship": "linked_to" }
+```
+
+`source` and `target` can be any E, S, T or L ID; `linked_to` is the only
+relationship for now. `validateConnection` rejects unknown IDs, self-links and
+duplicates in either direction. It does not say whether a link is "right".
+
+## Investigation state
+
+The backend owns it: evidence viewed, suspects viewed, timeline events viewed,
+connections made, contradictions found, working theory, final conclusion. Progress
+percentage is calculated server-side too, as the average of four ratios (evidence,
+suspects, events, contradictions found). Refreshing the page must not lose anything.
+
+`InvestigationService` holds the logic — `findRelatedEvidence`,
+`findSuspectConnections`, `findContradictions`, `getTimelineBetween`,
+`validateConnection`, `validateConclusion`, `calculateProgress`.
+
+Contradictions are derived by comparing statement claims against evidence facts,
+never stored as a flag in the seed data. Alex says he left at 21:00; the keycard log
+puts him in the storage room at 21:14; the service works that out. The four claim
+kinds and what contradicts each are in the PRD §6. The state only stores which ones
+the player has found: `POST /contradictions` checks the pair is real, records it, or
+returns 422.
+
+## The assistant
+
+Not a chatbot, and not a model: it is rule-based. `InvestigationService` classifies the
+question and answers from the derived case data. There is no API key, no `.env`, no
+network call. It answers three kinds of question about this case: what contradicts a
+statement, what happened in a time window, what ties a suspect to a place.
+
+It never returns loose prose. Always this shape, with `confidence` one of
+`"high"`, `"medium"`, `"low"`:
+
+```json
+{ "answer": "Alex's statement conflicts with the keycard record.",
+  "confidence": "high", "relatedEvidence": ["E014"],
+  "relatedSuspects": ["S02"], "relatedEvents": ["T08"], "contradiction": true,
+  "contradictions": [{ "assertionId": "ST02-A", "evidenceId": "E014" }] }
+```
+
+`contradictions` is optional (only when `contradiction` is true); the UI turns each
+pair into a "log this contradiction" button. The frontend turns the IDs into
+clickable cards, so every one must exist in the DB — check before responding. A
+question that fits none of the three kinds returns 200 with `confidence: "low"`, empty
+related lists, and an answer saying what it can help with. The assistant never sees
+`solution.json`.
+
+## Conclusion and report
+
+`POST /conclusion` validates before accepting. A malformed body is a 400. Otherwise
+the suspect must exist, the cited evidence must exist, the suspect must be the culprit
+with the required evidence cited, and the required connections must actually have been
+made. Anything short of that is a 422 with a reason the UI can show; a wrong suspect and
+too little evidence get the same reason so the answer can't be found by elimination.
+The player saves a theory with `PUT /theory` first.
+
+The report is generated from what the player actually did — their connections,
+evidence, contradictions and reviewed timeline. Nothing pre-written.
+
+## Build order
+
+Finish a phase, then move on. Each screen is built in the phase where its endpoints
+exist.
+
+1. Scaffolding — both apps running, DB seeded, one route end to end
+2. Seed data and the read routes: case, evidence, suspects, timeline
+3. Design tokens, then CaseEntry, Dashboard, EvidenceRoom, Suspects, Timeline
+4. Viewed, theory, connections, contradictions, progress — with InvestigationBoard
+5. Conclusion and report — with FinalReport
+6. Assistant — with AssistantPanel and the Assistant page
+7. Animation, responsive, Figma diff
+
+Current status: phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser
+through the real API. The screens were built before their endpoints, at the owner's request.
+Phase 7 is open: a visual pass of Timeline, InvestigationBoard, Assistant and FinalReport at
+desktop width, animation review, and the Figma diff. Done means every box in the PRD's
+Definition of Done is ticked.
+
+## Known gaps
+
+- Timeline, InvestigationBoard, Assistant and FinalReport have no Figma frame.
+- Only phone-width layouts and DOM state were checked for those four screens; nobody has looked
+  at them at 1440px yet.
+- The error state of each screen was not exercised, and there are no automated tests (by request).
+- Board layout is per-viewer in `localStorage`, so it does not follow the player to another browser.
+  Move it into the investigation state if that matters.
+- Some port on this machine (:4000) is often taken by another process; see Commands.
+
+## Working notes
+
+- Build one screen at a time and let me see it before starting the next.
+- No comments explaining what the line already says.
+- Don't write tests for this yet; I'll say when.
+- Loading, empty and error states come with every screen that fetches, not in
+  phase 7. A spinner that never resolves is worse than a blank page.
+- Game feel (dark room, typewriter labels, case-file language) comes from Figma and
+  lives in the CSS and copy, not the data layer.

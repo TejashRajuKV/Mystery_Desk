@@ -1,0 +1,19 @@
+{
+  "name": "mysterydesk-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MysteryDesk API: Case #047, The Missing Prototype",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/database/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

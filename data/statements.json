@@ -1,0 +1,112 @@
+[
+  {
+    "id": "ST01",
+    "suspectId": "S01",
+    "takenAt": "1984-03-10T09:40:00",
+    "text": "I left around half past seven on Friday and went straight home. I was at the bench most of the afternoon. I found the case empty at seven-thirty Saturday morning. As for Kessler-Ward, I have never heard of them.",
+    "assertions": [
+      {
+        "id": "ST01-A",
+        "claim": "I left the building around 19:30 on Friday.",
+        "kind": "departed_by",
+        "time": "1984-03-09T19:40:00",
+        "severity": "major"
+      },
+      {
+        "id": "ST01-B",
+        "claim": "I have never heard of Kessler-Ward.",
+        "kind": "did_not_perform",
+        "actions": ["knows_of"],
+        "target": "kessler_ward",
+        "severity": "minor",
+        "note": "Her own notebook names Kessler-Ward and shows she opposed the sale."
+      }
+    ]
+  },
+  {
+    "id": "ST02",
+    "suspectId": "S02",
+    "takenAt": "1984-03-10T10:20:00",
+    "text": "I finished the calibration and left the building at nine o'clock sharp. I went straight home. I haven't been near Storage Room B since six on Friday. And I've never asked anyone to touch the camera system. I wouldn't know how.",
+    "assertions": [
+      {
+        "id": "ST02-A",
+        "claim": "I left the building at 21:00 and went straight home.",
+        "kind": "departed_by",
+        "time": "1984-03-09T21:00:00",
+        "severity": "major"
+      },
+      {
+        "id": "ST02-B",
+        "claim": "I haven't been near Storage Room B since 18:00.",
+        "kind": "did_not_perform",
+        "actions": ["enter"],
+        "target": "L03",
+        "from": "1984-03-09T18:00:00",
+        "severity": "major"
+      },
+      {
+        "id": "ST02-C",
+        "claim": "I never asked anyone to touch the camera system.",
+        "kind": "did_not_perform",
+        "actions": ["filed_request"],
+        "target": "camera_system",
+        "severity": "major"
+      }
+    ]
+  },
+  {
+    "id": "ST03",
+    "suspectId": "S03",
+    "takenAt": "1984-03-10T11:05:00",
+    "text": "I was in my office all evening going over the quarterly budget. I didn't leave until ten at the earliest. I saw no one and heard nothing.",
+    "assertions": [
+      {
+        "id": "ST03-A",
+        "claim": "I stayed in the building until at least 22:00.",
+        "kind": "present_until",
+        "time": "1984-03-09T22:00:00",
+        "severity": "minor",
+        "mitigatedBy": ["E009"],
+        "note": "He was meeting Kessler-Ward's counsel and hid it to protect the deal."
+      }
+    ]
+  },
+  {
+    "id": "ST04",
+    "suspectId": "S04",
+    "takenAt": "1984-03-10T08:40:00",
+    "text": "I never left the lobby desk during my shift. Not once. I logged nothing unusual. If anyone had come through, I would have seen them.",
+    "assertions": [
+      {
+        "id": "ST04-A",
+        "claim": "I never left the lobby desk during my shift.",
+        "kind": "stayed_at_post",
+        "target": "L06",
+        "from": "1984-03-09T20:00:00",
+        "to": "1984-03-09T23:00:00",
+        "severity": "minor",
+        "mitigatedBy": ["E018"],
+        "note": "A hospital call about her son took her from the desk."
+      }
+    ]
+  },
+  {
+    "id": "ST05",
+    "suspectId": "S05",
+    "takenAt": "1984-03-10T10:50:00",
+    "text": "I was at home all evening. I didn't touch the camera system on Friday night. Everything was running normally as far as I know.",
+    "assertions": [
+      {
+        "id": "ST05-A",
+        "claim": "I didn't touch the camera system on Friday night.",
+        "kind": "did_not_perform",
+        "actions": ["remote_login"],
+        "target": "camera_system",
+        "severity": "minor",
+        "mitigatedBy": ["E006"],
+        "note": "He carried out a work order that Alex Reyes submitted."
+      }
+    ]
+  }
+]

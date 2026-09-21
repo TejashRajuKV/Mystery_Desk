@@ -1,0 +1,27 @@
+{
+  "id": "047",
+  "title": "The Missing Prototype",
+  "status": "active",
+  "classification": "CONFIDENTIAL",
+  "company": "Halden Dynamics",
+  "site": "Ridgeway Industrial Park",
+  "openedAt": "1984-03-10T08:15:00",
+  "incidentWindow": {
+    "from": "1984-03-09T19:00:00",
+    "to": "1984-03-10T07:30:00"
+  },
+  "leadInvestigator": "You",
+  "summary": "Sometime between Friday evening and Saturday morning, the Argus-7 prototype vanished from a locked storage room inside Halden Dynamics. No forced entry. No witnesses. Five people had the means. One of them is lying.",
+  "briefing": [
+    "Halden Dynamics is a mid-sized electronics firm on the edge of the city. Its crown jewel is the Argus-7: a solid-state memory cartridge the size of a paperback, years ahead of anything on the market.",
+    "At 07:30 on Saturday 10 March, chief engineer Dr. Maren Voss opened Storage Room B and found the Argus-7 case empty. The door showed no sign of force. The building's security systems recorded a gap in the night.",
+    "The board has asked you to work the case quietly. Review the evidence, question the five people who were in the building, rebuild the night minute by minute, and name the person responsible."
+  ],
+  "objectives": [
+    "Examine the physical and documentary evidence.",
+    "Interview and profile each suspect.",
+    "Reconstruct the timeline of Friday night.",
+    "Connect clues and expose contradictions in the statements.",
+    "Form a theory and submit your conclusion."
+  ]
+}

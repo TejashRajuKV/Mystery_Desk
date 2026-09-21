@@ -1,0 +1,8 @@
+.report-section {
+  display: flex; flex-direction: column; gap: 14px; padding: 30px 34px;
+  background: var(--paper); color: var(--paper-ink);
+}
+.report-section__head { display: flex; justify-content: space-between; }
+.report-section__class { opacity: 0.55; }
+.report-section__body { display: flex; flex-direction: column; gap: 10px; }
+.report-section__body ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }

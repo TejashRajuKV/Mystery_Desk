@@ -1,0 +1,15 @@
+.tl-event {
+  display: flex; align-items: flex-start; gap: 20px; width: 100%; padding: 8px 12px 8px 0; text-align: left;
+  background: none; border: 0; border-left: 4px solid transparent; color: var(--text-primary); position: relative;
+  transition: background 0.15s;
+}
+.tl-event:hover { background: var(--bg-raised); }
+.tl-event__time { width: 64px; flex: none; color: var(--white); padding-left: 0; }
+.tl-event__marker {
+  width: 16px; height: 16px; flex: none; margin-top: 8px; border-radius: 50%; z-index: 1;
+  background: var(--bg-base); border: 2px solid var(--line-strong); box-shadow: 0 0 0 3px var(--bg-base);
+}
+.tl-event--viewed .tl-event__marker { background: var(--white); border-color: var(--white); }
+.tl-event__body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tl-event--selected { background: var(--bg-panel); border-left-color: var(--white); padding-left: 0; }
+.tl-event--selected .tl-event__marker { background: var(--white); border-color: var(--bg-panel); box-shadow: none; transform: scale(1.25); }

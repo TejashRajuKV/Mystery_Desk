@@ -1,0 +1,110 @@
+[
+  {
+    "id": "T01",
+    "timestamp": "1984-03-09T17:30:00",
+    "title": "Work order #2291 filed",
+    "description": "A maintenance request is submitted from the Lab 2 desk: service the Storage Room camera recorder at 21:10 that night.",
+    "locationId": "L01",
+    "personIds": ["S02"],
+    "evidenceIds": ["E006"]
+  },
+  {
+    "id": "T02",
+    "timestamp": "1984-03-09T19:34:00",
+    "title": "Dr. Voss leaves the building",
+    "description": "Maren Voss badges out through the lobby turnstile.",
+    "locationId": "L06",
+    "personIds": ["S01"],
+    "evidenceIds": ["E003"]
+  },
+  {
+    "id": "T03",
+    "timestamp": "1984-03-09T20:55:00",
+    "title": "Victor Lang drives out",
+    "description": "The managing director's car leaves the garage barrier. It does not return.",
+    "locationId": "L05",
+    "personIds": ["S03"],
+    "evidenceIds": ["E008", "E009"]
+  },
+  {
+    "id": "T04",
+    "timestamp": "1984-03-09T21:00:00",
+    "title": "Alex Reyes badges out",
+    "description": "Reyes leaves through the lobby turnstile carrying a large duffel bag that looks empty.",
+    "locationId": "L06",
+    "personIds": ["S02"],
+    "evidenceIds": ["E003", "E004"]
+  },
+  {
+    "id": "T05",
+    "timestamp": "1984-03-09T21:05:00",
+    "title": "The lobby desk is left empty",
+    "description": "Nina Okafor leaves her chair after a call from the hospital. The lobby is unattended for twenty minutes.",
+    "locationId": "L06",
+    "personIds": ["S04"],
+    "evidenceIds": ["E012", "E018"]
+  },
+  {
+    "id": "T06",
+    "timestamp": "1984-03-09T21:07:00",
+    "title": "Garage stairwell door opens",
+    "description": "Card 0331 opens the garage stairwell door, a route that bypasses the lobby turnstile and camera.",
+    "locationId": "L05",
+    "personIds": ["S02"],
+    "evidenceIds": ["E007"]
+  },
+  {
+    "id": "T07",
+    "timestamp": "1984-03-09T21:10:00",
+    "title": "Storage Room camera goes dark",
+    "description": "A remote modem session puts the Storage Room CCTV recorder into service mode. It stops recording.",
+    "locationId": "L02",
+    "personIds": ["S05"],
+    "evidenceIds": ["E005", "E010", "E006"]
+  },
+  {
+    "id": "T08",
+    "timestamp": "1984-03-09T21:14:00",
+    "title": "Storage Room B opened",
+    "description": "Card 0331 opens the Storage Room B door. It closes five minutes later.",
+    "locationId": "L03",
+    "personIds": ["S02"],
+    "evidenceIds": ["E014", "E002", "E013"]
+  },
+  {
+    "id": "T09",
+    "timestamp": "1984-03-09T21:25:00",
+    "title": "Okafor returns to her post",
+    "description": "The pressure mat registers the guard back at her desk. Nothing is logged for the missing twenty minutes.",
+    "locationId": "L06",
+    "personIds": ["S04"],
+    "evidenceIds": ["E012"]
+  },
+  {
+    "id": "T10",
+    "timestamp": "1984-03-09T21:40:00",
+    "title": "Camera recorder resumes",
+    "description": "The Storage Room recorder returns to record mode. The prior thirty minutes are blank.",
+    "locationId": "L03",
+    "personIds": [],
+    "evidenceIds": ["E005"]
+  },
+  {
+    "id": "T11",
+    "timestamp": "1984-03-09T21:44:00",
+    "title": "Reyes's car leaves the garage",
+    "description": "Permit A-117 exits the barrier. A duffel bag sits on the passenger seat, visibly fuller than before.",
+    "locationId": "L05",
+    "personIds": ["S02"],
+    "evidenceIds": ["E011", "E004"]
+  },
+  {
+    "id": "T12",
+    "timestamp": "1984-03-10T07:30:00",
+    "title": "The empty case is discovered",
+    "description": "Dr. Voss opens Storage Room B and finds the Argus-7 case empty. Security is alerted; the case is opened.",
+    "locationId": "L03",
+    "personIds": ["S01"],
+    "evidenceIds": ["E001", "E002", "E013"]
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "L01",
+    "name": "Main Laboratory",
+    "floor": "2nd Floor",
+    "description": "Lab 2, where the Argus-7 was built and calibrated. Work benches, oscilloscopes, and a locked calibration cabinet. Only lab staff hold cards for this door."
+  },
+  {
+    "id": "L02",
+    "name": "Communications Room",
+    "floor": "Basement",
+    "description": "Houses the switchboard, the modem bank for remote maintenance, and the CCTV recorders that feed every camera in the building."
+  },
+  {
+    "id": "L03",
+    "name": "Storage Room B",
+    "floor": "1st Floor",
+    "description": "A windowless secure room with a single magnetic-card door. The Argus-7 prototype was kept here in a foam-lined case. One camera covers the door."
+  },
+  {
+    "id": "L04",
+    "name": "Executive Office",
+    "floor": "3rd Floor",
+    "description": "The managing director's suite. Board papers, a private line, and a typewriter that never seems to stop."
+  },
+  {
+    "id": "L05",
+    "name": "Parking Garage",
+    "floor": "Ground",
+    "description": "Staff garage with a ticket barrier on the exit ramp and a card-locked stairwell door that opens into the ground-floor corridor."
+  },
+  {
+    "id": "L06",
+    "name": "Lobby & Security Desk",
+    "floor": "Ground",
+    "description": "The main entrance. A turnstile logs every card in and out, and a pressure mat under the night guard's chair records when the desk is unattended."
+  }
+]
