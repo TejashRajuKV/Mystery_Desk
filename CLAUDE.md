@@ -232,16 +232,17 @@ exist.
 
 Current status: phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser
 through the real API. The screens were built before their endpoints, at the owner's request.
-Phase 7 is open: a visual pass of Timeline, InvestigationBoard, Assistant and FinalReport at
-desktop width, animation review, and the Figma diff. Done means every box in the PRD's
-Definition of Done is ticked.
+Phase 7 is partly done: Timeline, InvestigationBoard, Assistant and FinalReport were checked
+at phone, tablet and desktop widths, and both the assistant's network-error state and the
+top-level "try again" on a failed case load were exercised. Still open: the Figma diff for
+those four (no frame exists yet) and a dedicated animation review. Done means every box in
+the PRD's Definition of Done is ticked.
 
 ## Known gaps
 
-- Timeline, InvestigationBoard, Assistant and FinalReport have no Figma frame.
-- Only phone-width layouts and DOM state were checked for those four screens; nobody has looked
-  at them at 1440px yet.
-- The error state of each screen was not exercised, and there are no automated tests (by request).
+- Timeline, InvestigationBoard, Assistant and FinalReport have no Figma frame, so there is
+  nothing to diff them against yet.
+- There are no automated tests (by request).
 - Board layout is per-viewer in `localStorage`, so it does not follow the player to another browser.
   Move it into the investigation state if that matters.
 - Some port on this machine (:4000) is often taken by another process; see Commands.

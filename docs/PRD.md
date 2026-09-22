@@ -610,7 +610,9 @@ Loading, empty and error states are built with each screen that fetches, not def
 
 ### Status
 
-Phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser through the real API: reading evidence, testing claims, linking on the board, asking the assistant, a rejected then accepted conclusion, the report, and a refresh that loses nothing. **The eight screens were built before their endpoints**, at the owner's request, so the phase order above was not followed for the frontend. No case data is hardcoded in the UI. Still open: phase 7 (a visual pass of Timeline, Board, Assistant and Report at desktop width, animation review, the Figma diff) and the four screens without a Figma frame. No automated tests exist yet, by request.
+Phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser through the real API: reading evidence, testing claims, linking on the board, asking the assistant, a rejected then accepted conclusion, the report, and a refresh and a server restart that lose nothing. **The eight screens were built before their endpoints**, at the owner's request, so the phase order above was not followed for the frontend. No case data is hardcoded in the UI.
+
+Phase 7 is partly done: Timeline, Board, Assistant and Report were checked at desktop (1440px) and tablet (768px) width, on top of the phone width already checked when they were built — the drawer, the canvas scroll and node geometry, the two-column report, and the "revise conclusion" prefill all hold up. The assistant's network-error state was exercised (backend stopped mid-question) and degrades correctly, and so was the top-level error state (`Layout`'s `ErrorState`, shown when the initial case load fails) — including its "try again" recovering cleanly once the backend comes back. Page-transition and report-stamp animations were seen firing correctly, but not given a dedicated timing/easing pass. Still open: the Figma diff for all four screens (they have no frame to diff against yet) and a deliberate animation review. No automated tests exist yet, by request.
 
 ## 16. Definition of Done
 
@@ -621,12 +623,12 @@ Phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser thro
 - [x] Investigation board interactive
 - [x] Evidence inspection works
 - [x] Suspect profiles work
-- [ ] Timeline works (list, scrubber and drawer work; not yet checked visually at desktop width)
+- [x] Timeline works
 - [x] Assistant UI works
 - [x] Final report works
-- [ ] Animations implemented (built, not reviewed)
-- [ ] Responsive design works (checked at phone width only)
-- [ ] Every fetching screen has loading, empty and error states (loading and empty seen; the error state was not exercised)
+- [ ] Animations implemented (built and confirmed firing; not given a dedicated review)
+- [x] Responsive design works (checked at phone, tablet and desktop widths)
+- [x] Every fetching screen has loading, empty and error states
 
 ### Backend
 
