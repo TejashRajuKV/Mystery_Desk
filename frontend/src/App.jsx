@@ -1,7 +1,6 @@
 import { useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout/Layout.jsx';
-import CaseEntry from './pages/CaseEntry/CaseEntry.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import EvidenceRoom from './pages/EvidenceRoom/EvidenceRoom.jsx';
 import Suspects from './pages/Suspects/Suspects.jsx';
@@ -35,10 +34,8 @@ export default function App() {
   return (
     <CaseProvider>
       <Routes>
-        <Route path="/" element={<CaseEntry />} />
-        {/* Preview-only while the redesign is in progress; swaps in for "/" once verified. */}
         <Route
-          path="/landing"
+          path="/"
           element={
             <Suspense fallback={<div style={{ background: '#050403', minHeight: '100vh' }} />}>
               <LandingPage />
