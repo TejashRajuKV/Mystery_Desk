@@ -1,0 +1,25 @@
+/*
+ * Landing-page-only palette. Scoped under .landing so the rest of the app
+ * (Dashboard, Evidence Room, Board, ...) stays strictly grayscale per CLAUDE.md.
+ * See CLAUDE.md "Working notes" for why this exception exists.
+ */
+.landing {
+  --l-black: #050403;
+  --l-navy: #0a0e14;
+  --l-panel: #10131a;
+  --l-off-white: #ede6d8;
+  --l-brass: #b08d57;
+  --l-brass-dim: #6e5836;
+  --l-amber: #d9a441;
+  --l-red: #7a2e2e;
+  --l-line: rgba(176, 141, 87, 0.22);
+  --l-line-strong: rgba(176, 141, 87, 0.5);
+
+  --l-font-display: 'Playfair Display', Georgia, serif;
+  --l-font-heading: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+  --l-font-body: 'Special Elite', 'Courier New', monospace;
+  --l-font-mono: 'Courier Prime', 'Courier New', monospace;
+
+  background: var(--l-black);
+  color: var(--l-off-white);
+}

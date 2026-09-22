@@ -1,0 +1,15 @@
+.incident { align-items: flex-start; gap: 64px; }
+.incident__headline { font-size: clamp(44px, 8vw, 108px); margin: 0; }
+.incident__amber { color: var(--l-brass); }
+
+.incident__beats { display: flex; flex-direction: column; gap: 22px; max-width: 620px; }
+.incident__beat {
+  display: flex; align-items: baseline; gap: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--l-line);
+}
+.incident__time { width: 70px; flex: none; color: var(--l-amber); font-size: 13px; }
+.incident__desc { font-size: 18px; text-transform: capitalize; }
+
+@media (max-width: 720px) {
+  .incident__beat { gap: 16px; }
+  .incident__desc { font-size: 15px; }
+}

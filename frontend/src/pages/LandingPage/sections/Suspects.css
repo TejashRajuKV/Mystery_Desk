@@ -1,0 +1,47 @@
+.suspects { min-height: 130vh; padding-top: 100px; padding-bottom: 100px; align-items: flex-start; }
+.suspects__tag { display: block; margin-bottom: 14px; }
+.suspects__title { font-size: clamp(36px, 6vw, 72px); margin: 0 0 56px; }
+
+.suspects__wall {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2px;
+  width: 100%; background: var(--l-line);
+}
+
+.suspect-card {
+  position: relative; background: var(--l-navy); overflow: hidden; cursor: default;
+  display: flex; flex-direction: column;
+}
+
+.suspect-card__portrait {
+  position: relative; height: 320px; overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 38%, #2a2620 0, #2a2620 15%, transparent 16%),
+    radial-gradient(ellipse 60% 45% at 50% 92%, #2a2620 0, #2a2620 40%, transparent 41%),
+    var(--l-panel);
+  filter: grayscale(1) contrast(1.1);
+  transition: transform 0.5s ease, filter 0.5s ease;
+}
+.suspect-card__portrait::after {
+  content: ''; position: absolute; inset: 0; opacity: 0.5; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.suspect-card__redacted {
+  position: absolute; top: 16px; left: 16px; padding: 4px 10px; background: var(--l-red); color: var(--l-off-white);
+  letter-spacing: 0.15em;
+}
+.suspect-card:hover .suspect-card__portrait { transform: scale(1.06); filter: grayscale(0.6) contrast(1.15) sepia(0.15); }
+
+.suspect-card__meta { display: flex; flex-direction: column; gap: 6px; padding: 20px 22px 26px; }
+.suspect-card__id { color: var(--l-brass); }
+.suspect-card__name { font-size: 24px; }
+.suspect-card__role { color: var(--l-off-white); opacity: 0.5; font-size: 10px; }
+.suspect-card__reveal {
+  font-size: 13px; line-height: 1.55; max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease;
+}
+.suspect-card:hover .suspect-card__reveal { max-height: 140px; opacity: 0.75; margin-top: 6px; }
+
+@media (max-width: 720px) {
+  .suspects__wall { grid-template-columns: 1fr 1fr; }
+  .suspect-card__portrait { height: 220px; }
+}

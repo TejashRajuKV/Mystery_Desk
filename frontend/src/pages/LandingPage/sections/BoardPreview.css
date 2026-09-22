@@ -1,0 +1,23 @@
+.board { min-height: 130vh; padding-top: 100px; padding-bottom: 100px; align-items: flex-start; }
+.board__title { font-size: clamp(36px, 6vw, 72px); margin: 10px 0 50px; }
+
+.board__canvas { position: relative; width: 100%; max-width: 620px; height: 560px; margin: 0 auto; }
+.board__lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.board__lines line { stroke: var(--l-amber); stroke-width: 0.4; opacity: 0.75; }
+
+.board__node {
+  position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 4px;
+  padding: 12px 16px; background: var(--l-panel); border: 1px solid var(--l-line-strong); min-width: 140px;
+  text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.board__node--evidence { border-color: var(--l-brass); }
+.board__node--suspect { border-color: var(--l-off-white); background: #17141b; }
+.board__node--location { border-color: var(--l-red); }
+.board__node-label { color: var(--l-brass); font-size: 10px; }
+.board__node-title { font-family: var(--l-font-heading); font-size: 15px; letter-spacing: 0.02em; color: var(--l-off-white); }
+
+@media (max-width: 720px) {
+  .board__canvas { height: 480px; }
+  .board__node { min-width: 110px; padding: 8px 10px; }
+  .board__node-title { font-size: 12px; }
+}
