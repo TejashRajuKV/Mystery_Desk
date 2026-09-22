@@ -1,53 +1,23 @@
-.suspect-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-bottom: 24px; }
+.suspect-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; padding: 4px 4px 4px 0; }
+.dossier { display: grid; grid-template-columns: minmax(0, 1fr) 1.5px minmax(0, 1.15fr); gap: 32px; padding: 26px 28px; animation: page-in 0.25s ease both; }
+.dossier__profile, .dossier__statement { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.dossier__divider { border: 0; background: var(--line-subtle); margin: 0; }
+.dossier__field { display: flex; flex-direction: column; gap: 2px; }
+.dossier__field a { color: var(--text-primary); }
+.dossier__quote { margin: 0; padding: 4px 0 4px 16px; border-left: 3px solid var(--line-strong); color: var(--text-primary); font-size: 14px; line-height: 23px; }
+.claims { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+.claim { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--line-subtle); }
+.claim:last-child { border-bottom: 0; padding-bottom: 0; }
+.claim__text { color: var(--text-primary); }
+.claim__found { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.claim__check { display: flex; gap: 10px; }
+.claim__check .select { flex: 1; min-width: 0; }
+.claim__result { padding: 10px 12px; border: 1.5px solid var(--line-strong); color: var(--text-secondary); animation: page-in 0.2s ease both; }
+.claim__result--yes { background: var(--white); color: var(--paper-ink); border-color: var(--white); }
 
-/* The modal overlay (reuse from EvidenceRoom conceptually, but redefined here) */
-.drawer-overlay {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
-  display: flex; justify-content: flex-end;
+@media (max-width: 1180px) { .suspect-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  .dossier { grid-template-columns: 1fr; }
+  .dossier__divider { display: none; }
+  .suspect-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-
-.drawer {
-  width: 100%; max-width: 640px; height: 100%;
-  background: var(--bg-raised); border-left: 1px solid var(--line-strong);
-  display: flex; flex-direction: column; overflow-y: auto;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
-}
-
-.drawer__close { display: flex; justify-content: flex-end; padding: 24px 24px 0; }
-.drawer__close-btn {
-  background: none; border: none; color: var(--text-secondary);
-  font-family: var(--font-mono); font-size: 24px; cursor: pointer; transition: color 0.2s;
-}
-.drawer__close-btn:hover { color: var(--white); }
-
-.drawer__content { padding: 0 40px 40px; display: flex; flex-direction: column; gap: 24px; }
-
-.dossier__profile { display: flex; flex-direction: column; gap: 16px; }
-.dossier__name h2 { color: var(--accent); margin: 8px 0; }
-.dossier__field { display: flex; flex-direction: column; gap: 4px; margin-top: 16px; }
-.dossier__field a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); }
-.dossier__field a:hover { text-decoration: none; border-bottom: 1px solid var(--accent); }
-
-.dossier__statement { margin-top: 32px; }
-.dossier__quote { margin: 0; padding: 24px; background: rgba(255,255,255,0.02); border-left: 4px solid var(--accent); color: var(--text-primary); font-family: var(--font-body); font-style: italic; }
-.claims { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 32px; }
-.claim { display: flex; flex-direction: column; gap: 16px; padding-bottom: 32px; border-bottom: 1px dashed var(--line-strong); }
-.claim:last-child { border-bottom: none; }
-
-.claim__text { font-size: 16px; color: var(--text-primary); }
-.claim__check { display: flex; gap: 12px; }
-
-/* Contradiction Alert Animation */
-.contradiction-alert {
-  padding: 16px; border: 1px solid var(--warning); background: rgba(182, 92, 92, 0.05);
-  display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 10px rgba(182, 92, 92, 0.1);
-}
-.contradiction-title { color: var(--warning); display: flex; align-items: center; gap: 8px; font-weight: bold; }
-.blink-dot { width: 8px; height: 8px; background: var(--warning); border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
-
-@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-
-.claim__result { margin-top: 8px; }
-
-@media (max-width: 768px) { .drawer { max-width: 100%; border-left: none; } }

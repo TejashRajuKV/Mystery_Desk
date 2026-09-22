@@ -1,28 +1,20 @@
 .ev-card {
-  display: flex; flex-direction: column; gap: 8px; padding: 16px; text-align: left; width: 100%;
-  background: var(--bg-panel); color: var(--text-primary); border: 1px solid var(--line-strong); outline-offset: 0; cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  position: relative;
-  overflow: hidden;
+  display: flex; flex-direction: column; gap: 12px; padding: 16px; text-align: left; width: 100%;
+  background: var(--paper); color: var(--paper-ink); border: 0; outline-offset: 0; cursor: zoom-in;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.ev-card:hover {
-  border-color: var(--accent);
-  background: rgba(198, 166, 107, 0.03);
-}
-.ev-card--selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(198, 166, 107, 0.2);
-}
+.ev-card:hover { transform: translate(-3px, -3px) rotate(-0.4deg); box-shadow: 5px 5px 0 var(--line-strong); }
+.ev-card--selected { box-shadow: 0 0 0 4px var(--white); }
+.ev-card--selected:hover { box-shadow: 0 0 0 4px var(--white), 5px 5px 0 var(--line-strong); }
 .ev-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.ev-card__type { color: var(--text-secondary); }
-.ev-card__title { margin-top: 8px; margin-bottom: 12px; }
-.ev-card__meta { display: flex; flex-direction: column; gap: 2px; color: var(--text-secondary); }
-
-.ev-card__viewed-tag {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  color: var(--accent);
-  font-size: 10px;
-  opacity: 0.7;
+.ev-card__type { border: 1.5px solid var(--paper-ink); padding: 3px 8px; }
+.ev-card__photo {
+  position: relative; display: block; height: 96px; background: var(--paper-ink); overflow: hidden;
 }
+.ev-card__photo i { position: absolute; left: 12px; height: 6px; background: var(--line-subtle); }
+.ev-card__photo i:nth-child(1) { top: 18px; width: 80%; background: var(--line-strong); }
+.ev-card__photo i:nth-child(2) { top: 32px; width: 58%; }
+.ev-card__photo i:nth-child(3) { top: 46px; width: 70%; }
+.ev-card__caption { position: absolute; left: 12px; bottom: 8px; color: var(--text-muted); }
+.ev-card__title { min-height: 64px; }
+.ev-card__meta { display: flex; flex-direction: column; gap: 2px; }

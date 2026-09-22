@@ -44,11 +44,11 @@ function ConclusionForm({ onDone, onCancel }) {
 
   return (
     <form className="conclude" onSubmit={submit}>
-      <div className="conclude__intro">
-        <span className="t-mono report__label">FORM {caseId}-C · CONCLUSION OF INVESTIGATION</span>
-        <h2 className="t-h1">NAME THE CULPRIT</h2>
+      <div className="conclude__intro panel--paper">
+        <span className="t-label">FORM {caseId}-C · CONCLUSION OF INVESTIGATION</span>
+        <h2 className="t-h1">Name the culprit</h2>
         <hr className="rule" />
-        <p className="t-mono secondary">Choose one suspect, cite the exhibits that prove it, and set out your theory. Your conclusion is checked against the case files.</p>
+        <p className="t-small">Choose one suspect, cite the exhibits that prove it, and set out your theory. Your conclusion is checked against the case files.</p>
       </div>
 
       <fieldset className="conclude__block panel">
@@ -119,12 +119,12 @@ function Report({ onRevise }) {
     <div className="report">
       <header className="report__hero">
         <div>
-          <span className="t-mono report__label">FINAL REPORT · CASE #{report.case}</span>
+          <span className="t-label muted">FINAL REPORT · CASE #{report.case}</span>
           <h2 className="t-display report__title">{report.title}</h2>
-          <p className="t-label report__suspect-label">PRIMARY SUSPECT</p>
+          <p className="t-label secondary">PRIMARY SUSPECT</p>
           <p className="t-h1 report__suspect">{report.primarySuspect?.name}</p>
         </div>
-        <div className="report__stamp" role="img" aria-label="Case solved">CASE<br/>SOLVED</div>
+        <div className="report__stamp" role="img" aria-label="Case solved">CASE SOLVED</div>
       </header>
 
       <div className="report__grid">

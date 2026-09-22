@@ -1,32 +1,25 @@
-.cmd-center { display: flex; flex-direction: column; gap: 32px; padding: 40px; }
-.cmd-section { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
-.cmd-section__header { display: flex; justify-content: space-between; align-items: flex-end; }
-.cmd-status { color: var(--accent); }
-.cmd-case-info { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
-.cmd-meta { display: flex; gap: 24px; }
-.cmd-brief { max-width: 800px; }
+.dash { display: flex; flex-direction: column; gap: 24px; }
+.dash__row { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; }
+.dash__brief { padding: 24px 28px; display: flex; flex-direction: column; gap: 12px; background: var(--paper); color: var(--paper-ink); }
+.dash__brief-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.dash__objectives { display: flex; flex-direction: column; gap: 14px; }
+.dash__objectives ul, .dash__leads ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.dash__objectives li { display: flex; align-items: center; gap: 12px; }
+.check { width: 14px; height: 14px; border: 1.5px solid var(--line-strong); flex: none; }
+.done .check { background: var(--white); border-color: var(--white); }
+.dash__stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.stat { display: flex; flex-direction: column; gap: 10px; }
+.stat__value { color: var(--white); }
+.stat__ticks { display: flex; gap: 3px; }
+.stat__ticks i { width: 10px; height: 8px; background: var(--line-subtle); }
+.stat__ticks i.on { background: var(--white); }
+.dash__leads { display: flex; flex-direction: column; gap: 14px; }
+.dash__leads li { display: flex; gap: 18px; align-items: baseline; }
+.dash__leads a { text-decoration: none; }
+.dash__leads a:hover { color: var(--white); text-decoration: underline; }
+.lead__time { color: var(--white); width: 72px; flex: none; }
+.dash__next { display: flex; flex-direction: column; gap: 14px; }
 
-.cmd-objectives { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
-.cmd-checkbox { color: var(--accent); margin-right: 8px; }
-.cmd-obj-done { text-decoration: line-through; opacity: 0.5; }
-
-.cmd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; }
-.cmd-panel { padding: 24px; border: 1px solid var(--line-strong); background: var(--bg-panel); margin-bottom: 0; }
-.cmd-data-links { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
-.cmd-link { display: flex; justify-content: space-between; text-decoration: none; padding-bottom: 8px; border-bottom: 1px dashed var(--line-subtle); color: var(--text-primary); transition: color 0.2s; }
-.cmd-link:hover { color: var(--accent); }
-.cmd-stat { color: var(--accent); }
-
-.cmd-board-link { display: flex; align-items: center; justify-content: center; text-decoration: none; transition: background 0.2s, border-color 0.2s; cursor: pointer; }
-.cmd-board-link:hover { background: rgba(198, 166, 107, 0.05); border-color: var(--accent); }
-.cmd-board-content { text-align: center; display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
-.cmd-board-content h2 { color: var(--accent); }
-
-.cmd-leads { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
-.cmd-leads li { display: flex; gap: 24px; }
-.cmd-time { color: var(--text-secondary); min-width: 80px; }
-.cmd-lead-link { text-decoration: none; color: var(--text-primary); transition: color 0.2s; }
-.cmd-lead-link:hover { color: var(--accent); text-shadow: 0 0 4px rgba(198, 166, 107, 0.4); }
-.cmd-empty { margin-top: 16px; }
-
-@media (max-width: 960px) { .cmd-grid { grid-template-columns: 1fr; } .cmd-center { padding: 20px; } }
+@media (max-width: 1180px) { .dash__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 960px) { .dash__row { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .dash__stats { grid-template-columns: 1fr; } }
