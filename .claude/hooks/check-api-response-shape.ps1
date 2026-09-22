@@ -29,7 +29,7 @@ if ($content -match 'res\.json\(\s*\{\s*data\s*:') {
         hookSpecificOutput = @{
             hookEventName = "PostToolUse"
         }
-        notification = "API SHAPE WARNING in $filePath`: Found res.json({ data: ... }). Per CLAUDE.md, the response body IS the resource — never wrap it in { data: ... }. Errors use { error: 'message' }."
+        notification = "API SHAPE WARNING in $filePath`: Found res.json({ data: ... }). Per CLAUDE.md, the response body IS the resource - never wrap it in { data: ... }. Errors use { error: 'message' }."
     } | ConvertTo-Json -Depth 5
 }
 else {

@@ -31,12 +31,12 @@ $hexMatches = [regex]::Matches($content, '#[0-9a-fA-F]{3,8}\b') |
     Where-Object { $_.Value -notin @('#fff', '#000', '#ffffff', '#000000') }
 
 if ($hexMatches.Count -gt 3) {
-    $warnings += "$($hexMatches.Count) raw hex colors found — use var(--token-name) from tokens.css"
+    $warnings += "$($hexMatches.Count) raw hex colors found - use var(--token-name) from tokens.css"
 }
 
 # Check for raw rgb/rgba values
 if ($content -match 'rgba?\(\s*\d') {
-    $warnings += "Raw rgb/rgba values found — use CSS custom properties from tokens.css"
+    $warnings += "Raw rgb/rgba values found - use CSS custom properties from tokens.css"
 }
 
 if ($warnings.Count -gt 0) {

@@ -33,7 +33,7 @@ if ($content -match 'http://localhost:4\d{3}' -or
         hookSpecificOutput = @{
             hookEventName = "PostToolUse"
         }
-        notification = "WARNING in $filePath`: Found an absolute backend URL (localhost:4000). The frontend must use the Vite proxy — call /api, never an absolute URL. See CLAUDE.md."
+        notification = "WARNING in $filePath`: Found an absolute backend URL (localhost:4000). The frontend must use the Vite proxy - call /api, never an absolute URL. See CLAUDE.md."
     } | ConvertTo-Json -Depth 5
 }
 else {

@@ -32,8 +32,8 @@ if (-not $content) { exit 0 }
 
 $warnings = @()
 
-# Check for hardcoded suspect names from the case
-$suspectNames = @('Alex Mercer', 'Diana Holt', 'Frank Torelli', 'Lena Vasquez', 'Ray Caldwell')
+# Check for hardcoded suspect names from the case (data/suspects.json)
+$suspectNames = @('Maren Voss', 'Alex Reyes', 'Victor Lang', 'Nina Okafor', 'Daniel Cho')
 foreach ($name in $suspectNames) {
     if ($content -match [regex]::Escape($name) -and $content -notmatch "//.*$([regex]::Escape($name))") {
         $warnings += "Hardcoded suspect name '$name' found"
@@ -56,7 +56,7 @@ if ($warnings.Count -gt 0) {
         hookSpecificOutput = @{
             hookEventName = "PostToolUse"
         }
-        notification = "WARNING in $filePath`: $warningText. Per CLAUDE.md, every screen gets its data from the backend — hardcoded case data in JSX is a bug."
+        notification = "WARNING in $filePath`: $warningText. Per CLAUDE.md, every screen gets its data from the backend - hardcoded case data in JSX is a bug."
     } | ConvertTo-Json -Depth 5
 }
 else {

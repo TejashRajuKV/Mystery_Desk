@@ -1,7 +1,7 @@
 # .claude/hooks/check-route-no-logic.ps1
 # PostToolUse hook: After editing a backend route file, warns if the route
 # handler contains business logic instead of delegating to a service.
-# CLAUDE.md: "Routes stay thin — they parse the request and call a service.
+# CLAUDE.md: "Routes stay thin - they parse the request and call a service.
 # Logic goes in services/, never in a route handler."
 
 $callInput = [Console]::In.ReadToEnd() | ConvertFrom-Json
@@ -30,13 +30,13 @@ $warnings = @()
 
 # Check for direct database access in routes
 if ($content -match 'db\.(prepare|exec|run)\(' -or $content -match "from\s+['\"].*database") {
-    $warnings += "Direct database access in route file — use a service"
+    $warnings += "Direct database access in route file - use a service"
 }
 
 # Check for complex logic patterns (multiple if/else, loops over data)
 $ifCount = ([regex]::Matches($content, '\bif\s*\(')).Count
 if ($ifCount -gt 4) {
-    $warnings += "Route has $ifCount conditionals — business logic belongs in services/"
+    $warnings += "Route has $ifCount conditionals - business logic belongs in services/"
 }
 
 if ($warnings.Count -gt 0) {

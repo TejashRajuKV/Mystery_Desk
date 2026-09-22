@@ -1,6 +1,8 @@
 # .claude/hooks/block-unauthorized-deps.ps1
 # PreToolUse hook: Blocks npm install of unapproved packages.
-# Approved: react, react-dom, react-router-dom, vite, @vitejs/plugin-react, express.
+# Approved: react, react-dom, react-router-dom, vite, @vitejs/plugin-react, express,
+# three, @react-three/fiber, @react-three/drei, gsap (landing-page 3D/scroll stack,
+# approved by the project owner 2026-09-22 - see CLAUDE.md).
 # CLAUDE.md: "Ask before adding anything else."
 
 $callInput = [Console]::In.ReadToEnd() | ConvertFrom-Json
@@ -19,7 +21,11 @@ if ($command -match 'npm\s+(install|i|add)\s+(?!--)(\S+)') {
         'react-router-dom',
         'vite',
         '@vitejs/plugin-react',
-        'express'
+        'express',
+        'three',
+        '@react-three/fiber',
+        '@react-three/drei',
+        'gsap'
     )
 
     # Allow bare npm install (no package name = install from package.json)
@@ -39,7 +45,7 @@ if ($command -match 'npm\s+(install|i|add)\s+(?!--)(\S+)') {
             hookSpecificOutput = @{
                 hookEventName            = "PreToolUse"
                 permissionDecision       = "deny"
-                permissionDecisionReason = "BLOCKED: Package '$pkg' is not in the approved dependency list (react, react-dom, react-router-dom, vite, @vitejs/plugin-react, express). CLAUDE.md says: ask the user before adding anything else."
+                permissionDecisionReason = "BLOCKED: Package '$pkg' is not in the approved dependency list (react, react-dom, react-router-dom, vite, @vitejs/plugin-react, express, three, @react-three/fiber, @react-three/drei, gsap). CLAUDE.md says: ask the user before adding anything else."
             }
         } | ConvertTo-Json -Depth 5
         exit 0
