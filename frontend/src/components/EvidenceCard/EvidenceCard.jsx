@@ -1,4 +1,5 @@
 import { formatWhen, typeLabel } from '../../utils/format.js';
+import { playPaperRustle } from '../../utils/sound.js';
 import './EvidenceCard.css';
 
 /** Photocopy-style exhibit card. */
@@ -7,7 +8,7 @@ export default function EvidenceCard({ item, selected, viewed, onSelect }) {
     <button
       type="button"
       className={selected ? 'ev-card ev-card--selected' : 'ev-card'}
-      onClick={() => onSelect?.(item.id)}
+      onClick={() => { playPaperRustle(); onSelect?.(item.id); }}
       aria-pressed={selected}
       aria-label={`${item.id}, ${item.title}`}
     >

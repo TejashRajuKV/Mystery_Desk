@@ -1,6 +1,6 @@
 import { useCase } from '../../hooks/useCase.jsx';
 import { CASE_ID } from '../../services/api.js';
-import { Stamp } from '../ui/ui.jsx';
+import { Stamp, SoundToggle } from '../ui/ui.jsx';
 import ProgressIndicator from '../ProgressIndicator/ProgressIndicator.jsx';
 import './CaseHeader.css';
 
@@ -13,6 +13,7 @@ export default function CaseHeader() {
       <span className="case-header__spacer" />
       {caseInfo && <Stamp className="case-header__class">{caseInfo.classification}</Stamp>}
       <ProgressIndicator value={progress.percent} />
+      <SoundToggle className="case-header__sound" />
     </header>
   );
 }

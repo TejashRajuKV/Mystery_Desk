@@ -4,10 +4,29 @@ import { Button, PageTitle, EmptyState } from '../../components/ui/ui.jsx';
 import InvestigationNode from '../../components/InvestigationNode/InvestigationNode.jsx';
 import { kindOf } from '../../utils/format.js';
 import { autoPosition, loadBoard, saveBoard } from '../../utils/boardStore.js';
+import { prefersReducedMotion } from '../../utils/motion.js';
+import { playDenied, playLinkConnect, playLinkRemove, playPin } from '../../utils/sound.js';
 import './InvestigationBoard.css';
 
 const NODE_W = 180;
 const NODE_H = 84;
+
+/** A red-string line, drawn stroke-first the moment it's created — never replayed on re-render. */
+function BoardLink({ id, x1, y1, x2, y2 }) {
+  const animated = useRef(false);
+  const ref = useCallback((el) => {
+    if (!el || animated.current) return;
+    animated.current = true;
+    const len = el.getTotalLength();
+    el.style.strokeDasharray = String(len);
+    el.style.strokeDashoffset = String(len);
+    el.animate(
+      [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+      { duration: prefersReducedMotion() ? 1 : 340, easing: 'ease-out', fill: 'forwards' },
+    );
+  }, []);
+  return <line ref={ref} className="link" x1={x1} y1={y1} x2={x2} y2={y2} />;
+}
 
 export default function InvestigationBoard() {
   const { evidence, suspects, timeline, caseInfo, evidenceById, suspectById, eventById, locationById, connections, addConnection, removeConnection } = useCase();
@@ -19,6 +38,7 @@ export default function InvestigationBoard() {
   const [error, setError] = useState(null);
   const [pickId, setPickId] = useState('');
   const [dragId, setDragId] = useState(null);
+  const [settleId, setSettleId] = useState(null);
   const drag = useRef(null);
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
@@ -52,6 +72,7 @@ export default function InvestigationBoard() {
   function pin() {
     if (!pickId || layout[pickId]) return;
     persist({ ...layout, [pickId]: autoPosition(ids.length) });
+    playPin();
     setPickId('');
   }
 
@@ -74,9 +95,11 @@ export default function InvestigationBoard() {
     setBusy(true); setError(null);
     try {
       await addConnection({ ...pending, relationship: 'linked_to' });
+      playLinkConnect();
       setPending(null);
     } catch (e) {
       setError(e);
+      playDenied();
     } finally {
       setBusy(false);
     }
@@ -84,7 +107,13 @@ export default function InvestigationBoard() {
 
   async function deleteLink(id) {
     setError(null);
-    try { await removeConnection(id); } catch (e) { setError(e); }
+    try {
+      await removeConnection(id);
+      playLinkRemove();
+    } catch (e) {
+      setError(e);
+      playDenied();
+    }
   }
 
   // Dragging: a move under 4px counts as a click.
@@ -108,8 +137,13 @@ export default function InvestigationBoard() {
     drag.current = null;
     setDragId(null);
     if (!d) return;
-    if (d.moved) saveBoard(layoutRef.current);
-    else onNodeClick(id);
+    if (d.moved) {
+      saveBoard(layoutRef.current);
+      setSettleId(id);
+      // Belt-and-suspenders: guarantees cleanup even if onAnimationEnd is missed
+      // (e.g. a backgrounded tab throttling animation events).
+      setTimeout(() => setSettleId((cur) => (cur === id ? null : cur)), 320);
+    } else onNodeClick(id);
   }
 
   function onKeyDown(e, id) {
@@ -157,7 +191,13 @@ export default function InvestigationBoard() {
                 {shownLinks.map((c) => {
                   const a = layout[c.source];
                   const b = layout[c.target];
-                  return <line key={c.id} className="link" x1={a.x + NODE_W / 2} y1={a.y + NODE_H / 2} x2={b.x + NODE_W / 2} y2={b.y + NODE_H / 2} />;
+                  return (
+                    <BoardLink
+                      key={c.id} id={c.id}
+                      x1={a.x + NODE_W / 2} y1={a.y + NODE_H / 2}
+                      x2={b.x + NODE_W / 2} y2={b.y + NODE_H / 2}
+                    />
+                  );
                 })}
               </svg>
 
@@ -171,13 +211,14 @@ export default function InvestigationBoard() {
                     role="button" tabIndex={0}
                     aria-label={`${id}, ${info.title}`}
                     aria-pressed={selected === id}
-                    className="board__node"
+                    className={settleId === id ? 'board__node board__node--settle' : 'board__node'}
                     style={{ left: layout[id].x, top: layout[id].y }}
                     onPointerDown={(e) => onPointerDown(e, id)}
                     onPointerMove={onPointerMove}
                     onPointerUp={() => onPointerUp(id)}
                     onPointerCancel={() => { drag.current = null; setDragId(null); }}
                     onKeyDown={(e) => onKeyDown(e, id)}
+                    onAnimationEnd={() => setSettleId((cur) => (cur === id ? null : cur))}
                   />
                 );
               })}

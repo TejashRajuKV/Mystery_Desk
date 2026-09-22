@@ -261,3 +261,16 @@ Done means every box in the PRD's Definition of Done is ticked.
   phase 7. A spinner that never resolves is worse than a blank page.
 - Game feel (dark room, typewriter labels, case-file language) comes from Figma and
   lives in the CSS and copy, not the data layer.
+- Sound is procedural: `frontend/src/utils/sound.js` synthesizes every effect at call
+  time with the Web Audio API — no audio files, no new dependency. A module-level
+  singleton (same pattern as `boardStore.js`), muteable via the `SoundToggle` in
+  `components/ui` (shown on CaseEntry and CaseHeader), preference in `localStorage`.
+  Ambience and every SFX are gated behind the browser's autoplay policy; `App.jsx`
+  unlocks audio on the app's first pointer/key/wheel gesture, and every `play*()` call
+  also lazily unlocks (so the very first sound-producing click works even if that
+  gesture listener hasn't fired yet). Add a new effect as a small `playX()` export
+  built from `playTone`/`playNoiseBurst`, not a new audio asset.
+- JS-driven animation (the board's line-draw, anything not expressible as a CSS
+  `animation`) must check `utils/motion.js`'s `prefersReducedMotion()` itself — the
+  blanket `prefers-reduced-motion` rule in `index.css` only clamps CSS
+  `animation`/`transition` durations, not imperative style or Web Animations API calls.

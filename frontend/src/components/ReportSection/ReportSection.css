@@ -1,6 +1,7 @@
 .report-section {
   display: flex; flex-direction: column; gap: 14px; padding: 30px 34px;
   background: var(--paper); color: var(--paper-ink);
+  animation: page-in 0.35s ease both;
 }
 .report-section__head { display: flex; justify-content: space-between; }
 .report-section__class { opacity: 0.55; }

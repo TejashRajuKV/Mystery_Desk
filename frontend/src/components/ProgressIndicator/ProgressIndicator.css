@@ -3,3 +3,5 @@
 .progress__ticks { display: flex; gap: 3px; }
 .progress__tick { flex: 1; height: 14px; background: var(--line-subtle); transition: background 0.3s ease; }
 .progress__tick--on { background: var(--white); }
+.progress__tick--new { animation: tick-pop 0.35s ease; }
+@keyframes tick-pop { 0% { transform: scaleY(1); } 40% { transform: scaleY(1.7); } 100% { transform: scaleY(1); } }

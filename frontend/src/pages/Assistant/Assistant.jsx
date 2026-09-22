@@ -3,6 +3,7 @@ import { api } from '../../services/api.js';
 import { useCase } from '../../hooks/useCase.jsx';
 import { Button, Stamp, PageTitle } from '../../components/ui/ui.jsx';
 import AssistantMessage from '../../components/AssistantPanel/AssistantPanel.jsx';
+import { playDenied, playSuccess, playTypewriterKey } from '../../utils/sound.js';
 import './Assistant.css';
 
 const GREETING = {
@@ -43,12 +44,16 @@ export default function Assistant() {
     setInput('');
     push({ role: 'user', text: q });
     setBusy(true);
+    const tick = setInterval(playTypewriterKey, 420);
     try {
       const response = await api.askAssistant(q);
       push({ role: 'assistant', text: response.answer, response });
+      if (response.contradiction) playSuccess();
     } catch (e) {
       push({ role: 'assistant', text: `I couldn’t reach the case files. ${e.message}`, error: true });
+      playDenied();
     } finally {
+      clearInterval(tick);
       setBusy(false);
     }
   }
@@ -56,10 +61,11 @@ export default function Assistant() {
   async function logContradiction({ assertionId, evidenceId }) {
     try {
       const result = await flagContradiction(assertionId, evidenceId);
-      if (result.contradiction) setLogged((prev) => new Set(prev).add(`${assertionId}:${evidenceId}`));
-      else push({ role: 'assistant', text: `The records don’t confirm that conflict for ${evidenceId}.` });
+      if (result.contradiction) { setLogged((prev) => new Set(prev).add(`${assertionId}:${evidenceId}`)); playSuccess(); }
+      else { push({ role: 'assistant', text: `The records don’t confirm that conflict for ${evidenceId}.` }); playDenied(); }
     } catch (e) {
       push({ role: 'assistant', text: `Couldn’t log that contradiction. ${e.message}`, error: true });
+      playDenied();
     }
   }
 

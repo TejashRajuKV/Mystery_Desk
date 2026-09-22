@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout/Layout.jsx';
 import CaseEntry from './pages/CaseEntry/CaseEntry.jsx';
@@ -9,8 +10,24 @@ import InvestigationBoard from './pages/InvestigationBoard/InvestigationBoard.js
 import Assistant from './pages/Assistant/Assistant.jsx';
 import FinalReport from './pages/FinalReport/FinalReport.jsx';
 import { CaseProvider } from './hooks/useCase.jsx';
+import { unlockAudio } from './utils/sound.js';
 
 export default function App() {
+  // Browsers require a user gesture before audio can play; this catches the first one,
+  // wherever it happens, so ambience and SFX are ready without a dedicated "start" click.
+  useEffect(() => {
+    const unlock = () => unlockAudio();
+    const opts = { once: true, passive: true };
+    window.addEventListener('pointerdown', unlock, opts);
+    window.addEventListener('keydown', unlock, opts);
+    window.addEventListener('wheel', unlock, opts);
+    return () => {
+      window.removeEventListener('pointerdown', unlock, opts);
+      window.removeEventListener('keydown', unlock, opts);
+      window.removeEventListener('wheel', unlock, opts);
+    };
+  }, []);
+
   return (
     <CaseProvider>
       <Routes>

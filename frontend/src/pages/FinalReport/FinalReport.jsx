@@ -5,7 +5,12 @@ import { useCase } from '../../hooks/useCase.jsx';
 import { Button, Stamp, PageTitle, Loading, ErrorState, Field } from '../../components/ui/ui.jsx';
 import ReportSection from '../../components/ReportSection/ReportSection.jsx';
 import { formatWhen } from '../../utils/format.js';
+import { playDenied, playStampThud } from '../../utils/sound.js';
 import './FinalReport.css';
+
+// Indexed by row, not DOM order — the two report columns cascade down together,
+// like a dossier's pages dropping into place, rather than the right column waiting on the left.
+const SECTION_DELAY = (row) => `${120 + row * 100}ms`;
 
 function ConclusionForm({ onDone, onCancel }) {
   const { suspects, evidence, investigation, saveTheory, submitConclusion, caseId } = useCase();
@@ -31,6 +36,7 @@ function ConclusionForm({ onDone, onCancel }) {
       onDone();
     } catch (err) {
       setError(err);
+      playDenied();
     } finally {
       setBusy(false);
     }
@@ -99,6 +105,13 @@ function Report({ onRevise }) {
     return () => { cancelled = true; };
   }, [investigation?.conclusion]);
 
+  useEffect(() => {
+    if (!report) return;
+    // Timed to land as the stamp's own CSS animation (0.4s delay, overshoot easing) hits impact.
+    const t = setTimeout(playStampThud, 480);
+    return () => clearTimeout(t);
+  }, [report]);
+
   if (error) return <ErrorState error={error} onRetry={onRevise} />;
   if (!report) return <Loading label="COMPILING REPORT" />;
 
@@ -116,11 +129,11 @@ function Report({ onRevise }) {
 
       <div className="report__grid">
         <div className="report__col">
-          <ReportSection label="SECTION 01" heading="Theory">
+          <ReportSection label="SECTION 01" heading="Theory" style={{ animationDelay: SECTION_DELAY(0) }}>
             <p>{report.theory || 'No theory was recorded.'}</p>
           </ReportSection>
 
-          <ReportSection label="SECTION 02" heading="Supporting Evidence">
+          <ReportSection label="SECTION 02" heading="Supporting Evidence" style={{ animationDelay: SECTION_DELAY(1) }} /* row 1 */>
             {report.supportingEvidence?.length ? (
               <ul className="report__list">
                 {report.supportingEvidence.map((e) => (
@@ -133,7 +146,7 @@ function Report({ onRevise }) {
             ) : <p>No evidence cited.</p>}
           </ReportSection>
 
-          <ReportSection label="SECTION 03" heading="Contradictions">
+          <ReportSection label="SECTION 03" heading="Contradictions" style={{ animationDelay: SECTION_DELAY(2) }}>
             {report.contradictions?.length ? (
               <ul className="report__list">
                 {report.contradictions.map((c) => (
@@ -148,7 +161,7 @@ function Report({ onRevise }) {
         </div>
 
         <div className="report__col">
-          <ReportSection label="SECTION 04" heading="Reconstructed Timeline">
+          <ReportSection label="SECTION 04" heading="Reconstructed Timeline" style={{ animationDelay: SECTION_DELAY(0) }} /* row 0, right column */>
             {report.timeline?.length ? (
               <ol className="report__timeline">
                 {report.timeline.map((t) => (
@@ -158,7 +171,7 @@ function Report({ onRevise }) {
             ) : <p>No timeline events were reviewed.</p>}
           </ReportSection>
 
-          <ReportSection label="SECTION 05" heading="Connections">
+          <ReportSection label="SECTION 05" heading="Connections" style={{ animationDelay: SECTION_DELAY(1) }} /* row 1, right column */>
             {report.connections?.length ? (
               <ul className="report__list">
                 {report.connections.map((c, i) => (

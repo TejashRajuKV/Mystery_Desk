@@ -1,3 +1,4 @@
+import { playPaperRustle } from '../../utils/sound.js';
 import './SuspectCard.css';
 
 /** Dossier card with a silhouette portrait. */
@@ -6,7 +7,7 @@ export default function SuspectCard({ suspect, selected, viewed, onSelect }) {
     <button
       type="button"
       className={selected ? 'sus-card sus-card--selected' : 'sus-card'}
-      onClick={() => onSelect?.(suspect.id)}
+      onClick={() => { playPaperRustle(); onSelect?.(suspect.id); }}
       aria-pressed={selected}
     >
       <span className="sus-card__portrait" aria-hidden="true">

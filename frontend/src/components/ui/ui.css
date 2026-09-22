@@ -10,3 +10,5 @@
   border: 1.5px dashed var(--line-strong); padding: 32px 24px; text-align: center;
   display: flex; flex-direction: column; gap: 8px; align-items: center;
 }
+
+.sound-toggle { min-width: 68px; justify-content: center; flex: none; }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useCase } from '../../hooks/useCase.jsx';
-import { Button, Stamp } from '../../components/ui/ui.jsx';
+import { Button, Stamp, SoundToggle } from '../../components/ui/ui.jsx';
 import { CASE_ID } from '../../services/api.js';
 import { monthYear } from '../../utils/format.js';
 import './CaseEntry.css';
@@ -30,6 +30,7 @@ export default function CaseEntry() {
           <Stamp>CASE #{caseInfo?.id ?? CASE_ID}</Stamp>
           {ready && <Stamp>{caseInfo.classification}</Stamp>}
           {ready && <Stamp>{caseInfo.status.toUpperCase()}</Stamp>}
+          <SoundToggle className="entry__sound" />
         </div>
         <p className="t-label muted entry__place">
           {ready ? `${caseInfo.company.toUpperCase()}  ·  ${caseInfo.site.toUpperCase()}  ·  ${monthYear(caseInfo.openedAt)}` : ''}

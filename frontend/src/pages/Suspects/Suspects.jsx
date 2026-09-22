@@ -4,6 +4,7 @@ import { useCase } from '../../hooks/useCase.jsx';
 import { Button, Stamp, PageTitle, EmptyState } from '../../components/ui/ui.jsx';
 import SuspectCard from '../../components/SuspectCard/SuspectCard.jsx';
 import { formatDateTime } from '../../utils/format.js';
+import { playDenied, playSuccess } from '../../utils/sound.js';
 import './Suspects.css';
 
 /** One claim from a statement, with a control to test it against an exhibit. */
@@ -20,9 +21,12 @@ function Assertion({ assertion }) {
     if (!evidenceId) return;
     setBusy(true); setError(null); setResult(null);
     try {
-      setResult({ evidenceId, ...(await flagContradiction(assertion.id, evidenceId)) });
+      const r = { evidenceId, ...(await flagContradiction(assertion.id, evidenceId)) };
+      setResult(r);
+      r.contradiction ? playSuccess() : playDenied();
     } catch (e) {
       setError(e);
+      playDenied();
     } finally {
       setBusy(false);
     }

@@ -1,19 +1,42 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { isMuted, playClick, toggleMuted } from '../../utils/sound.js';
 import './ui.css';
 
 const cx = (...parts) => parts.filter(Boolean).join(' ');
 
-export function Button({ variant = 'primary', block, small, to, className, children, ...rest }) {
+export function Button({ variant = 'primary', block, small, to, className, children, onClick, ...rest }) {
   const cls = cx('btn', `btn--${variant}`, block && 'btn--block', small && 'btn--small', className);
-  if (to) return <Link to={to} className={cls} {...rest}>{children}</Link>;
-  return <button type="button" className={cls} {...rest}>{children}</button>;
+  const handleClick = (e) => { playClick(); onClick?.(e); };
+  if (to) return <Link to={to} className={cls} onClick={handleClick} {...rest}>{children}</Link>;
+  return <button type="button" className={cls} onClick={handleClick} {...rest}>{children}</button>;
 }
 
 /** Small label tag. Pass `onClick` to make it a button. */
 export function Stamp({ variant = 'default', onClick, className, children, ...rest }) {
   const cls = cx('stamp', variant !== 'default' && `stamp--${variant}`, className);
-  if (onClick) return <button type="button" className={cls} onClick={onClick} {...rest}>{children}</button>;
+  if (onClick) {
+    const handleClick = (e) => { playClick(); onClick(e); };
+    return <button type="button" className={cls} onClick={handleClick} {...rest}>{children}</button>;
+  }
   return <span className={cls} {...rest}>{children}</span>;
+}
+
+/** A small speaker toggle, styled as a stamp. Placed on CaseEntry and CaseHeader. */
+export function SoundToggle({ className }) {
+  const [muted, setMutedState] = useState(isMuted);
+  return (
+    <button
+      type="button"
+      className={cx('stamp', 'sound-toggle', className)}
+      onClick={() => setMutedState(toggleMuted())}
+      aria-pressed={!muted}
+      aria-label={muted ? 'Sound is off. Turn sound on.' : 'Sound is on. Turn sound off.'}
+      title={muted ? 'Sound off' : 'Sound on'}
+    >
+      {muted ? '♪ OFF' : '♪ ON'}
+    </button>
+  );
 }
 
 export function Loading({ label = 'LOADING CASE FILE' }) {

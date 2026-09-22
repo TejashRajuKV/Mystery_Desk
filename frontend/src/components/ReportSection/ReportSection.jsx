@@ -1,8 +1,8 @@
 import './ReportSection.css';
 
-export default function ReportSection({ label, heading, children, className = '' }) {
+export default function ReportSection({ label, heading, children, className = '', style }) {
   return (
-    <section className={`report-section ${className}`}>
+    <section className={`report-section ${className}`} style={style}>
       <div className="report-section__head t-label">
         <span>{label}</span>
         <span className="report-section__class">CLASSIFIED</span>
