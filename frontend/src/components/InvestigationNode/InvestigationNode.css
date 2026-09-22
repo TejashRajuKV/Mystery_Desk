@@ -1,21 +1,23 @@
 .inode {
   position: relative; width: 180px; height: 84px; padding: 18px 14px 12px; display: flex; flex-direction: column; gap: 6px;
-  background: var(--bg-raised); border: 1.5px solid var(--line-strong); color: var(--text-primary);
+  background: var(--bg-panel); border: 1px solid var(--line-strong); color: var(--text-primary);
   text-align: left; text-decoration: none; user-select: none; overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .inode__pin {
-  position: absolute; top: 6px; left: 50%; margin-left: -7px; width: 14px; height: 14px; border-radius: 50%;
-  background: var(--white); border: 3px solid var(--bg-base); box-shadow: 0 1px 0 var(--line-strong);
+  position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+  background: var(--line-strong);
 }
 .inode__head { display: flex; justify-content: space-between; color: var(--text-secondary); }
 .inode__kind { opacity: 0.7; }
-.inode__title { line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inode__title { line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
 
-.inode--evidence { background: var(--paper); color: var(--paper-ink); border-color: var(--paper); }
-.inode--evidence .inode__head { color: var(--paper-ink); }
-.inode--suspect { background: var(--bg-panel); border: 2px solid var(--white); }
-.inode--event .inode__title { color: var(--white); }
+.inode--evidence .inode__pin { background: var(--text-primary); }
+.inode--suspect .inode__pin { background: var(--accent); }
+.inode--location .inode__pin { background: var(--text-secondary); }
+.inode--event .inode__pin { background: var(--warning); }
 
-.inode--selected { box-shadow: 0 0 0 4px var(--white); z-index: 3; }
-.inode--dragging { cursor: grabbing; box-shadow: 6px 6px 0 var(--line-strong); z-index: 4; }
-a.inode:hover, button.inode:hover { border-color: var(--white); }
+.inode--selected { border-color: var(--accent); box-shadow: 0 0 12px rgba(198, 166, 107, 0.3); z-index: 3; }
+.inode--dragging { cursor: grabbing; border-color: var(--text-primary); z-index: 4; }
+a.inode:hover, button.inode:hover { border-color: var(--accent); }

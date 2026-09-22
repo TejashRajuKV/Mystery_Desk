@@ -1,37 +1,23 @@
-.tl__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px; margin-top: 22px; }
-.tl__col { display: flex; flex-direction: column; gap: 10px; position: relative; }
-/* Spine through the markers: time column (64) + gap (20) + marker centre (8) */
-.tl__col::before { content: ''; position: absolute; top: 18px; bottom: 18px; left: 91px; width: 2px; background: var(--line-strong); }
+.tl-container { max-width: 800px; margin: 40px auto 0; display: flex; flex-direction: column; }
 
-.scrubber { position: relative; display: flex; justify-content: space-between; gap: 6px; padding: 22px 32px 18px; overflow-x: auto; }
-.scrubber__line { position: absolute; left: 32px; right: 32px; top: 37px; height: 2px; background: var(--line-strong); }
-.scrubber__mark { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; background: none; border: 0; padding: 0 2px; color: var(--text-muted); }
-.scrubber__mark i { width: 12px; height: 12px; border-radius: 50%; background: var(--bg-raised); border: 1.5px solid var(--line-strong); box-shadow: 0 0 0 4px var(--bg-raised); margin-top: 6px; transition: transform 0.15s; }
-.scrubber__mark.seen i { background: var(--white); border-color: var(--white); }
-.scrubber__mark.active { color: var(--white); }
-.scrubber__mark.active i { transform: scale(1.7); background: var(--white); }
-.scrubber__mark:hover i { transform: scale(1.4); }
-
-.tl-detail {
-  position: fixed; top: 0; right: 0; bottom: 0; width: min(400px, 100vw); z-index: 50; overflow-y: auto;
-  background: var(--bg-raised); border-left: 1.5px solid var(--white); padding: 28px 26px;
-  display: flex; flex-direction: column; gap: 14px; animation: drawer-in 0.25s ease both;
+/* The modal overlay (reuse from EvidenceRoom conceptually, but redefined here) */
+.drawer-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+  display: flex; justify-content: flex-end;
 }
-@keyframes drawer-in { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-.tl-detail__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--text-muted); }
-.tl-detail__close { background: none; border: 1.5px solid var(--line-strong); width: 32px; height: 32px; color: var(--text-primary); }
-.tl-detail__close:hover { border-color: var(--white); }
-.tl-detail__meta { display: grid; grid-template-columns: 70px 1fr; gap: 3px 8px; margin: 0; }
-.tl-detail__meta dt { color: var(--text-muted); }
-.tl-detail__meta dd { margin: 0; }
-.tl-detail__ev { display: flex; flex-direction: column; gap: 10px; }
-.tl-detail__link { display: flex; gap: 12px; align-items: center; text-decoration: none; }
-.tl-detail__link:hover .t-small { text-decoration: underline; }
 
-/* Keep the list readable beside the open drawer */
-@media (min-width: 1101px) {
-  .tl--open { padding-right: 440px; }
-  .tl--open .tl__cols { grid-template-columns: 1fr; }
+.drawer {
+  width: 100%; max-width: 500px; height: 100%;
+  background: var(--bg-raised); border-left: 1px solid var(--line-strong);
+  display: flex; flex-direction: column; overflow-y: auto;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
 }
-@media (max-width: 1100px) { .tl__cols { grid-template-columns: 1fr; } .tl__col + .tl__col { margin-top: 0; } }
-@media (max-width: 640px) { .scrubber { justify-content: flex-start; gap: 18px; } .tl__col::before { left: 91px; } }
+.drawer__close { display: flex; justify-content: flex-end; padding: 24px 24px 0; }
+.drawer__close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; transition: color 0.2s; }
+.drawer__close-btn:hover { color: var(--white); }
+.drawer__content { padding: 0 40px 40px; display: flex; flex-direction: column; gap: 0; min-height: 100%; }
+
+@media (max-width: 768px) {
+  .drawer { max-width: 100%; border-left: none; }
+}

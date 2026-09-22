@@ -1,31 +1,17 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useCase } from '../../hooks/useCase.jsx';
-import { Button, Stamp, EmptyState } from '../../components/ui/ui.jsx';
 import { formatDateTime, formatWhen } from '../../utils/format.js';
 import './Dashboard.css';
 
-function Stat({ value, label, ratio }) {
-  const ticks = 10;
-  const on = Math.round(Math.min(1, Math.max(0, ratio)) * ticks);
-  return (
-    <div className="panel stat">
-      <span className="t-h1 stat__value">{value}</span>
-      <span className="t-label muted">{label}</span>
-      {ratio != null && (
-        <div className="stat__ticks" aria-hidden="true">
-          {Array.from({ length: ticks }, (_, i) => <i key={i} className={i < on ? 'on' : ''} />)}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const ratio = (a, b) => (b ? a / b : 0);
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
 
 export default function Dashboard() {
   const { caseInfo, progress: p, investigation, connections, evidenceById } = useCase();
 
-  // The case supplies the objective wording, in this order.
   const done = [
     p.evidenceTotal > 0 && p.evidenceViewed >= p.evidenceTotal,
     p.suspectsTotal > 0 && p.suspectsViewed >= p.suspectsTotal,
@@ -39,62 +25,97 @@ export default function Dashboard() {
     .map((id) => evidenceById[id]).filter(Boolean);
 
   return (
-    <div className="page dash">
-      <div className="dash__row">
-        <section className="panel--paper dash__brief">
-          <div className="dash__brief-head t-label">
-            <span>CASE FILE · OPENED {formatDateTime(caseInfo.openedAt).toUpperCase()}</span>
-            <Stamp variant="ink">{caseInfo.status.toUpperCase()}</Stamp>
+    <div className="page cmd-center">
+      <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+        
+        {/* CASE STATUS */}
+        <motion.section className="cmd-section" variants={itemVariants}>
+          <div className="cmd-section__header">
+            <h3 className="t-label muted">CASE STATUS</h3>
+            <span className="t-mono cmd-status">{caseInfo.status.toUpperCase()}</span>
           </div>
-          <h2 className="t-h1">{caseInfo.title}</h2>
           <hr className="rule" />
-          {caseInfo.briefing.map((para, i) => <p key={i} className="t-body">{para}</p>)}
-        </section>
+          <div className="cmd-case-info">
+            <h1 className="t-h1">{caseInfo.title}</h1>
+            <div className="cmd-meta">
+              <span className="t-label muted">OPENED {formatDateTime(caseInfo.openedAt).toUpperCase()}</span>
+              <span className="t-label muted">CLASS {caseInfo.classification}</span>
+            </div>
+            {caseInfo.briefing.map((para, i) => <p key={i} className="t-body secondary cmd-brief">{para}</p>)}
+          </div>
+        </motion.section>
 
-        <section className="panel dash__objectives" aria-label="Objectives">
-          <span className="t-label muted">OBJECTIVES</span>
-          <ul>
+        {/* OBJECTIVE */}
+        <motion.section className="cmd-section" variants={itemVariants}>
+          <div className="cmd-section__header">
+            <h3 className="t-label muted">OBJECTIVES</h3>
+          </div>
+          <hr className="rule" />
+          <ul className="cmd-objectives">
             {objectives.map((o) => (
-              <li key={o.text} className={o.done ? 't-small muted done' : 't-small'}>
-                <i aria-hidden="true" className="check" />{o.text}
-                <span className="sr-only">{o.done ? ' (done)' : ' (to do)'}</span>
+              <li key={o.text} className={o.done ? 't-mono muted cmd-obj-done' : 't-mono'}>
+                <span className="cmd-checkbox">[{o.done ? 'X' : ' '}]</span> {o.text}
               </li>
             ))}
           </ul>
-        </section>
-      </div>
+        </motion.section>
 
-      <div className="dash__stats">
-        <Stat value={`${p.evidenceViewed} / ${p.evidenceTotal}`} label="EVIDENCE EXAMINED" ratio={ratio(p.evidenceViewed, p.evidenceTotal)} />
-        <Stat value={`${p.suspectsViewed} / ${p.suspectsTotal}`} label="SUSPECTS PROFILED" ratio={ratio(p.suspectsViewed, p.suspectsTotal)} />
-        <Stat value={`${p.eventsViewed} / ${p.eventsTotal}`} label="TIMELINE EVENTS" ratio={ratio(p.eventsViewed, p.eventsTotal)} />
-        <Stat value={p.contradictions} label="CONTRADICTIONS LOGGED" />
-      </div>
+        {/* 2-COLUMN: CASE DATA & BOARD */}
+        <div className="cmd-grid">
+          <motion.section className="cmd-section cmd-panel" variants={itemVariants}>
+            <div className="cmd-section__header">
+              <h3 className="t-label muted">CASE DATA</h3>
+            </div>
+            <hr className="rule" />
+            <div className="cmd-data-links">
+              <Link to="/evidence" className="cmd-link">
+                <span className="t-mono">EVIDENCE</span>
+                <span className="t-mono cmd-stat">[{p.evidenceViewed}/{p.evidenceTotal}]</span>
+              </Link>
+              <Link to="/suspects" className="cmd-link">
+                <span className="t-mono">SUSPECTS</span>
+                <span className="t-mono cmd-stat">[{p.suspectsViewed}/{p.suspectsTotal}]</span>
+              </Link>
+              <Link to="/timeline" className="cmd-link">
+                <span className="t-mono">TIMELINE</span>
+                <span className="t-mono cmd-stat">[{p.eventsViewed}/{p.eventsTotal}]</span>
+              </Link>
+              <div className="cmd-link" style={{ pointerEvents: 'none' }}>
+                <span className="t-mono">CONTRADICTIONS</span>
+                <span className="t-mono cmd-stat">[{p.contradictions}]</span>
+              </div>
+            </div>
+          </motion.section>
 
-      <div className="dash__row">
-        <section className="panel dash__leads">
-          <span className="t-label muted">LATEST LEADS</span>
+          <motion.section className="cmd-section cmd-panel cmd-board-link" variants={itemVariants}>
+            <Link to="/board" className="cmd-board-content">
+              <h2 className="t-h1">INVESTIGATION BOARD</h2>
+              <span className="t-label muted">ACCESS NETWORK OF CONNECTIONS</span>
+            </Link>
+          </motion.section>
+        </div>
+
+        {/* RECENT DISCOVERIES */}
+        <motion.section className="cmd-section" variants={itemVariants}>
+          <div className="cmd-section__header">
+            <h3 className="t-label muted">RECENT DISCOVERIES</h3>
+          </div>
+          <hr className="rule" />
           {leads.length === 0 ? (
-            <EmptyState title="No leads yet">Open an exhibit in the Evidence Room and it will show up here.</EmptyState>
+            <p className="t-mono muted cmd-empty">NO RECENT DISCOVERIES.</p>
           ) : (
-            <ul>
+            <ul className="cmd-leads">
               {leads.map((e) => (
                 <li key={e.id}>
-                  <span className="t-h3 lead__time">{formatWhen(e.timestamp)}</span>
-                  <Link to={`/evidence?select=${e.id}`} className="t-small secondary">{e.title} ({e.id}). {e.summary}</Link>
+                  <span className="t-mono cmd-time">{formatWhen(e.timestamp)}</span>
+                  <Link to={`/evidence?select=${e.id}`} className="t-mono cmd-lead-link">{e.id} - {e.title}</Link>
                 </li>
               ))}
             </ul>
           )}
-        </section>
+        </motion.section>
 
-        <section className="panel dash__next">
-          <span className="t-label muted">NEXT STEPS</span>
-          <Button to="/evidence" block>ENTER EVIDENCE ROOM</Button>
-          <Button to="/board" variant="secondary" block>OPEN THE BOARD</Button>
-          <Button to="/assistant" variant="secondary" block>ASK THE ASSISTANT</Button>
-        </section>
-      </div>
+      </motion.div>
     </div>
   );
 }

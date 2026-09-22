@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../../services/api.js';
 import { useCase } from '../../hooks/useCase.jsx';
 import { Button, Stamp, PageTitle, EmptyState } from '../../components/ui/ui.jsx';
@@ -8,7 +9,7 @@ import { EVIDENCE_GROUPS, formatDateTime, typeLabel } from '../../utils/format.j
 import { isPinned, pinToBoard } from '../../utils/boardStore.js';
 import './EvidenceRoom.css';
 
-function Inspector({ id, onSelect }) {
+function Inspector({ id, onSelect, onClose }) {
   const { evidenceById, markViewed } = useCase();
   const [detail, setDetail] = useState(null);
   const [error, setError] = useState(null);
@@ -22,49 +23,70 @@ function Inspector({ id, onSelect }) {
       .then((d) => { if (!cancelled) { setDetail(d); markViewed('evidence', id); } })
       .catch((e) => { if (!cancelled) setError(e); });
     return () => { cancelled = true; };
-    // markViewed changes identity with investigation state; only re-run when the selection changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const item = detail ?? summary;
-  return (
-    <aside className="inspector" aria-live="polite">
-      <div className="inspector__head t-label">
-        <span>{item.id}</span>
-        <Stamp variant="ink">{typeLabel(item.type)}</Stamp>
-      </div>
-      <h2 className="t-h1 inspector__title">{item.title}</h2>
-      <hr className="rule" />
-      <dl className="inspector__meta t-mono">
-        <dt>TIME</dt><dd>{formatDateTime(item.timestamp)}</dd>
-        <dt>PLACE</dt><dd>{item.location ?? 'Off-site'}</dd>
-        {item.people?.length > 0 && (<><dt>PEOPLE</dt><dd>{item.people.join(' · ')}</dd></>)}
-        {detail?.source && (<><dt>SOURCE</dt><dd>{detail.source}</dd></>)}
-      </dl>
-      {error && <p className="t-small">Could not load the full exhibit. {error.message}</p>}
-      <p className="t-small inspector__details">{detail ? detail.details : item.summary}</p>
 
-      {detail?.relatedEvidenceIds?.length > 0 && (
-        <div className="inspector__related">
-          <span className="t-label">RELATED</span>
-          <div>
-            {detail.relatedEvidenceIds.map((rid) => (
-              <button key={rid} type="button" className="stamp stamp--ink-solid" onClick={() => onSelect(rid)}>{rid}</button>
-            ))}
+  return (
+    <div className="drawer-overlay" onClick={onClose}>
+      <motion.aside 
+        className="drawer"
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        onClick={(e) => e.stopPropagation()}
+        aria-live="polite"
+      >
+        <div className="drawer__close">
+          <button className="drawer__close-btn" onClick={onClose} aria-label="Close">×</button>
+        </div>
+        
+        <div className="drawer__content">
+          <div className="drawer__head t-label">
+            <span>{item.id}</span>
+            <Stamp variant="default">{typeLabel(item.type)}</Stamp>
+          </div>
+          
+          <h2 className="t-h1 drawer__title">{item.title.toUpperCase()}</h2>
+          <hr className="rule" />
+          
+          <dl className="drawer__meta t-mono">
+            <dt>TIMESTAMP</dt><dd>{formatDateTime(item.timestamp)}</dd>
+            <dt>LOCATION</dt><dd>{item.location ?? 'Off-site'}</dd>
+            {item.people?.length > 0 && (<><dt>SUSPECTS</dt><dd>{item.people.join(' · ')}</dd></>)}
+            {detail?.source && (<><dt>SOURCE</dt><dd>{detail.source}</dd></>)}
+            {detail?.reliability && (<><dt>RELIABILITY</dt><dd>{detail.reliability}</dd></>)}
+          </dl>
+          
+          {error && <p className="t-mono" style={{color: 'var(--warning)'}}>Could not load full exhibit. {error.message}</p>}
+          
+          <p className="t-mono drawer__details">{detail ? detail.details : item.summary}</p>
+
+          {detail?.relatedEvidenceIds?.length > 0 && (
+            <div className="drawer__related">
+              <span className="t-label muted">RELATED EVIDENCE</span>
+              <div>
+                {detail.relatedEvidenceIds.map((rid) => (
+                  <button key={rid} type="button" className="stamp stamp--default" onClick={() => onSelect(rid)}>{rid}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="drawer__actions">
+            <Button
+              variant="secondary" block disabled={pinned}
+              onClick={() => { pinToBoard(id); setPinned(true); }}
+            >
+              {pinned ? 'PINNED TO BOARD' : 'ADD TO BOARD'}
+            </Button>
+            {pinned && <Button to="/board" variant="secondary" block>OPEN THE BOARD</Button>}
           </div>
         </div>
-      )}
-
-      <div className="inspector__actions">
-        <Button
-          variant="ink" block disabled={pinned}
-          onClick={() => { pinToBoard(id); setPinned(true); }}
-        >
-          {pinned ? 'PINNED TO BOARD' : 'ADD TO BOARD'}
-        </Button>
-        {pinned && <Button to="/board" variant="ink" block>OPEN THE BOARD</Button>}
-      </div>
-    </aside>
+      </motion.aside>
+    </div>
   );
 }
 
@@ -79,16 +101,23 @@ export default function EvidenceRoom() {
     () => (group.types ? evidence.filter((e) => group.types.includes(e.type)) : evidence),
     [evidence, group],
   );
+  
   const select = (id) => setParams({ select: id }, { replace: true });
+  const deselect = () => {
+    const newParams = new URLSearchParams(params);
+    newParams.delete('select');
+    setParams(newParams, { replace: true });
+  };
+  
   const validSelected = selectedId && evidence.some((e) => e.id === selectedId) ? selectedId : null;
 
   return (
     <div className="page">
-      <PageTitle title="Evidence Room" meta={`${evidence.length} EXHIBITS · ${progress.evidenceViewed} EXAMINED`} />
+      <PageTitle title="EVIDENCE DATABASE" meta={`${evidence.length} EXHIBITS · ${progress.evidenceViewed} EXAMINED`} />
 
       <div className="filters" role="group" aria-label="Filter evidence">
         {EVIDENCE_GROUPS.map((g) => (
-          <Stamp key={g.id} variant={g.id === groupId ? 'alert' : 'default'} onClick={() => setGroupId(g.id)} aria-pressed={g.id === groupId}>
+          <Stamp key={g.id} variant={g.id === groupId ? 'default' : 'viewed'} style={{borderColor: g.id === groupId ? 'var(--accent)' : '', color: g.id === groupId ? 'var(--accent)' : ''}} onClick={() => setGroupId(g.id)} aria-pressed={g.id === groupId}>
             {g.label}
           </Stamp>
         ))}
@@ -98,16 +127,28 @@ export default function EvidenceRoom() {
         {list.length === 0 ? (
           <EmptyState title="Nothing filed here">No exhibits match this filter.</EmptyState>
         ) : (
-          <div className="evgrid">
-            {list.map((e) => (
-              <EvidenceCard key={e.id} item={e} selected={e.id === validSelected} viewed={viewed.evidence.has(e.id)} onSelect={select} />
-            ))}
-          </div>
+          <motion.div className="evgrid" layout>
+            <AnimatePresence>
+              {list.map((e) => (
+                <motion.div 
+                  key={e.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  layout
+                >
+                  <EvidenceCard item={e} selected={e.id === validSelected} viewed={viewed.evidence.has(e.id)} onSelect={select} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
-        {validSelected
-          ? <Inspector id={validSelected} onSelect={select} />
-          : <aside className="inspector inspector--empty"><p className="t-h3 muted">SELECT AN EXHIBIT</p><p className="t-small muted">Open any card to read the full record and pin it to the board.</p></aside>}
       </div>
+
+      <AnimatePresence>
+        {validSelected && <Inspector id={validSelected} onSelect={select} onClose={deselect} />}
+      </AnimatePresence>
     </div>
   );
 }

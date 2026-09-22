@@ -3,13 +3,11 @@ import { Stamp, Button } from '../ui/ui.jsx';
 import InvestigationNode from '../InvestigationNode/InvestigationNode.jsx';
 import './AssistantPanel.css';
 
-/** One chat turn. Assistant turns turn the structured API response into interactive UI. */
 export default function AssistantMessage({ message, lookups, onLogContradiction, logged }) {
   if (message.role === 'user') {
     return (
       <div className="msg msg--user">
-        <span className="t-label">YOU</span>
-        <p className="t-body">{message.text}</p>
+        <span className="t-mono muted">&gt; {message.text}</span>
       </div>
     );
   }
@@ -23,21 +21,20 @@ export default function AssistantMessage({ message, lookups, onLogContradiction,
   return (
     <div className={message.error ? 'msg msg--assistant msg--error' : 'msg msg--assistant'}>
       <div className="msg__head t-label">
-        <span>{message.error ? 'ANALYST OFFLINE' : 'ANALYST'}</span>
+        <span>{message.error ? 'ANALYSIS FAILED' : 'ANALYSIS'}</span>
         {r?.confidence && <span className="muted">CONFIDENCE: {String(r.confidence).toUpperCase()}</span>}
       </div>
-      <p className="t-body msg__text">{message.text}</p>
+      <p className="t-mono msg__text">{message.text}</p>
 
-      {r?.contradiction && <Stamp variant="alert">CONTRADICTION FOUND</Stamp>}
+      {r?.contradiction && <Stamp variant="alert" style={{ marginTop: '8px' }}>⚠ CONTRADICTION FOUND</Stamp>}
 
       {evidence.length > 0 && (
         <div className="msg__group">
-          <span className="t-label muted">RELATED EVIDENCE</span>
+          <span className="t-label muted">RELEVANT EVIDENCE</span>
           <div className="msg__nodes">
             {evidence.map((id) => (
               <Link key={id} to={`/evidence?select=${id}`} className="msg__node-link">
                 <InvestigationNode kind="evidence" id={id} title={evidenceById[id].title} as="span" />
-                <span className="t-label msg__view">VIEW EVIDENCE →</span>
               </Link>
             ))}
           </div>

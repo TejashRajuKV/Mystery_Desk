@@ -1,7 +1,7 @@
-.progress { display: flex; flex-direction: column; gap: 8px; width: 300px; max-width: 100%; }
+.progress { display: flex; flex-direction: column; gap: 6px; width: 260px; max-width: 100%; }
 .progress__head { display: flex; justify-content: space-between; }
-.progress__ticks { display: flex; gap: 3px; }
-.progress__tick { flex: 1; height: 14px; background: var(--line-subtle); transition: background 0.3s ease; }
-.progress__tick--on { background: var(--white); }
+.progress__ticks { display: flex; gap: 2px; }
+.progress__tick { flex: 1; height: 8px; background: var(--line-subtle); transition: background 0.3s ease; }
+.progress__tick--on { background: var(--accent); box-shadow: 0 0 4px rgba(198, 166, 107, 0.5); }
 .progress__tick--new { animation: tick-pop 0.35s ease; }
 @keyframes tick-pop { 0% { transform: scaleY(1); } 40% { transform: scaleY(1.7); } 100% { transform: scaleY(1); } }

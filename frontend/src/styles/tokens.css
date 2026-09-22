@@ -1,17 +1,20 @@
 /* Mirrors the Figma "Color" variable collection (mode: Noir) and the shared text styles. */
 :root {
-  --bg-base: #0a0a0a;
-  --bg-raised: #141414;
-  --bg-panel: #1c1c1c;
-  --line-subtle: #2e2e2e;
-  --line-strong: #5a5a5a;
-  --text-muted: #8c8c8c;
-  --text-secondary: #b8b8b8;
-  --text-primary: #ededed;
+  --bg-base: #050505;
+  --bg-raised: #0B0B0B;
+  --bg-panel: #111111;
+  --line-subtle: rgba(255, 255, 255, 0.04);
+  --line-strong: rgba(255, 255, 255, 0.08);
+  --text-muted: rgba(255, 255, 255, 0.3);
+  --text-secondary: rgba(255, 255, 255, 0.55);
+  --text-primary: #F5F5F5;
+  --accent: #C6A66B;
+  --warning: #B65C5C;
+  --success: #7C9F84;
   --paper: #dcdcdc;
   --paper-ink: #111111;
   --white: #ffffff;
-  --vignette: rgba(0, 0, 0, 0.55);
+  --vignette: rgba(0, 0, 0, 0.65);
 
   --font-display: 'Playfair Display', Georgia, serif;
   --font-heading: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;

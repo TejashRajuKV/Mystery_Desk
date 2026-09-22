@@ -11,7 +11,6 @@ const GREETING = {
   text: 'I work from the case files only: statements, exhibits, the timeline and the locations. Ask me about a suspect, a time window, a place or a piece of evidence.',
 };
 
-// One example of each question the assistant answers, filled in from the case.
 function suggestedQuestions({ suspects, timeline, locationById }) {
   const list = ['Which evidence contradicts a suspect’s statement?'];
   if (timeline.length >= 4) {
@@ -71,10 +70,10 @@ export default function Assistant() {
 
   return (
     <div className="page assistant">
-      <PageTitle title="Investigation Assistant" meta="ANALYSES THE CASE FILES ONLY" />
+      <PageTitle title="INVESTIGATION ASSISTANT" meta="TERMINAL INTERFACE ACTIVE" />
 
       <div className="assistant__layout">
-        <section className="assistant__chat panel" aria-label="Conversation">
+        <section className="assistant__chat" aria-label="Conversation">
           <div className="assistant__log" role="log" aria-live="polite">
             {messages.map((m) => (
               <AssistantMessage
@@ -85,39 +84,41 @@ export default function Assistant() {
             ))}
             {busy && (
               <div className="msg msg--assistant" role="status">
-                <span className="t-label muted">ANALYSING<span className="dots" aria-hidden="true" /></span>
+                <span className="t-mono muted" style={{color: 'var(--accent)'}}>ANALYSING<span className="dots" aria-hidden="true" /></span>
               </div>
             )}
             <div ref={endRef} />
           </div>
 
           <div className="assistant__suggest">
-            {prompts.map((p) => <Stamp key={p} onClick={() => ask(p)} disabled={busy}>{p}</Stamp>)}
+            {prompts.map((p) => <Stamp key={p} onClick={() => ask(p)} disabled={busy} variant="default" style={{ borderColor: 'var(--line-strong)', color: 'var(--text-secondary)' }}>{p}</Stamp>)}
           </div>
 
           <form className="assistant__form" onSubmit={(e) => { e.preventDefault(); ask(input); }}>
             <label className="sr-only" htmlFor="q">Ask the assistant</label>
-            <input id="q" className="input" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about a suspect, a time, a place, an exhibit…" autoComplete="off" />
-            <Button type="submit" disabled={busy || !input.trim()}>ASK</Button>
+            <input id="q" className="input" value={input} onChange={(e) => setInput(e.target.value)} placeholder="QUERY DATABASE..." autoComplete="off" />
+            <Button type="submit" disabled={busy || !input.trim()} variant="secondary" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>SUBMIT</Button>
           </form>
         </section>
 
         <aside className="assistant__side">
-          <section className="panel assistant__ctx">
-            <span className="t-label muted">CASE CONTEXT</span>
-            <p className="t-small secondary">The assistant reads every exhibit, statement and event. It does not see what you have pinned or concluded.</p>
+          <section className="assistant__ctx">
+            <span className="t-label muted">CASE CONTEXT: ACTIVE</span>
+            <hr className="rule" style={{ margin: '8px 0', borderColor: 'var(--line-strong)' }} />
+            <p className="t-mono secondary" style={{ fontSize: '13px' }}>Assistant has read access to all logged exhibits, statements, and timeline events.</p>
             <dl className="t-mono assistant__stats">
               <dt>EXHIBITS EXAMINED</dt><dd>{progress.evidenceViewed}/{progress.evidenceTotal}</dd>
               <dt>SUSPECTS PROFILED</dt><dd>{progress.suspectsViewed}/{progress.suspectsTotal}</dd>
               <dt>CONTRADICTIONS LOGGED</dt><dd>{progress.contradictions}</dd>
             </dl>
           </section>
-          <section className="panel assistant__ctx">
-            <span className="t-label muted">CHECK A STATEMENT</span>
+          <section className="assistant__ctx">
+            <span className="t-label muted">QUICK ACTIONS</span>
+            <hr className="rule" style={{ margin: '8px 0', borderColor: 'var(--line-strong)' }} />
             <div className="assistant__people">
               {suspects.map((s) => (
-                <button key={s.id} type="button" className="assistant__person t-small" onClick={() => ask(`What contradicts ${s.name}’s statement?`)} disabled={busy}>
-                  <span className="t-label">{s.id}</span> {s.name}
+                <button key={s.id} type="button" className="assistant__person" onClick={() => ask(`What contradicts ${s.name}’s statement?`)} disabled={busy}>
+                  <span className="t-label">{s.id}</span> CROSS-REFERENCE
                 </button>
               ))}
             </div>
