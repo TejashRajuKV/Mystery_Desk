@@ -59,7 +59,10 @@ No TypeScript, no Tailwind, no component library, no ORM, no native database dri
 the UI is bespoke enough that a framework's defaults fight the Figma file. Approved:
 react, react-dom, react-router-dom, vite, @vitejs/plugin-react, express. `node --watch`
 replaces nodemon. CORS is unnecessary (the Vite proxy makes every call same-origin).
-Ask before adding anything else.
+Ask before adding anything else. Versions track `npm audit`: vite and react-router-dom
+were bumped (5→6, 6→7) on 2026-09-22 to clear real CVEs, verified with a full build and
+a played-through game (Link/NavLink/useSearchParams/catch-all redirect all unaffected)
+before merging — bump again the same way if `npm audit` finds something new.
 
 ## Commands
 
