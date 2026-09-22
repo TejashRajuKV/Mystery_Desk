@@ -232,16 +232,18 @@ exist.
 
 Current status: phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser
 through the real API. The screens were built before their endpoints, at the owner's request.
-Phase 7 is partly done: Timeline, InvestigationBoard, Assistant and FinalReport were checked
-at phone, tablet and desktop widths, and both the assistant's network-error state and the
-top-level "try again" on a failed case load were exercised. Still open: the Figma diff for
-those four (no frame exists yet) and a dedicated animation review. Done means every box in
-the PRD's Definition of Done is ticked.
+Phase 7 is done except the Figma diff: Timeline, InvestigationBoard, Assistant and FinalReport
+were checked at phone, tablet and desktop widths; the assistant's network-error state and the
+top-level "try again" on a failed case load were both exercised; every animation was checked
+against the Web Animations API at runtime (exact duration/easing/fill/keyframes against the
+declared CSS, not just eyeballed) and `prefers-reduced-motion` was confirmed to disable them.
+Done means every box in the PRD's Definition of Done is ticked.
 
 ## Known gaps
 
 - Timeline, InvestigationBoard, Assistant and FinalReport have no Figma frame, so there is
-  nothing to diff them against yet.
+  nothing to diff them against. The Figma MCP plan limit was re-checked on 2026-09-22 (still
+  in effect) — don't retry it without the owner's say-so.
 - There are no automated tests (by request).
 - Board layout is per-viewer in `localStorage`, so it does not follow the player to another browser.
   Move it into the investigation state if that matters.

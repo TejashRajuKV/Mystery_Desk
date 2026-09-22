@@ -612,13 +612,13 @@ Loading, empty and error states are built with each screen that fetches, not def
 
 Phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser through the real API: reading evidence, testing claims, linking on the board, asking the assistant, a rejected then accepted conclusion, the report, and a refresh and a server restart that lose nothing. **The eight screens were built before their endpoints**, at the owner's request, so the phase order above was not followed for the frontend. No case data is hardcoded in the UI.
 
-Phase 7 is partly done: Timeline, Board, Assistant and Report were checked at desktop (1440px) and tablet (768px) width, on top of the phone width already checked when they were built — the drawer, the canvas scroll and node geometry, the two-column report, and the "revise conclusion" prefill all hold up. The assistant's network-error state was exercised (backend stopped mid-question) and degrades correctly, and so was the top-level error state (`Layout`'s `ErrorState`, shown when the initial case load fails) — including its "try again" recovering cleanly once the backend comes back. Page-transition and report-stamp animations were seen firing correctly, but not given a dedicated timing/easing pass. Still open: the Figma diff for all four screens (they have no frame to diff against yet) and a deliberate animation review. No automated tests exist yet, by request.
+Phase 7 is done except the Figma diff. Timeline, Board, Assistant and Report were checked at desktop (1440px) and tablet (768px) width, on top of the phone width already checked when they were built — the drawer, the canvas scroll and node geometry, the two-column report, and the "revise conclusion" prefill all hold up. The assistant's network-error state was exercised (backend stopped mid-question) and degrades correctly, and so was the top-level error state (`Layout`'s `ErrorState`, shown when the initial case load fails) — including its "try again" recovering cleanly once the backend comes back. Every animation was checked against the Web Animations API at runtime (exact duration, easing, fill mode and keyframe values), not just eyeballed: all match their declared CSS, the report stamp's delay lines up exactly with the report fade's duration with no gap or overlap, and `prefers-reduced-motion` correctly disables the ambient grain and clamps every other animation. Still open: the Figma diff for all four screens. There is still no Figma frame to diff against — the Figma MCP plan limit was checked again on 2026-09-22 and is still in effect; don't retry it without the owner's say-so. No automated tests exist yet, by request.
 
 ## 16. Definition of Done
 
 ### Frontend
 
-- [ ] Figma design implemented (4 of 8 screens have a Figma frame; no diff done yet)
+- [ ] Figma design implemented (4 of 8 screens have a Figma frame; the other four have none to diff against — Figma MCP plan limit, checked again 2026-09-22)
 - [x] All major screens functional
 - [x] Investigation board interactive
 - [x] Evidence inspection works
@@ -626,7 +626,7 @@ Phase 7 is partly done: Timeline, Board, Assistant and Report were checked at de
 - [x] Timeline works
 - [x] Assistant UI works
 - [x] Final report works
-- [ ] Animations implemented (built and confirmed firing; not given a dedicated review)
+- [x] Animations implemented
 - [x] Responsive design works (checked at phone, tablet and desktop widths)
 - [x] Every fetching screen has loading, empty and error states
 
