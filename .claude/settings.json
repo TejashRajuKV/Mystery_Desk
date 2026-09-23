@@ -6,7 +6,19 @@
         "hooks": [
           {
             "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-solution-edit.ps1"
+            ],
             "if": "Edit(**/solution.json)",
+            "statusMessage": "Checking solution.json protection..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -15,24 +27,24 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-solution-edit.ps1"
             ],
-            "statusMessage": "Checking solution.json protection..."
-          },
-          {
-            "type": "command",
             "if": "Write(**/solution.json)",
-            "command": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-solution-edit.ps1"
-            ],
             "statusMessage": "Checking solution.json protection..."
           },
           {
             "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-typescript-tailwind.ps1"
+            ],
             "if": "Write(*.ts)",
+            "statusMessage": "Checking stack compliance (no TypeScript)..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -41,24 +53,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-typescript-tailwind.ps1"
             ],
-            "statusMessage": "Checking stack compliance (no TypeScript)..."
-          },
-          {
-            "type": "command",
             "if": "Write(*.tsx)",
-            "command": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-typescript-tailwind.ps1"
-            ],
             "statusMessage": "Checking stack compliance (no TypeScript)..."
           },
           {
             "type": "command",
-            "if": "Write(**/tailwind.config*)",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -67,11 +66,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-typescript-tailwind.ps1"
             ],
+            "if": "Write(**/tailwind.config*)",
             "statusMessage": "Checking stack compliance (no Tailwind)..."
           },
           {
             "type": "command",
-            "if": "Write(*.test.*)",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -80,11 +79,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-test-files.ps1"
             ],
+            "if": "Write(*.test.*)",
             "statusMessage": "Checking test file policy..."
           },
           {
             "type": "command",
-            "if": "Write(*.spec.*)",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -93,6 +92,7 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-test-files.ps1"
             ],
+            "if": "Write(*.spec.*)",
             "statusMessage": "Checking test file policy..."
           }
         ]
@@ -102,7 +102,19 @@
         "hooks": [
           {
             "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-unauthorized-deps.ps1"
+            ],
             "if": "Bash(npm install *)",
+            "statusMessage": "Checking dependency approval..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -111,11 +123,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-unauthorized-deps.ps1"
             ],
-            "statusMessage": "Checking dependency approval..."
-          },
-          {
-            "type": "command",
             "if": "Bash(npm i *)",
+            "statusMessage": "Checking dependency approval..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -124,24 +136,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-unauthorized-deps.ps1"
             ],
-            "statusMessage": "Checking dependency approval..."
-          },
-          {
-            "type": "command",
             "if": "Bash(npm add *)",
-            "command": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-unauthorized-deps.ps1"
-            ],
             "statusMessage": "Checking dependency approval..."
           },
           {
             "type": "command",
-            "if": "Bash(rm *)",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -150,11 +149,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-destructive-commands.ps1"
             ],
+            "if": "Bash(rm *)",
             "statusMessage": "Checking for destructive operations..."
           },
           {
             "type": "command",
-            "if": "PowerShell(Remove-Item *)",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -163,6 +162,7 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-destructive-commands.ps1"
             ],
+            "if": "PowerShell(Remove-Item *)",
             "statusMessage": "Checking for destructive operations..."
           }
         ]
@@ -174,7 +174,19 @@
         "hooks": [
           {
             "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-frontend-no-hardcoded-data.ps1"
+            ],
             "if": "Edit(**/frontend/src/**/*.jsx)",
+            "statusMessage": "Scanning for hardcoded case data..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -183,24 +195,24 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-frontend-no-hardcoded-data.ps1"
             ],
-            "statusMessage": "Scanning for hardcoded case data..."
-          },
-          {
-            "type": "command",
             "if": "Write(**/frontend/src/**/*.jsx)",
-            "command": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-frontend-no-hardcoded-data.ps1"
-            ],
             "statusMessage": "Scanning for hardcoded case data..."
           },
           {
             "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-absolute-backend-url.ps1"
+            ],
             "if": "Edit(**/frontend/src/**)",
+            "statusMessage": "Checking for absolute backend URLs..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -209,24 +221,24 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-absolute-backend-url.ps1"
             ],
-            "statusMessage": "Checking for absolute backend URLs..."
-          },
-          {
-            "type": "command",
             "if": "Write(**/frontend/src/**)",
-            "command": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-absolute-backend-url.ps1"
-            ],
             "statusMessage": "Checking for absolute backend URLs..."
           },
           {
             "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-css-uses-tokens.ps1"
+            ],
             "if": "Edit(**/frontend/src/**/*.css)",
+            "statusMessage": "Checking CSS token usage..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -235,24 +247,24 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-css-uses-tokens.ps1"
             ],
-            "statusMessage": "Checking CSS token usage..."
-          },
-          {
-            "type": "command",
             "if": "Write(**/frontend/src/**/*.css)",
-            "command": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-css-uses-tokens.ps1"
-            ],
             "statusMessage": "Checking CSS token usage..."
           },
           {
             "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-route-no-logic.ps1"
+            ],
             "if": "Edit(**/backend/src/routes/**)",
+            "statusMessage": "Checking route architecture..."
+          },
+          {
+            "type": "command",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -261,24 +273,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-route-no-logic.ps1"
             ],
-            "statusMessage": "Checking route architecture..."
-          },
-          {
-            "type": "command",
             "if": "Write(**/backend/src/routes/**)",
-            "command": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-route-no-logic.ps1"
-            ],
             "statusMessage": "Checking route architecture..."
           },
           {
             "type": "command",
-            "if": "Edit(**/backend/src/controllers/**)",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -287,11 +286,11 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-api-response-shape.ps1"
             ],
+            "if": "Edit(**/backend/src/controllers/**)",
             "statusMessage": "Checking API response shape..."
           },
           {
             "type": "command",
-            "if": "Write(**/backend/src/controllers/**)",
             "command": "powershell.exe",
             "args": [
               "-NoProfile",
@@ -300,10 +299,14 @@
               "-File",
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-api-response-shape.ps1"
             ],
+            "if": "Write(**/backend/src/controllers/**)",
             "statusMessage": "Checking API response shape..."
           }
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "playwright@claude-plugins-official": true
   }
 }

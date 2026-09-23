@@ -1,0 +1,4 @@
+# Transient output from the Playwright MCP server (screenshots/snapshots/console
+# logs it writes to the CWD by default). The screenshots worth keeping are copied
+# into docs/qa/_plugin-usage/ with explicit names; this directory is scratch.
+.playwright-mcp/
