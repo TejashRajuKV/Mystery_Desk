@@ -1,0 +1,25 @@
+### Result
+Found 2 matches for "Loan Default Notice":
+
+- generic [ref=e3]:
+  - generic [ref=e34]:
+    - main [ref=e63]:
+      - generic [ref=e68]:
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - button "E014, Keycard Access" [ref=e250]:
+              ...
+              - generic [ref=e260]:
+                - generic [ref=e261]: 21:14
+                - generic [ref=e262]: Storage Room B
+            - button "E015, Loan Default Notice" [ref=e263]:
+              - generic [ref=e264]:
+                - generic [ref=e265]: E015
+                - generic [ref=e266]: FINANCIAL
+              - generic [ref=e271]: "[ EXHIBIT ]"
+              - generic [ref=e272]: Loan Default Notice
+              - generic [ref=e273]:
+                - generic [ref=e274]: Mon 5 Mar
+                - generic [ref=e275]: Off-site
+### Events
+- New console entries: .playwright-mcp\console-2026-09-23T05-01-42-714Z.log#L2
