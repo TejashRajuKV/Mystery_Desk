@@ -1,0 +1,34 @@
+[
+  {
+    "step": "case-entry",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\01-case-entry.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\01-case-entry.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\01-case-entry.png',\n  scale: 'css',\n  type: 'png'\n});\n```\n### Page\n- Page URL: http://localhost:5173/\n- Page Title: MysteryDesk: Case #047\n- Console: 1 errors, 1 warnings\n### Events\n- New console entries: .playwright-mcp\\console-2026-09-23T04-57-40-580Z.log#L2-L3"
+  },
+  {
+    "step": "dashboard",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\02-dashboard.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\02-dashboard.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\02-dashboard.png',\n  scale: 'css',\n  type: 'png'\n});\n```"
+  },
+  {
+    "step": "evidence-room",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\03-evidence-room.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\03-evidence-room.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\03-evidence-room.png',\n  scale: 'css',\n  type: 'png'\n});\n```"
+  },
+  {
+    "step": "suspects",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\04-suspects.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\04-suspects.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\04-suspects.png',\n  scale: 'css',\n  type: 'png'\n});\n```"
+  },
+  {
+    "step": "board",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\05-board.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\05-board.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\05-board.png',\n  scale: 'css',\n  type: 'png'\n});\n```"
+  },
+  {
+    "step": "assistant",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\06-assistant.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\06-assistant.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\06-assistant.png',\n  scale: 'css',\n  type: 'png'\n});\n```"
+  },
+  {
+    "step": "timeline",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\07-timeline.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\07-timeline.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\07-timeline.png',\n  scale: 'css',\n  type: 'png'\n});\n```"
+  },
+  {
+    "step": "report",
+    "text": "### Result\n- [Screenshot of viewport](docs\\qa\\_plugin-usage\\08-report.png)\n### Ran Playwright code\n```js\n// Screenshot viewport and save it as docs\\qa\\_plugin-usage\\08-report.png\nawait page.screenshot({\n  path: 'docs\\\\qa\\\\_plugin-usage\\\\08-report.png',\n  scale: 'css',\n  type: 'png'\n});\n```"
+  }
+]
