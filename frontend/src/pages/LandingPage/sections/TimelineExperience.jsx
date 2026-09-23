@@ -24,12 +24,15 @@ export default function TimelineExperience({ timeline }) {
       // and avoids the scroll-hijacking-vs-touch-gesture conflicts that make this pattern painful on mobile.
       if (prefersReducedMotion() || window.innerWidth <= 720) return;
 
-      const distance = track.current.scrollWidth - window.innerWidth + 160;
+      const getDistance = () => track.current.scrollWidth - window.innerWidth + 160;
       gsap.to(track.current, {
-        x: -distance, ease: 'none',
+        x: () => -getDistance(), ease: 'none',
         scrollTrigger: {
-          trigger: '.tlx__pin', start: 'top top', end: () => `+=${distance + 400}`,
-          pin: true, scrub: 0.6, anticipatePin: 1,
+          trigger: '.tlx__pin', start: 'top top', end: () => `+=${getDistance() + 400}`,
+          // Explicit: GSAP skips reserving scroll space by default when the pinned
+          // element's parent computes to display:flex (see .tlx in the CSS) — without
+          // this the next section overlaps the still-pinned track instead of waiting for it.
+          pin: true, pinSpacing: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true,
         },
       });
     }, root);
@@ -39,12 +42,13 @@ export default function TimelineExperience({ timeline }) {
 
   return (
     <section id="timeline" className="landing__section tlx" ref={root}>
-      <div className="tlx__intro">
-        <span className="l-mono">FRIDAY NIGHT, MINUTE BY MINUTE</span>
-        <h2 className="tlx__title l-display">Reconstructing the Night</h2>
-      </div>
-
+      {/* The intro now lives inside the pin wrapper so it stays
+          fixed on screen while the timeline track scrolls through. */}
       <div className="tlx__pin">
+        <div className="tlx__intro">
+          <span className="l-mono">FRIDAY NIGHT, MINUTE BY MINUTE</span>
+          <h2 className="tlx__title l-display">Reconstructing the Night</h2>
+        </div>
         <div className="tlx__track" ref={track}>
           {events.map((e, i) => (
             <div key={e.id} className="tlx__event">
