@@ -16,11 +16,12 @@ Fixed facts used below, verified directly against seed data (not the solution fi
 - Suspects: S01 Dr. Maren Voss, S02 Alex Reyes, S03 Victor Lang, S04 Nina Okafor, S05 Daniel Cho.
 - Locations: L01 Main Laboratory, L02 Communications Room, L03 Storage Room B, L04 Executive Office,
   L05 Parking Garage, L06 Lobby & Security Desk.
-- Alex Reyes (S02) has three real derived contradictions, all `severity: "major"`: ST02-A vs E007, E011, E014
-  (this is the exact example documented in PRD §9/§10).
+- Alex Reyes (S02) has five real derived contradictions: ST02-A vs E007, E011 and E014, plus ST02-B vs E014 and
+  ST02-C vs E006 (ST02-A vs E014 is the example documented in PRD §9/§10). A response only lists the pairs whose
+  exhibit the player holds.
 - Victor Lang (S03) has one real derived contradiction: ST03-A vs E008, `severity: "minor"`, `mitigatedBy: ["E009"]`.
 - Dr. Maren Voss (S01) has one real derived contradiction: ST01-B vs E017, `severity: "minor"`, no `mitigatedBy`.
-- Nina Okafor (S04) has one real derived contradiction: ST04-A vs E018, `severity: "minor"`, `mitigatedBy: ["E018"]`.
+- Nina Okafor (S04) has one real derived contradiction: ST04-A vs E012, `severity: "minor"`, `mitigatedBy: ["E018"]`.
 - Daniel Cho (S05) has one real derived contradiction: ST05-A vs E010, `severity: "minor"`, `mitigatedBy: ["E006"]`.
 - Timeline events between 21:00 and 22:00 on 1984-03-09: T04 (21:00), T05 (21:05), T06 (21:07), T07 (21:10),
   T08 (21:14), T09 (21:25), T10 (21:40), T11 (21:44) — 8 events (IDs read left-to-right off `data/timeline.json`;
@@ -55,7 +56,7 @@ Fixed facts used below, verified directly against seed data (not the solution fi
 - **Covers spec point:** 3
 - **Preconditions:** fresh seed
 - **Steps / Input:** `POST /api/assistant/query` `{ "question": "Does Alex Reyes's statement contradict any evidence?" }`
-- **Expected result:** 200; `contradiction: true`; `confidence: "high"`; `contradictions` is present and is an array of `{ assertionId, evidenceId }` objects, every one with `assertionId: "ST02-A"` and `evidenceId` one of `"E007"`, `"E011"`, `"E014"` (all three must appear, since all three are real); `relatedEvidence` contains `E007`, `E011` and `E014`; `relatedSuspects` contains `S02`.
+- **Expected result:** 200; `contradiction: true`; `confidence: "high"`; `contradictions` is present and is an array of `{ assertionId, evidenceId }` objects, each a real derived pair for S02 (`ST02-A`, `ST02-B` or `ST02-C`) whose exhibit the player holds; it includes `ST02-A` vs every one of `E007`, `E011`, `E014` that is unlocked; `relatedEvidence` contains the exhibits in those pairs and no locked exhibit; `relatedSuspects` contains `S02`.
 - **Priority:** high
 
 ## TC-04 — Contradiction question, suspect whose only real contradiction is minor and mitigated

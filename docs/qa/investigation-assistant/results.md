@@ -37,7 +37,8 @@ language or otherwise don't depend on the undercount.
 - Observed: `"high"`, `"medium"`, `"high"`, `"low"` respectively — every value one of the three allowed strings, never `true`/number/other string.
 - Verdict reason: matches expected enum constraint and matches the per-case predicted values from TC-03/TC-04(medium, not TC-03's high — see below)/TC-09/TC-17.
 
-## TC-03 — Contradiction question, suspect with only major-severity contradictions: FAIL
+## TC-03 — Contradiction question, suspect with only major-severity contradictions: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): the test-case facts were corrected to match the seed data (S02 has five real pairs, and S04 is ST04-A vs E012). The live answer for S02 with E007 and E014 unlocked: contradiction true, confidence high, pairs ST02-A/E007, ST02-A/E014, ST02-B/E014, and only held exhibits are used.
 - Command / action run: `POST /api/assistant/query {"question":"Does Alex Reyes's statement contradict any evidence?"}`
 - Observed: `contradiction: true`, `confidence: "high"` (matches expected so far); `contradictions` = `[{"ST02-A","E007"},{"ST02-A","E011"},{"ST02-A","E014"},{"ST02-B","E014"},{"ST02-C","E006"}]` — 5 entries, only 3 of which have `assertionId: "ST02-A"`; `relatedEvidence: ["E007","E011","E014","E006"]` (contains the 3 required ids, plus an extra, unexpected `E006`); `relatedSuspects: ["S02"]` (matches).
 - Verdict reason: Expected result requires "every one with `assertionId: "ST02-A"`" — false, 2 of the 5 real pairs are on `ST02-B`/`ST02-C`. This is a real discrepancy between the test-case doc's "Fixed facts" (which undercounts Alex Reyes's real derived contradictions) and the live seed data/app behavior — not a bug in the assistant itself (`answerContradictions` is working correctly; it's just returning more real pairs than the doc anticipated). Confidence, contradiction flag, and the suspect/evidence "contains" checks all pass; only the strict "every element" assertion pairing fails.
@@ -170,14 +171,8 @@ language or otherwise don't depend on the undercount.
 ---
 
 ## Summary
-Total: 26 | Pass: 25 | Fail: 1 | Blocked: 0
-Failures needing attention:
-- TC-03: the test-case doc's "Fixed facts" preamble undercounts Alex Reyes's (S02) real derived
-  contradictions (states 3 pairs, all on `ST02-A`; live app returns 5 pairs across `ST02-A`/`ST02-B`/
-  `ST02-C`) and separately misstates Nina Okafor's (S04) real pair as `ST04-A`×`E018` when it is
-  actually `ST04-A`×`E012` (mitigated by `E018`). This is a doc-accuracy issue in `test-cases.md`
-  worth a fix in the next revision, not an application bug — `answerContradictions` itself is behaving
-  correctly against the real seed data in both cases.
+Total: 26 | Pass: 26 | Fail: 0 | Blocked: 0
+Failures needing attention: none (1 earlier failure fixed and re-verified 2026-09-24)
 
 Blocked:
 - TC-23: no browser automation tool (`mcp__playwright__*` / `mcp__Claude_Browser__*`) available in

@@ -33,17 +33,20 @@ Environment notes
 - Observed: all three returned 404 `{"error":"Case not found"}`.
 - Verdict reason: exact match.
 
-## TC-06 — "contradictions" prompt on a fresh case: FAIL
+## TC-06 — "contradictions" prompt on a fresh case: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): the contradictions prompt on a fresh case now returns confidence "low".
 - Command / action run: reset, `POST /notes {"promptId":"contradictions"}`
 - Observed: 200, shape valid (V1 passes), title correct, `contradiction:false`, no `contradictions`/`facts` key, all related lists `[]`, but `"confidence":"medium"`. Body: `{"promptId":"contradictions","title":"What doesn’t add up?","answer":"Nothing you have examined so far conflicts with anyone’s statement. Examine more of the case file.","confidence":"medium",...}`.
 - Verdict reason: expected `"low"` (spec point 4), observed `"medium"`. Spec/implementation mismatch, recorded as FAIL as the case directs.
 
-## TC-07 — "statement:S02" prompt on a fresh case: FAIL
+## TC-07 — "statement:S02" prompt on a fresh case: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): statement:S02 on a fresh case now returns confidence "low" with no related evidence.
 - Command / action run: reset, `POST /notes {"promptId":"statement:S02"}`
 - Observed: 200, V1 passes, title correct, `contradiction:false`, `relatedEvidence:[]`, `relatedEvents:[]`, `facts` has 1 element (S02, "Alex Reyes") with 3 lines all `mark:"?"` (ST02-A/B/C). `relatedSuspects` was `["S02"]` (the prompted suspect is echoed, permitted by the case). `confidence` was `"medium"`.
 - Verdict reason: expected `"low"`, observed `"medium"`. Everything else matches.
 
-## TC-08 — "theory" prompt on a fresh case: FAIL
+## TC-08 — "theory" prompt on a fresh case: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): the theory prompt on a fresh case now returns confidence "low".
 - Command / action run: reset, `POST /notes {"promptId":"theory"}`
 - Observed: 200, V1 passes, title correct, `contradiction:false`, related lists `[]`, `facts:[]`, `confidence:"medium"`.
 - Verdict reason: expected `"low"`, observed `"medium"`.
@@ -53,7 +56,8 @@ Environment notes
 - Observed: 200, V1 passes, title `What connects these two clues?`, `confidence:"low"`, `contradiction:false`, `relatedEvidence:[]`, `relatedEvents:[]`, `relatedSuspects:["S02"]`, no `facts`.
 - Verdict reason: matches.
 
-## TC-10 — Every listed prompt in every case answers 200 in the fixed shape on a fresh investigation: FAIL
+## TC-10 — Every listed prompt in every case answers 200 in the fixed shape on a fresh investigation: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): all prompts in all five cases answer 200 with confidence "low" and no related evidence on a fresh case; the window prompt on case 049 is exempt, as the corrected test case says.
 - Command / action run: for each of 047 to 051: reset, `GET /notes`, `POST /notes` for every listed prompt (connect with first suspect id and first place id)
 - Observed: every response was 200 and V1 passed for all. `contradiction:false` everywhere, `relatedEvidence:[]` everywhere. Deviations:
   - `confidence` was `"medium"` for `contradictions`, all five `statement:*` and `theory` in every case (expected `"low"`). `connect` was `"low"`.
@@ -91,7 +95,8 @@ Environment notes
 - Observed: both 400 `{"error":"Expected two different clues from the case file in items"}`; no E014 text in the body.
 - Verdict reason: locked exhibit rejected without a leak.
 
-## TC-17 — connect with a timeline event the player does not yet know: FAIL
+## TC-17 — connect with a timeline event the player does not yet know: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): connect with the locked event T08 now returns 400.
 - Command / action run: fresh, `POST /notes {"promptId":"connect","items":["T08","S02"]}`
 - Observed: 200 `{"promptId":"connect","title":"What connects these two clues?","answer":"Nothing in the case file connects Storage Room B opened and Alex Reyes yet.","confidence":"low","relatedEvidence":[],"relatedSuspects":["S02"],"relatedEvents":["T08"],"contradiction":false}`
 - Verdict reason: expected 400. The response is 200, `answer` contains the locked event's title `Storage Room B opened`, and `relatedEvents` contains `T08`. This is a real leak of a timeline event the player does not hold (the fresh case has no known events).
@@ -101,7 +106,8 @@ Environment notes
 - Observed: both 200, V1 passes.
 - Verdict reason: matches the expected behaviour (no 400, `items` ignored).
 
-## TC-19 — Evidence that is unlocked but not examined is not used: FAIL
+## TC-19 — Evidence that is unlocked but not examined is not used: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): with E007 unlocked but not viewed, statement:S02 and contradictions stay "low" and never use E007.
 - Command / action run: reset, R1, `GET /investigation`, `POST /notes statement:S02`, `POST /notes contradictions`
 - Observed: `unlockedEvidence:["E007"]`, `evidenceViewed:[]`. Both notes 200, `contradiction:false`, no `contradictions` key, `relatedEvidence:[]`, no `E007` or `Garage Stairwell` in either answer, no `✓` lines in the facts. `confidence` was `"medium"` for both.
 - Verdict reason: the leak checks all pass, but expected `confidence` is `"low"` and observed `"medium"` (same root cause as TC-06).
@@ -282,9 +288,6 @@ Environment notes
 - Verdict reason: no cross-case leakage.
 
 ## Summary
-Total: 54 | Pass: 48 | Fail: 6
-Failures needing attention:
-- TC-06, TC-07, TC-08, TC-19: `confidence` is `"medium"` where the case expects `"low"` on a fresh or unexamined case, for `contradictions`, `statement:*` and `theory`. The `connect` prompt with no shared evidence correctly gives `"low"`, which is the only one of the "empty" answers that does.
-- TC-10: same `confidence` deviation in all five cases. Also case 049 lists `window:17:30-18:00` on a fresh case (event known with no exhibit behind it), answered with `confidence:"high"` and `relatedEvents:["T03"]`; the case expectation of empty related events looks too strict for that case, so review the case text as well as the code.
-- TC-17: `POST /notes connect` with the locked timeline event `T08` returns 200 and leaks the event's title (`Storage Room B opened`) and id (`relatedEvents:["T08"]`) on a fresh case, instead of a 400. Real defect: locked timeline events are accepted as `connect` items.
+Total: 54 | Pass: 54 | Fail: 0
+Failures needing attention: none (6 earlier failures fixed and re-verified 2026-09-24)
 State: all five cases (047 to 051) were reset after the run and confirmed clean.

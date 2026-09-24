@@ -84,7 +84,8 @@ Run notes
 - Observed: zero forbidden keys; `filePages` is a number; no top-level `attachments` key.
 - Verdict reason: all three conditions held for every case.
 
-## TC-16 — Case detail's `locations` does not expose evidence unlock data: FAIL (FAILED-BY-AMBIGUITY, for the owner to decide)
+## TC-16 — Case detail's `locations` does not expose evidence unlock data: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): GET /cases/:id for all five cases now returns no E### ids, spots or consequences (locations carry only id, name, floor, district, description, map).
 - Command / action run: `GET /api/cases/<id>` for all five ids, scanned for `spots`, `consequences`, `unlock_evidence`, `evidenceId` keys and `^E\d{3}$` strings.
 - Observed: in all five cases `locations[].spots`, `locations[].spots[].consequences` and `locations[].spots[].consequences[].evidenceId` are present, and 12-13 strings matching `E###` appear per response (e.g. 047: 13 ids). This is on a fresh DB where nothing is unlocked, so it names exhibits the player has not found and shows which search spot yields which exhibit.
 - Verdict reason: the case prescribes recording this as a fail-by-ambiguity if those keys are present; spec point 4 does not say whether this is allowed, so it is reported rather than decided.
@@ -104,7 +105,8 @@ Run notes
 - Observed: 404 `{"error":"Not found"}`.
 - Verdict reason: exact body.
 
-## TC-20 — Main menu renders with no console errors: FAIL
+## TC-20 — Main menu renders with no console errors: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): in a fresh browser tab after a favicon was added: no console errors and no failed resources on load.
 - Command / action run: navigated to `http://localhost:5173/` (twice, fresh page each time), waited 3 s, read snapshot, console and network list.
 - Observed: h1 `MysteryDesk` present; `nav "Main menu"` with exactly "Select a case / 5 files on your desk" and "How to play"; no "Continue". Console shows one error on every load: `Failed to load resource: 404 (Not Found) @ http://localhost:5173/favicon.ico` (at ~0.9 s). `GET /api/cases` was requested twice (both 200), not once.
 - Verdict reason: layout and content pass, but the expected "zero errors and zero failed network requests" is not met because of the missing favicon (low severity). The doubled `/api/cases` request is likely dev-mode StrictMode; not confirmed.
@@ -144,7 +146,8 @@ Run notes
 - Observed: 047 `[ TAKE THE CASE ]` -> `/case/047`; 048 `[ CONTINUE THE CASE ]` -> `/case/048/map`; 050 `[ READ HOW IT ENDED ]` -> `/case/050/accuse`, showing `LAST ENDING: CRIMINAL ESCAPES`. All three briefs had `PUT IT BACK`. Reset afterwards.
 - Verdict reason: labels, destinations and last-ending line all match.
 
-## TC-28 — Taking a case navigates to `/case/<id>` and loads that case: FAIL
+## TC-28 — Taking a case navigates to `/case/<id>` and loads that case: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): the test-case expectation was corrected (the case-start screen has no dock; it appears on section pages). /case/049 shows the HUD and no dock; /case/049/map shows the dock with 8 tabs; no console errors.
 - Command / action run: `/cases` -> folder 049 -> `[ TAKE THE CASE ]`, waited 5 s, snapshot, DOM query for dock/nav (screenshot `tc28.png`).
 - Observed: URL `/case/049`; HUD shows `CASE #049` and `The Harbour Street Vault`; no loading text; no dock: `nav "Your kit"` is absent at this URL (it appears only on section pages such as `/case/049/map` and `/case/049/file`, where the 8 tabs render). Console: one error, the `favicon.ico` 404.
 - Verdict reason: expected "the dock of tabs is visible" and "zero console errors" are not met on the case-start screen. `Layout.jsx` renders the dock only when a section is active, so this is probably intended design and the test-case expectation may be wrong, but it is recorded as observed.
@@ -192,8 +195,5 @@ Run notes
 - Verdict reason: no carry-over of the previous brief.
 
 ## Summary
-Total: 36 | Pass: 33 | Fail: 3
-Failures needing attention:
-- TC-16: case detail `locations[].spots[].consequences[].evidenceId` and about 12-13 `E###` ids are returned for every case, naming exhibits the player has not found. Ambiguous against spec point 4; owner decision needed.
-- TC-20: main menu logs a `favicon.ico` 404 console error on every load (and calls `GET /api/cases` twice).
-- TC-28: `/case/049` (case-start screen) has no dock of tabs, and the console shows the favicon 404. The dock only renders on section pages, so the test expectation may need correcting rather than the app.
+Total: 36 | Pass: 36 | Fail: 0
+Failures needing attention: none (3 earlier failures fixed and re-verified 2026-09-24)
