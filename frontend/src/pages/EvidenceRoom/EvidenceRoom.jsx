@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { api } from '../../services/api.js';
 import { useCase } from '../../hooks/useCase.jsx';
 import { Button, Stamp, PageTitle, EmptyState } from '../../components/ui/ui.jsx';
 import EvidenceCard from '../../components/EvidenceCard/EvidenceCard.jsx';
@@ -9,7 +8,7 @@ import { isPinned, pinToBoard } from '../../utils/boardStore.js';
 import './EvidenceRoom.css';
 
 function Inspector({ id, onSelect }) {
-  const { evidenceById, markViewed } = useCase();
+  const { api, base, evidenceById, markViewed } = useCase();
   const [detail, setDetail] = useState(null);
   const [error, setError] = useState(null);
   const [pinned, setPinned] = useState(() => isPinned(id));
@@ -62,7 +61,7 @@ function Inspector({ id, onSelect }) {
         >
           {pinned ? 'PINNED TO BOARD' : 'ADD TO BOARD'}
         </Button>
-        {pinned && <Button to="/board" variant="ink" block>OPEN THE BOARD</Button>}
+        {pinned && <Button to={`${base}/board`} variant="ink" block>OPEN THE BOARD</Button>}
       </div>
     </aside>
   );
@@ -84,7 +83,7 @@ export default function EvidenceRoom() {
 
   return (
     <div className="page">
-      <PageTitle title="Evidence Room" meta={`${evidence.length} EXHIBITS · ${progress.evidenceViewed} EXAMINED`} />
+      <PageTitle kicker="What can I learn from this?" title="Evidence" meta={`${evidence.length} EXHIBIT${evidence.length === 1 ? "" : "S"} · ${progress.evidenceViewed} EXAMINED`} />
 
       <div className="filters" role="group" aria-label="Filter evidence">
         {EVIDENCE_GROUPS.map((g) => (
@@ -96,7 +95,9 @@ export default function EvidenceRoom() {
 
       <div className="evroom">
         {list.length === 0 ? (
-          <EmptyState title="Nothing filed here">No exhibits match this filter.</EmptyState>
+          evidence.length === 0
+            ? <EmptyState title="Nothing collected yet">Evidence isn’t handed to you. Go out to the places on the map and search them, question the people you find there, and read the case file for its paperwork.</EmptyState>
+            : <EmptyState title="Nothing filed here">No exhibits match this filter.</EmptyState>
         ) : (
           <div className="evgrid">
             {list.map((e) => (

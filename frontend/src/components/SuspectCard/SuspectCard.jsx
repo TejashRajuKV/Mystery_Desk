@@ -1,8 +1,9 @@
 import { playPaperRustle } from '../../utils/sound.js';
+import Portrait from '../Portrait/Portrait.jsx';
 import './SuspectCard.css';
 
 /** Dossier card with a silhouette portrait. */
-export default function SuspectCard({ suspect, selected, viewed, onSelect }) {
+export default function SuspectCard({ suspect, selected, badge, onSelect }) {
   return (
     <button
       type="button"
@@ -11,10 +12,9 @@ export default function SuspectCard({ suspect, selected, viewed, onSelect }) {
       aria-pressed={selected}
     >
       <span className="sus-card__portrait" aria-hidden="true">
-        <i className="sus-card__shoulders" />
-        <i className="sus-card__head" />
+        <Portrait suspect={suspect} className="sus-card__face" />
         <span className="stamp stamp--alert sus-card__id">{suspect.id}</span>
-        {viewed && <span className="stamp stamp--viewed sus-card__seen">PROFILED</span>}
+        {badge && <span className="stamp stamp--viewed sus-card__seen">{badge}</span>}
       </span>
       <span className="sus-card__info">
         <span className="t-h2 sus-card__name">{suspect.name}</span>

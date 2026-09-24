@@ -1,8 +1,14 @@
 import * as cases from '../models/case.model.js';
+import * as inv from '../models/investigation.model.js';
+import { inCase } from '../database/caseScope.js';
 import { HttpError } from '../middleware/errorHandler.js';
 import { hhmm } from '../utils/time.js';
+import { knownTimeline } from './investigation.service.js';
 
 const nameOf = (list) => Object.fromEntries(list.map((x) => [x.id, x.name]));
+
+/** Evidence the player has in the case file. Locked exhibits are treated as not existing yet. */
+export const unlockedEvidenceIds = () => new Set(inv.listUnlocked());
 
 function shapeEvidence(e, locations, suspects) {
   return {
@@ -19,10 +25,31 @@ function shapeEvidence(e, locations, suspects) {
   };
 }
 
+/** The desk of case folders: what each case is, and how far the detective has got. Never the answer. */
+export function listCases() {
+  const status = Object.fromEntries(inv.listCaseStatus().map((s) => [s.caseId, s]));
+  return cases.listCases().map((c) => inCase(c.id, () => {
+    const s = status[c.id];
+    const conclusion = s?.conclusion ? JSON.parse(s.conclusion) : null;
+    const started = Boolean(s?.minutesUsed) || inv.listViewed('page').length > 0;
+    const ending = conclusion?.ending ? cases.getEnding(conclusion.ending) : null;
+    return {
+      id: c.id, title: c.title, crime: c.crime, difficulty: c.difficulty, teaser: c.teaser, summary: c.summary, openedAt: c.openedAt, site: c.site,
+      deadlineNote: c.clock.deadlineNote,
+      suspectCount: cases.listSuspects().length, evidenceCount: cases.listEvidence().length, locationCount: cases.listLocations().length,
+      clockHours: c.clock.hours,
+      status: conclusion ? 'closed' : started ? 'in_progress' : 'new',
+      ending: ending && { id: conclusion.ending, title: ending.title, stamp: ending.stamp },
+    };
+  }));
+}
+
+// The file's pages are read one at a time through the field service (reading costs time), so the case omits them.
 export function getCase() {
-  const c = cases.getCase();
+  const { file, ...c } = cases.getCase();
   return {
     ...c,
+    filePages: file.length,
     suspectCount: cases.listSuspects().length,
     evidenceCount: cases.listEvidence().length,
     locationCount: cases.listLocations().length,
@@ -34,14 +61,16 @@ export function getCase() {
 export function listEvidence() {
   const locations = nameOf(cases.listLocations());
   const suspects = nameOf(cases.listSuspects());
-  return cases.listEvidence().map((e) => shapeEvidence(e, locations, suspects));
+  const unlocked = unlockedEvidenceIds();
+  return cases.listEvidence().filter((e) => unlocked.has(e.id)).map((e) => shapeEvidence(e, locations, suspects));
 }
 
 export function getEvidence(id) {
-  const e = cases.getEvidence(id);
+  const unlocked = unlockedEvidenceIds();
+  const e = unlocked.has(id) ? cases.getEvidence(id) : null;
   if (!e) throw new HttpError(404, 'Evidence not found');
   const shaped = shapeEvidence(e, nameOf(cases.listLocations()), nameOf(cases.listSuspects()));
-  return { ...shaped, details: e.details, source: e.source, relatedEvidenceIds: e.relatedEvidenceIds };
+  return { ...shaped, details: e.details, source: e.source, relatedEvidenceIds: e.relatedEvidenceIds.filter((r) => unlocked.has(r)) };
 }
 
 export const listSuspects = () => cases.listSuspects();
@@ -65,7 +94,8 @@ export function listStatements() {
 
 export function listTimeline() {
   const locations = nameOf(cases.listLocations());
-  return cases.listTimeline().map((t) => ({
+  const unlocked = unlockedEvidenceIds();
+  return knownTimeline().map((t) => ({
     id: t.id,
     timestamp: t.timestamp,
     time: hhmm(t.timestamp),
@@ -74,6 +104,6 @@ export function listTimeline() {
     locationId: t.locationId,
     location: locations[t.locationId] ?? null,
     personIds: t.personIds,
-    evidenceIds: t.evidenceIds,
+    evidenceIds: t.evidenceIds.filter((id) => unlocked.has(id)),
   }));
 }

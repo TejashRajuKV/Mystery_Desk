@@ -1,0 +1,12 @@
+.notices { position: fixed; top: 92px; right: 20px; z-index: 1200; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; width: min(360px, calc(100vw - 32px)); pointer-events: none; }
+.notice { pointer-events: auto; animation: notice-in 0.35s ease both, notice-out 0.4s ease 3.8s both; }
+.notice__body {
+  width: 100%; display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 12px 16px;
+  background: var(--paper); color: var(--paper-ink); border: 0; border-left: 6px solid var(--paper-ink);
+  box-shadow: 6px 6px 0 var(--bg-base);
+}
+.notice__kind { letter-spacing: 3px; }
+.notice__detail { color: var(--paper-ink); }
+@keyframes notice-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes notice-out { to { opacity: 0; transform: translateX(24px); } }
+@media (max-width: 640px) { .notices { top: auto; bottom: 16px; right: 16px; } }

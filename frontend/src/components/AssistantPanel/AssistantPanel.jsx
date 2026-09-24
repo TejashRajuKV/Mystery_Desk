@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Stamp, Button } from '../ui/ui.jsx';
 import InvestigationNode from '../InvestigationNode/InvestigationNode.jsx';
+import { useCase } from '../../hooks/useCase.jsx';
 import './AssistantPanel.css';
 
 /** One chat turn. Assistant turns turn the structured API response into interactive UI. */
 export default function AssistantMessage({ message, lookups, onLogContradiction, logged }) {
+  const { base } = useCase();
   if (message.role === 'user') {
     return (
       <div className="msg msg--user">
@@ -23,7 +25,7 @@ export default function AssistantMessage({ message, lookups, onLogContradiction,
   return (
     <div className={message.error ? 'msg msg--assistant msg--error' : 'msg msg--assistant'}>
       <div className="msg__head t-label">
-        <span>{message.error ? 'ANALYST OFFLINE' : 'ANALYST'}</span>
+        <span>{message.error ? 'ANALYST OFFLINE' : message.author ?? 'ANALYST'}</span>
         {r?.confidence && <span className="muted">CONFIDENCE: {String(r.confidence).toUpperCase()}</span>}
       </div>
       <p className="t-body msg__text">{message.text}</p>
@@ -35,7 +37,7 @@ export default function AssistantMessage({ message, lookups, onLogContradiction,
           <span className="t-label muted">RELATED EVIDENCE</span>
           <div className="msg__nodes">
             {evidence.map((id) => (
-              <Link key={id} to={`/evidence?select=${id}`} className="msg__node-link">
+              <Link key={id} to={`${base}/evidence?select=${id}`} className="msg__node-link">
                 <InvestigationNode kind="evidence" id={id} title={evidenceById[id].title} as="span" />
                 <span className="t-label msg__view">VIEW EVIDENCE →</span>
               </Link>
@@ -47,10 +49,10 @@ export default function AssistantMessage({ message, lookups, onLogContradiction,
       {(suspects.length > 0 || events.length > 0) && (
         <div className="msg__chips">
           {suspects.map((id) => (
-            <Link key={id} to={`/suspects?select=${id}`} className="stamp">{id} · {suspectById[id].name}</Link>
+            <Link key={id} to={`${base}/people?select=${id}`} className="stamp">{id} · {suspectById[id].name}</Link>
           ))}
           {events.map((id) => (
-            <Link key={id} to={`/timeline?select=${id}`} className="stamp">{id} · {eventById[id].time}</Link>
+            <Link key={id} to={`${base}/timeline?select=${id}`} className="stamp">{id} · {eventById[id].time}</Link>
           ))}
         </div>
       )}

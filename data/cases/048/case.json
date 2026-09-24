@@ -1,0 +1,58 @@
+{
+  "id": "048",
+  "title": "Last Curtain at the Orpheum",
+  "crime": "Murder",
+  "difficulty": "Hard",
+  "teaser": "Opening night. The leading man is found dead in his dressing room before the curtain call. Everyone was on stage, in the wings, or in the audience.",
+  "status": "active",
+  "classification": "HOMICIDE",
+  "company": "The Orpheum Theatre",
+  "site": "Canal Street, Ridgeway",
+  "openedAt": "1984-05-19T09:00:00",
+  "incidentWindow": { "from": "1984-05-18T19:30:00", "to": "1984-05-18T22:30:00" },
+  "leadInvestigator": "You",
+  "accusationQuestion": "Who killed Julian Crane?",
+  "summary": "On the opening night of The Glass Widow, the Orpheum's leading man, Julian Crane, walked off stage at 21:40 and never came back for his curtain call. The stage manager found him dead in his dressing room at 22:18. The house was full. Five people had a reason.",
+  "briefing": [
+    "Julian Crane was the Orpheum's biggest draw: forty-six, handsome on a poster, cruel off it. On Friday 18 May he opened in The Glass Widow to a full house.",
+    "His character dies halfway through the second act. Crane left the stage at 21:40 and went to his dressing room to wait for the curtain call. When he missed it, the stage manager went to fetch him and found him on the floor, struck once on the head.",
+    "The theatre was locked down at 22:30. Nobody left before the police arrived. The Chief wants a name before the Sunday papers go to press."
+  ],
+  "objectives": [
+    "Read the file.",
+    "Go to the theatre and question the company.",
+    "Search the rooms backstage and front of house.",
+    "Break the statements that don't hold.",
+    "Name the killer, and prove it."
+  ],
+  "clock": { "start": "1984-05-19T09:00:00", "hours": 14, "deadlineNote": "The Sunday papers go to press at eleven tonight." },
+  "city": {"district": "Canal Street & the West End", "streets": {"v": ["Chapel Street", "Garrick Lane", null, null, "Tobacco Street", "Quay Road"], "h": ["Lyceum Row", null, "Canal Street", "Wharf Lane"]}, "major": ["Canal Street"], "water": {"name": "Ridgeway Canal", "edge": "south"}, "parks": [{"name": "St Anne’s Gardens", "cells": [5, 3, 6, 3]}], "sites": [{"name": "The Orpheum", "cells": [2, 1, 4, 2], "building": [2.12, 1.1, 4.88, 2.88]}]},
+  "file": [
+    { "id": "F1", "title": "Incident report",
+      "body": [
+        "Victim: Julian Crane, 46, actor. Found at 22:18 on the floor of Dressing Room 1 by the stage manager, Harriet Pell, who raised the alarm.",
+        "The house was locked down at 22:30 on the manager's instruction. The company, the front-of-house staff and the audience in the boxes were held and their names taken.",
+        "A brass candlestick is missing from the props table."
+      ],
+      "attachments": [] },
+    { "id": "F2", "title": "Medical examiner's note",
+      "body": [
+        "A single heavy blow to the left temple from a rounded, weighted object. Death was quick.",
+        "Time of death between 21:40, when he was last seen on stage, and 22:10 at the latest, from body temperature."
+      ],
+      "attachments": ["E002"] },
+    { "id": "F3", "title": "Persons of interest",
+      "body": [
+        "Cordelia Vane, leading lady, the victim's former wife. With the cast in the Green Room.",
+        "Felix Marsh, understudy. With the cast in the Green Room.",
+        "Harriet Pell, stage manager. Called the show from the prompt corner. On the Stage.",
+        "Leonard Voight, the victim's agent and manager for eighteen years. Watched from Box B. Held Front of House.",
+        "Mae Donnelly, dresser. Works out of Wardrobe."
+      ] },
+    { "id": "F4", "title": "Front-of-house notes",
+      "body": [
+        "The Orpheum keeps a pass door between the auditorium and backstage. Its key hangs on the front-of-house key board and must be signed out.",
+        "The usher on the boxes keeps a latecomers' book and notes every time a box door opens during a performance. Ask the house manager for it."
+      ] }
+  ]
+}

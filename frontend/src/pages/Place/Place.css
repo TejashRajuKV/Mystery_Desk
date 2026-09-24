@@ -1,0 +1,26 @@
+.place { padding: 30px var(--gutter) 30px; display: flex; flex-direction: column; gap: 24px; max-width: 1300px; margin: 0 auto; }
+.place--away { align-items: flex-start; padding-top: 12vh; }
+.place__kicker { font-size: 44px; color: var(--white); }
+.place__where { color: var(--brass); letter-spacing: 3px; }
+.place__title { font-size: clamp(44px, 7vw, 86px); color: var(--white); line-height: 1.1; margin-bottom: 8px; }
+.place__arrival { font-style: italic; color: var(--text-secondary); max-width: 70ch; font-size: 18px; line-height: 30px; }
+.place__layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 32px; align-items: start; }
+.place__people, .place__search { display: flex; flex-direction: column; gap: 14px; }
+.place__faces { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 18px; }
+.face {
+  width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 0 0 12px; text-align: left; background: none; border: 0; color: var(--text-primary);
+  transition: transform 0.2s var(--ease-out);
+}
+.face:hover, .face:focus-visible { transform: translateY(-6px); outline: none; }
+.face:hover .face__portrait, .face:focus-visible .face__portrait { border-color: var(--brass); }
+.face__portrait { width: 100%; transition: border-color 0.2s; }
+.face__name { color: var(--white); }
+.face__talk { color: var(--red-bright); }
+.place__empty { padding: 30px; border: 1.5px dashed var(--line-strong); }
+.note-found { padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; box-shadow: 10px 10px 0 var(--bg-base); transform: rotate(-0.8deg); animation: note-drop 0.5s var(--ease-out) both; }
+.note-found__clips { display: flex; flex-wrap: wrap; gap: 8px; }
+.note-found__clips .stamp { text-decoration: none; white-space: normal; }
+.place__error { border-left: 3px solid var(--red); padding-left: 10px; }
+.place__row { display: flex; flex-wrap: wrap; gap: 12px; }
+@keyframes note-drop { from { opacity: 0; transform: translateY(-16px) rotate(3deg); } to { opacity: 1; transform: rotate(-0.8deg); } }
+@media (max-width: 960px) { .place__layout { grid-template-columns: 1fr; } }

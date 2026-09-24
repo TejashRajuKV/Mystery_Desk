@@ -98,6 +98,16 @@ $json1c = @'
 '@
 Test-Hook -TestName "ALLOW editing evidence.json" -HookScript "block-solution-edit.ps1" -InputJson $json1c -ExpectResult "allow" -Description "Non-solution files should pass through"
 
+$json1d = @'
+{"tool_name":"Write","tool_input":{"file_path":"c:/project/data/cases/047/solution.json","content":"{}"}}
+'@
+Test-Hook -TestName "DENY writing Case 047's moved solution.json" -HookScript "block-solution-edit.ps1" -InputJson $json1d -ExpectResult "deny" -Description "Case 047's answer key stays locked in its case folder"
+
+$json1e = @'
+{"tool_name":"Write","tool_input":{"file_path":"c:\\project\\data\\cases\\048\\solution.json","content":"{}"}}
+'@
+Test-Hook -TestName "ALLOW authoring a new case's solution.json" -HookScript "block-solution-edit.ps1" -InputJson $json1e -ExpectResult "allow" -Description "Owner-approved: new cases may be authored"
+
 
 # ============================================================================
 # HOOK 2: block-unauthorized-deps.ps1 (PreToolUse on Bash)

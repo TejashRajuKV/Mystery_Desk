@@ -1,0 +1,195 @@
+[
+  {
+    "id": "S01",
+    "name": "Cordelia Vane",
+    "alias": "The Leading Lady",
+    "age": 41,
+    "role": "Leading Actress",
+    "department": "Company",
+    "background": "Twenty years on the Ridgeway stage. Married Julian Crane in 1974, divorced him in 1980, and has shared a stage with him every season since.",
+    "motive": "Crane was leaving for a Hollywood contract after this run and had told the papers the show was 'a vehicle for one'.",
+    "opportunity": "Had the run of backstage during the interval, and a key to the dressing-room corridor.",
+    "personality": "Grand, cutting, theatrical even when she's being honest.",
+    "accessLevel": "Company pass (backstage, Green Room)",
+    "locationIds": [
+      "L01",
+      "L04"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S02",
+        "note": "Thinks the understudy is 'a very promising boy'."
+      },
+      {
+        "suspectId": "S04",
+        "note": "Has never liked Crane's agent."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "wavy",
+      "hairColor": "auburn",
+      "face": "oval",
+      "outfit": "dress",
+      "outfitColor": "oxblood",
+      "extras": [
+        "pearls"
+      ]
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 1.05,
+      "rate": 0.9
+    }
+  },
+  {
+    "id": "S02",
+    "name": "Felix Marsh",
+    "alias": "The Understudy",
+    "age": 28,
+    "role": "Understudy",
+    "department": "Company",
+    "background": "Three seasons as Crane's understudy. Has gone on for him twice, to better notices than Crane ever got.",
+    "motive": "With Crane gone, the lead — and the tour — are his.",
+    "opportunity": "Offstage for the whole second act, with nothing to do but wait.",
+    "personality": "Eager, jumpy, talks too fast when he's worried.",
+    "accessLevel": "Company pass (backstage, Green Room, stage door)",
+    "locationIds": [
+      "L04",
+      "L02"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S01",
+        "note": "Idolises Cordelia."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "curly",
+      "hairColor": "blond",
+      "face": "long",
+      "outfit": "sweater",
+      "outfitColor": "cream",
+      "extras": []
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 1.1,
+      "rate": 1.1
+    }
+  },
+  {
+    "id": "S03",
+    "name": "Harriet Pell",
+    "alias": "The Stage Manager",
+    "age": 52,
+    "role": "Stage Manager",
+    "department": "Production",
+    "background": "Has called every show at the Orpheum for fifteen years from the prompt corner. Found the body.",
+    "motive": "Crane had her assistant sacked last month after a missed cue, and told her she would be next.",
+    "opportunity": "Knows every door backstage and holds a master key.",
+    "personality": "Brisk, exact, and allergic to fuss.",
+    "accessLevel": "Master key (all backstage doors)",
+    "locationIds": [
+      "L01"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S05",
+        "note": "Runs the crew Mae works with."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "bob",
+      "hairColor": "grey",
+      "face": "square",
+      "outfit": "cardigan",
+      "outfitColor": "olive",
+      "extras": [
+        "glasses"
+      ]
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 0.95,
+      "rate": 1.05
+    }
+  },
+  {
+    "id": "S04",
+    "name": "Leonard Voight",
+    "alias": "The Agent",
+    "age": 55,
+    "role": "Talent Agent",
+    "department": "Voight Management",
+    "background": "Found Crane in a touring rep company in 1966 and has managed him ever since. Sat in Box B for every opening night.",
+    "motive": "None that anyone has heard of. He says Crane was 'like a son'.",
+    "opportunity": "Was in the audience, in Box B, all night. Or so he says.",
+    "personality": "Warm, unhurried, generous with cigars and condolences.",
+    "accessLevel": "Guest of the management (front of house)",
+    "locationIds": [
+      "L05"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S01",
+        "note": "Calls Cordelia 'darling' and means none of it."
+      }
+    ],
+    "look": {
+      "skin": "tan",
+      "hair": "receding",
+      "hairColor": "grey",
+      "face": "round",
+      "outfit": "suit",
+      "outfitColor": "brown",
+      "extras": [
+        "moustache",
+        "cigar"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.75,
+      "rate": 0.85
+    }
+  },
+  {
+    "id": "S05",
+    "name": "Mae Donnelly",
+    "alias": "The Dresser",
+    "age": 34,
+    "role": "Dresser",
+    "department": "Wardrobe",
+    "background": "Dresses the principals. Has worked Crane's quick changes for two seasons and knows his habits better than anyone.",
+    "motive": "Crane had accused her of stealing from his coat and threatened to have her dismissed.",
+    "opportunity": "Free during the second act, once Crane's last change was done.",
+    "personality": "Quiet, frightened, desperate not to lose her job.",
+    "accessLevel": "Company pass (Wardrobe, dressing rooms)",
+    "locationIds": [
+      "L06"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S03",
+        "note": "Works under Harriet."
+      }
+    ],
+    "look": {
+      "skin": "porcelain",
+      "hair": "bun",
+      "hairColor": "auburn",
+      "face": "oval",
+      "outfit": "cardigan",
+      "outfitColor": "navy",
+      "extras": []
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 1.1,
+      "rate": 0.95
+    }
+  }
+]

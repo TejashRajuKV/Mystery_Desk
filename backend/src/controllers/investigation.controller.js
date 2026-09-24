@@ -1,10 +1,12 @@
 import * as service from '../services/investigation.service.js';
+import * as ending from '../services/ending.service.js';
 
 export const getInvestigation = (_req, res) => res.json(service.getInvestigation());
 export const recordViewed = (req, res) => res.json(service.recordViewed(req.body));
+export const resetInvestigation = (_req, res) => res.json(service.resetInvestigation());
 export const saveTheory = (req, res) => res.json(service.saveTheory(req.body));
 export const flagContradiction = (req, res) => res.json(service.flagContradiction(req.body));
-export const submitConclusion = (req, res) => res.json(service.submitConclusion(req.body));
+export const submitConclusion = (req, res) => res.json(ending.submitConclusion(req.body));
 
 export const listConnections = (_req, res) => res.json(service.listConnections());
 export const createConnection = (req, res) => res.status(201).json(service.createConnection(req.body));

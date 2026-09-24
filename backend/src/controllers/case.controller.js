@@ -1,5 +1,6 @@
 import * as service from '../services/case.service.js';
 
+export const listCases = (_req, res) => res.json(service.listCases());
 export const getCase = (_req, res) => res.json(service.getCase());
 export const listEvidence = (_req, res) => res.json(service.listEvidence());
 export const getEvidence = (req, res) => res.json(service.getEvidence(req.params.evidenceId));

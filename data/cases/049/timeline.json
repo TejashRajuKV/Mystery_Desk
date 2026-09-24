@@ -1,0 +1,14 @@
+[
+  { "id": "T01", "timestamp": "1984-04-19T15:02:00", "title": "The quarterly audit", "description": "Head Office Audit opens and reseals both combination envelopes.", "locationId": "L02", "personIds": ["S04"], "evidenceIds": ["E016"] },
+  { "id": "T02", "timestamp": "1984-04-19T16:50:00", "title": "A weekend service call is booked", "description": "Someone telephones Fortress Alarms asking for a full sensor test over the holiday.", "locationId": "L05", "personIds": ["S04"], "evidenceIds": ["E011"] },
+  { "id": "T03", "timestamp": "1984-04-19T17:30:00", "title": "The branch closes for Easter", "description": "The manager locks up for the long weekend.", "locationId": "L01", "personIds": ["S01"], "evidenceIds": [] },
+  { "id": "T04", "timestamp": "1984-04-21T16:00:00", "title": "The alarm engineer's test", "description": "The alarm goes into test mode while the engineer checks every sensor, vault included.", "locationId": "L03", "personIds": ["S02"], "evidenceIds": ["E003", "E010"] },
+  { "id": "T05", "timestamp": "1984-04-21T20:30:00", "title": "A car leaves Millbrook", "description": "Someone goes out for the evening.", "locationId": null, "personIds": ["S04"], "evidenceIds": ["E012"] },
+  { "id": "T06", "timestamp": "1984-04-21T21:40:00", "title": "Southbound through the Millbrook toll", "description": "A Rover passes the toll plaza, heading for Ridgeway.", "locationId": null, "personIds": ["S04"], "evidenceIds": ["E013"] },
+  { "id": "T07", "timestamp": "1984-04-21T23:08:00", "title": "The vault sensor is bypassed", "description": "An override code is entered at the rear keypad.", "locationId": "L03", "personIds": ["S04"], "evidenceIds": ["E003"] },
+  { "id": "T08", "timestamp": "1984-04-21T23:30:00", "title": "A ticket on Harbour Street", "description": "The locksmith's van is ticketed outside his shop.", "locationId": "L04", "personIds": ["S03"], "evidenceIds": ["E008", "E009"] },
+  { "id": "T09", "timestamp": "1984-04-21T23:40:00", "title": "The time lock opens", "description": "The time lock is overridden by the service procedure.", "locationId": "L03", "personIds": [], "evidenceIds": ["E004"] },
+  { "id": "T10", "timestamp": "1984-04-22T07:00:00", "title": "The cleaner comes in", "description": "An extra clean on Easter Sunday morning. The vault corridor is already wet.", "locationId": "L01", "personIds": ["S05"], "evidenceIds": ["E005", "E014"] },
+  { "id": "T11", "timestamp": "1984-04-22T10:02:00", "title": "The manager comes in", "description": "Six minutes, escorted by the guard.", "locationId": "L01", "personIds": ["S01"], "evidenceIds": ["E005", "E007"] },
+  { "id": "T12", "timestamp": "1984-04-24T09:05:00", "title": "The empty vault is found", "description": "The branch reopens. The manager opens the vault.", "locationId": "L03", "personIds": ["S01"], "evidenceIds": ["E001", "E002"] }
+]

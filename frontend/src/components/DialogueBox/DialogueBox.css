@@ -1,0 +1,9 @@
+.dialogue { display: flex; flex-direction: column; gap: 12px; }
+.dialogue__who { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.dialogue__name { color: var(--white); }
+.dialogue__mood { color: var(--text-secondary); }
+.dialogue__narration { font-style: italic; color: var(--text-muted); max-width: 62ch; }
+.dialogue__line { margin: 0; padding: 6px 0 6px 18px; border-left: 3px solid var(--white); color: var(--text-primary); font-size: 19px; line-height: 31px; max-width: 62ch; cursor: default; min-height: 62px; }
+.dialogue__caret { animation: blink 0.8s steps(2) infinite; margin-left: 1px; }
+.dialogue__voice { align-self: flex-start; }
+@media (max-width: 640px) { .dialogue__line { font-size: 16px; line-height: 26px; } }

@@ -1,0 +1,5 @@
+{
+  "culprit": "S04",
+  "requiredEvidence": ["E003", "E011", "E013"],
+  "requiredConnections": [["E003", "S04"]]
+}

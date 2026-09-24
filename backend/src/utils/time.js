@@ -7,3 +7,10 @@ export function toTimestamp(date, clock) {
   if (!m || +m[1] > 23 || +m[2] > 59) return null;
   return `${date}T${m[1].padStart(2, '0')}:${m[2]}:00`;
 }
+
+/** A local ISO timestamp moved on by `minutes` (no time zones: the case's clock is wall time). */
+export function addMinutes(ts, minutes) {
+  const d = new Date(`${ts}Z`);
+  d.setUTCMinutes(d.getUTCMinutes() + minutes);
+  return d.toISOString().slice(0, 19);
+}

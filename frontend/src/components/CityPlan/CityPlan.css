@@ -1,0 +1,24 @@
+.plan { display: block; width: 100%; height: 100%; }
+.plan__ground { fill: var(--map-ground); }
+.plan__block { fill: var(--map-block); stroke: var(--map-road-edge); stroke-width: 0.8; }
+.plan__shadow { fill: var(--map-block-shadow); opacity: 0.55; }
+.plan__casing { stroke: var(--map-road-edge); fill: none; stroke-linecap: square; }
+.plan__road { stroke: var(--map-road); fill: none; stroke-linecap: square; }
+.plan__park { fill: var(--map-park); stroke: var(--map-tree); stroke-width: 1; }
+.plan__tree { fill: var(--map-tree); opacity: 0.55; }
+.plan__site { fill: var(--map-ground); stroke: var(--map-ink); stroke-width: 1.6; stroke-dasharray: 7 4; }
+.plan__building { fill: var(--map-block); stroke: var(--map-ink); stroke-width: 1.6; }
+.plan__water { fill: var(--map-water); stroke: var(--map-water-line); stroke-width: 1.5; }
+.plan__ripple { fill: none; stroke: var(--map-water-line); stroke-width: 1.2; stroke-linecap: round; }
+
+.plan__street, .plan__park-name, .plan__site-name, .plan__water-name { fill: var(--map-ink); pointer-events: none; }
+.plan__street { font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
+.plan__street--major { font-size: 14px; letter-spacing: 2px; }
+.plan__park-name { font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: 17px; paint-order: stroke; stroke: var(--map-park); stroke-width: 4px; }
+.plan__site-name { font-family: var(--font-heading); font-size: 20px; letter-spacing: 3px; text-transform: uppercase; paint-order: stroke; stroke: var(--map-ground); stroke-width: 4px; }
+.plan__water-name { font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: 22px; letter-spacing: 6px; opacity: 0.75; }
+
+.plan__compass circle { fill: var(--map-ground); stroke: var(--map-ink); stroke-width: 1.2; }
+.plan__compass path { fill: var(--map-ground); stroke: var(--map-ink); stroke-width: 1.2; }
+.plan__compass .plan__compass-n { fill: var(--map-ink); }
+.plan__compass text { font-family: var(--font-heading); font-size: 14px; fill: var(--map-ink); }

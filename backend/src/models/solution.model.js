@@ -1,8 +1,8 @@
 import { db } from '../database/db.js';
-import { CASE_ID } from '../config/index.js';
+import { currentCase } from '../database/caseScope.js';
 
-// Only InvestigationService.validateConclusion may import this.
+// Only ending.service may import this.
 export function getSolution() {
-  const row = db.prepare('SELECT data FROM solution WHERE case_id = ?').get(CASE_ID);
+  const row = db.prepare('SELECT data FROM solution WHERE case_id = ?').get(currentCase());
   return row ? JSON.parse(row.data) : null;
 }

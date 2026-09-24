@@ -1,0 +1,254 @@
+{
+  "defaultUnlockedEvidence": [],
+  "interviews": {
+    "S01": {
+      "startNode": "ca-start", "presentFallback": "ca-unmoved",
+      "nodes": {
+        "ca-start": {
+          "speaker": "S01", "mood": "defensive", "presentable": true,
+          "narration": "Lady Constance does not offer you a seat. You take one anyway.",
+          "text": "Thirty-three years I kept this house for him, and he left it to Gerald. You may ask your questions. I may not answer them.",
+          "choices": [
+            { "id": "ca-start-will", "label": "Ask about the will", "next": "ca-will" },
+            { "id": "ca-start-gerald", "label": "Ask about Gerald", "next": "ca-gerald" },
+            { "id": "ca-start-fairlie", "label": "Ask about Mr Fairlie", "next": "ca-fairlie" },
+            { "id": "ca-start-nurse", "label": "Ask about the Colonel's nurse", "next": "ca-nurse" },
+            { "id": "ca-start-e004", "present": "E004", "next": "ca-e004",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST01-A", "evidenceId": "E004" },
+                { "type": "unlock_evidence", "evidenceId": "E009" }
+              ] },
+            { "id": "ca-start-e012", "present": "E012", "next": "ca-will" },
+            { "id": "ca-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "ca-will": { "speaker": "S01", "mood": "angry", "narration": "Her knuckles whiten on the arm of the chair.",
+          "text": "An annuity. For his wife. And everything else to a brother he hadn't spoken to in ten years. Gerald was going to put me in the dower cottage by Christmas. I'm not sorry he's dead. I didn't kill him.",
+          "choices": [{ "id": "ca-will-back", "label": "Go back to your questions", "next": "ca-start" }] },
+        "ca-gerald": { "speaker": "S01", "mood": "neutral",
+          "text": "Insufferable, loud, and suddenly rich. He spent the first half of the reading telling Ambrose he'd have the trust accounts gone through by Monday. Poor Ambrose looked quite ill.",
+          "choices": [{ "id": "ca-gerald-back", "label": "Go back to your questions", "next": "ca-start" }] },
+        "ca-fairlie": { "speaker": "S01", "mood": "neutral",
+          "text": "Ambrose has been our solicitor for thirty years. The only honest man in this house. He sat and read that dreadful document without a tremor.",
+          "choices": [{ "id": "ca-fairlie-back", "label": "Go back to your questions", "next": "ca-start" }] },
+        "ca-nurse": { "speaker": "S01", "mood": "suspicious",
+          "text": "Agnes kept all of Edmund's pills. Heart pills. She's a good girl, but she'd been promised money and she didn't get any. I only tell you what's true.",
+          "choices": [{ "id": "ca-nurse-back", "label": "Go back to your questions", "next": "ca-start" }] },
+        "ca-e004": { "speaker": "S01", "mood": "defeated", "narration": "For a moment she looks her age.",
+          "text": "My saccharin. I'm diabetic, and I will not have the staff handling my medicine. I fetch it myself at ten to four every day. I didn't say because it's nobody's business but mine.",
+          "choices": [{ "id": "ca-e004-back", "label": "Go back to your questions", "next": "ca-start" }] },
+        "ca-unmoved": { "speaker": "S01", "mood": "neutral",
+          "text": "I have no idea what that is, and I don't intend to find out.",
+          "choices": [{ "id": "ca-unmoved-back", "label": "Go back to your questions", "next": "ca-start" }] }
+      }
+    },
+
+    "S02": {
+      "startNode": "am-start", "presentFallback": "am-unmoved",
+      "nodes": {
+        "am-start": {
+          "speaker": "S02", "mood": "nervous", "presentable": true,
+          "narration": "Agnes Mora keeps her hands in her apron pockets.",
+          "text": "Everyone keeps asking about the Colonel's pills. I know what it looks like. I nursed him for a year. I'd never hurt anybody.",
+          "choices": [
+            { "id": "am-start-colonel", "label": "Ask about the Colonel's last months", "next": "am-colonel" },
+            { "id": "am-start-pills", "label": "Ask what happened to his medicines", "next": "am-pills" },
+            { "id": "am-start-tea", "label": "Ask where she was during the reading", "next": "am-tea" },
+            { "id": "am-start-e008", "present": "E008", "next": "am-e008",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST02-A", "evidenceId": "E008" },
+                { "type": "set_flag", "key": "lead.car", "value": true }
+              ] },
+            { "id": "am-start-e002", "present": "E002", "next": "am-e002" },
+            { "id": "am-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "am-colonel": { "speaker": "S02", "mood": "neutral",
+          "text": "His heart was failing. Digoxin every morning, a quarter of a milligram. He used to say it tasted of nothing, and so it does. He promised me something in the will. He forgot, I suppose.",
+          "choices": [{ "id": "am-colonel-back", "label": "Go back to your questions", "next": "am-start" }] },
+        "am-pills": { "speaker": "S02", "mood": "defensive",
+          "text": "I destroyed them. After he died. That's the rule. I haven't had any digoxin since June.",
+          "choices": [{ "id": "am-pills-back", "label": "Go back to your questions", "next": "am-start" }] },
+        "am-tea": { "speaker": "S02", "mood": "neutral",
+          "text": "Up here, with the laundry. Nurses don't sit with the family, and nobody invited me to hear a will I wasn't in.",
+          "choices": [{ "id": "am-tea-back", "label": "Go back to your questions", "next": "am-start" }] },
+        "am-e008": { "speaker": "S02", "mood": "surprised", "narration": "She reads her own signature and then the one underneath it.",
+          "text": "I didn't destroy them. I kept them too long, and then Mr Fairlie said they were estate property and must go on the probate inventory. I handed him every tablet, all sixty, on the tenth. He put the box in his car with the other inventory things. I lied because I'd broken the rules. I'm sorry.",
+          "choices": [{ "id": "am-e008-back", "label": "Go back to your questions", "next": "am-start" }] },
+        "am-e002": { "speaker": "S02", "mood": "nervous",
+          "text": "Tablets. Not foxglove. So it was his. The Colonel's. Oh, God.",
+          "choices": [{ "id": "am-e002-back", "label": "Go back to your questions", "next": "am-start" }] },
+        "am-unmoved": { "speaker": "S02", "mood": "nervous",
+          "text": "I don't know anything about that. I only looked after the Colonel.",
+          "choices": [{ "id": "am-unmoved-back", "label": "Go back to your questions", "next": "am-start" }] }
+      }
+    },
+
+    "S03": {
+      "startNode": "sb-start", "presentFallback": "sb-unmoved",
+      "nodes": {
+        "sb-start": {
+          "speaker": "S03", "mood": "suspicious", "presentable": true,
+          "narration": "Silas Brook snips a rose and drops it in the trug before he looks at you.",
+          "text": "You'll have seen the foxgloves. Everybody's seen the foxgloves. Go on, then.",
+          "variants": [
+            { "requires": { "flags": { "hostile.S03": { "eq": true } } }, "mood": "angry",
+              "text": "I've nothing more to say to you. Forty years I've kept this garden. Get off my border." }
+          ],
+          "choices": [
+            { "id": "sb-start-afternoon", "label": "Ask about his afternoon", "next": "sb-afternoon" },
+            { "id": "sb-start-foxgloves", "label": "Ask about the foxgloves", "next": "sb-foxgloves" },
+            { "id": "sb-start-gerald", "label": "Ask about Gerald", "next": "sb-gerald" },
+            { "id": "sb-start-accuse", "label": "Accuse him of poisoning Gerald with foxglove", "next": "sb-accused",
+              "requires": { "flags": { "hostile.S03": { "ne": true } } },
+              "consequences": [{ "type": "set_flag", "key": "hostile.S03", "value": true }] },
+            { "id": "sb-start-e005", "present": "E005", "next": "sb-e005",
+              "requires": { "flags": { "hostile.S03": { "ne": true } } },
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST03-A", "evidenceId": "E005" },
+                { "type": "unlock_evidence", "evidenceId": "E006" },
+                { "type": "set_flag", "key": "lead.car", "value": true }
+              ] },
+            { "id": "sb-start-e010", "present": "E010", "next": "sb-foxgloves" },
+            { "id": "sb-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "sb-afternoon": { "speaker": "S03", "mood": "defensive",
+          "text": "Walled garden, three till five. Tying in the sweet peas. I never came near the house.",
+          "choices": [{ "id": "sb-afternoon-back", "label": "Go back to your questions", "next": "sb-start" }] },
+        "sb-foxgloves": { "speaker": "S03", "mood": "angry",
+          "text": "I cut them for the house every July. Her ladyship likes them. If I wanted to poison a man I wouldn't put the evidence in a vase on his tea table.",
+          "choices": [{ "id": "sb-foxgloves-back", "label": "Go back to your questions", "next": "sb-start" }] },
+        "sb-gerald": { "speaker": "S03", "mood": "neutral",
+          "text": "Told me I'd be pensioned off before the autumn. Forty years. I'd have gone quiet, mind. I'm too old to hang for a pension.",
+          "choices": [{ "id": "sb-gerald-back", "label": "Go back to your questions", "next": "sb-start" }] },
+        "sb-accused": { "speaker": "S03", "mood": "angry", "narration": "He puts the secateurs down very carefully.",
+          "text": "Forty years. Forty years, and a man in a raincoat calls me a poisoner in my own garden. You'll get nothing more out of me.",
+          "choices": [{ "id": "sb-accused-leave", "label": "Leave interview", "next": null }] },
+        "sb-e005": { "speaker": "S03", "mood": "nervous", "narration": "He takes his cap off.",
+          "text": "All right, I went round to the drive. The wine van couldn't get past Mr Fairlie's car. And there he was, ten past four, come out of the house like a man in a hurry, head in the glovebox of that Humber. Jumped like a cat when he saw me. Said he'd come for his spectacles. He was wearing them.",
+          "choices": [{ "id": "sb-e005-back", "label": "Go back to your questions", "next": "sb-start" }] },
+        "sb-unmoved": { "speaker": "S03", "mood": "suspicious",
+          "text": "That's house business. I'm garden.",
+          "choices": [{ "id": "sb-unmoved-back", "label": "Go back to your questions", "next": "sb-start" }] }
+      }
+    },
+
+    "S04": {
+      "startNode": "af-start", "presentFallback": "af-unmoved",
+      "nodes": {
+        "af-start": {
+          "speaker": "S04", "mood": "neutral", "presentable": true,
+          "narration": "Ambrose Fairlie folds his reading glasses and sets them square on his papers.",
+          "text": "Detective. A wretched business. I've known this family for thirty years, and I read that will to them myself. Whatever you need.",
+          "variants": [
+            { "requires": { "flags": { "briefcase.S04": { "eq": true } } }, "mood": "defensive",
+              "narration": "His clerk has been and gone. So has his briefcase.",
+              "text": "My papers are privileged, Detective. My clerk has taken them back to the office. I'm sure you understand." }
+          ],
+          "choices": [
+            { "id": "af-start-reading", "label": "Ask about the reading", "next": "af-reading" },
+            { "id": "af-start-tea", "label": "Ask who poured Gerald's tea", "next": "af-tea", "requires": { "flags": { "file.F4": { "eq": true } } } },
+            { "id": "af-start-trust", "label": "Ask about the family trust", "next": "af-trust" },
+            { "id": "af-start-widow", "label": "Ask about Lady Constance", "next": "af-widow" },
+            { "id": "af-start-nurse", "label": "Ask about the nurse", "next": "af-nurse" },
+            { "id": "af-start-briefcase", "label": "Demand to see inside his briefcase", "next": "af-briefcase",
+              "requires": { "flags": { "briefcase.S04": { "ne": true } } },
+              "consequences": [{ "type": "set_flag", "key": "briefcase.S04", "value": true }] },
+            { "id": "af-start-e004", "present": "E004", "next": "af-e004",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-A", "evidenceId": "E004" }] },
+            { "id": "af-start-e008", "present": "E008", "next": "af-e008",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-B", "evidenceId": "E008" }] },
+            { "id": "af-start-e007", "present": "E007", "next": "af-e007",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-B", "evidenceId": "E007" }] },
+            { "id": "af-start-e011", "present": "E011", "next": "af-e011",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-C", "evidenceId": "E011" }] },
+            { "id": "af-start-e006", "present": "E006", "next": "af-e006",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-D", "evidenceId": "E006" }] },
+            { "id": "af-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "af-reading": { "speaker": "S04", "mood": "neutral",
+          "text": "I began at four and read until Gerald fell. I never left the room, and I never touched the tea things; Mrs Hobbs saw to all that. I was rather occupied with the codicils.",
+          "choices": [{ "id": "af-reading-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-tea": { "speaker": "S04", "mood": "defensive",
+          "text": "Mrs Hobbs, I imagine. Or Gerald helped himself; he generally did. I was reading, Detective. I didn't see.",
+          "choices": [{ "id": "af-tea-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-trust": { "speaker": "S04", "mood": "neutral",
+          "text": "In perfect order. I've kept those accounts for twenty-two years. Gerald wanted to go through them, which was his right as executor. I'd have been glad to help him.",
+          "choices": [{ "id": "af-trust-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-widow": { "speaker": "S04", "mood": "suspicious", "narration": "He chooses his words with care.",
+          "text": "Dear Constance was disinherited at that table, in front of us all. She took it very hard. She left the room once before the reading. I say no more than that.",
+          "choices": [{ "id": "af-widow-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-nurse": { "speaker": "S04", "mood": "suspicious",
+          "text": "The nurse had charge of the Colonel's heart medicine. If I were you, I'd ask her very plainly what became of it.",
+          "choices": [{ "id": "af-nurse-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-briefcase": { "speaker": "S04", "mood": "angry", "narration": "He rings the bell for his clerk.",
+          "text": "Those papers are privileged, Detective. You'll need a warrant, and you won't get one by tonight. Mr Pardoe will take them back to the office.",
+          "choices": [{ "id": "af-briefcase-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-e004": { "speaker": "S04", "mood": "defensive",
+          "text": "Mrs Hobbs is mistaken. Or I may have handed Gerald his cup. It's a courtesy. People do it without thinking.",
+          "choices": [{ "id": "af-e004-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-e008": { "speaker": "S04", "mood": "surprised",
+          "text": "For the probate inventory. Purely a formality. They were to be destroyed. I'd quite forgotten.",
+          "choices": [{ "id": "af-e008-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-e007": { "speaker": "S04", "mood": "defeated", "narration": "He looks at the bottle, and then at nothing at all.",
+          "text": "Forty-two. You've counted them. Of course you've counted them.",
+          "choices": [{ "id": "af-e007-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-e011": { "speaker": "S04", "mood": "angry",
+          "text": "That is private correspondence between a trustee and his bank. A temporary shortfall. It would have been put right.",
+          "choices": [{ "id": "af-e011-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-e006": { "speaker": "S04", "mood": "nervous",
+          "text": "I stepped out for my spectacles. Two minutes. An old man forgets his spectacles, Detective.",
+          "choices": [{ "id": "af-e006-back", "label": "Go back to your questions", "next": "af-start" }] },
+        "af-unmoved": { "speaker": "S04", "mood": "neutral",
+          "text": "I'm afraid I can't help you with that one, Detective.",
+          "choices": [{ "id": "af-unmoved-back", "label": "Go back to your questions", "next": "af-start" }] }
+      }
+    },
+
+    "S05": {
+      "startNode": "ra-start", "presentFallback": "ra-unmoved",
+      "nodes": {
+        "ra-start": {
+          "speaker": "S05", "mood": "suspicious", "presentable": true,
+          "narration": "Rory Ashcombe pushes his pint an inch away from him.",
+          "text": "The black sheep turns up the day the heir drops dead. I'd suspect me too. I wasn't even in the house.",
+          "choices": [
+            { "id": "ra-start-why", "label": "Ask why he came", "next": "ra-why" },
+            { "id": "ra-start-when", "label": "Ask when he arrived", "next": "ra-when" },
+            { "id": "ra-start-fairlie", "label": "Ask about Mr Fairlie", "next": "ra-fairlie" },
+            { "id": "ra-start-e015", "present": "E015", "next": "ra-e015",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST05-A", "evidenceId": "E015" },
+                { "type": "unlock_evidence", "evidenceId": "E014" },
+                { "type": "set_flag", "key": "confessed.S05", "value": true }
+              ] },
+            { "id": "ra-start-saw", "label": "Ask what he saw from the library", "next": "ra-saw",
+              "requires": { "flags": { "confessed.S05": { "eq": true } } },
+              "consequences": [{ "type": "set_flag", "key": "lead.car", "value": true }] },
+            { "id": "ra-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "ra-why": { "speaker": "S05", "mood": "neutral",
+          "text": "To find out if Uncle Edmund had forgiven me before he died. He hadn't. Not a penny.",
+          "choices": [{ "id": "ra-why-back", "label": "Go back to your questions", "next": "ra-start" }] },
+        "ra-when": { "speaker": "S05", "mood": "defensive",
+          "text": "Half past four. By the time I walked up the drive the doctor's car was already outside.",
+          "choices": [{ "id": "ra-when-back", "label": "Go back to your questions", "next": "ra-start" }] },
+        "ra-fairlie": { "speaker": "S05", "mood": "angry",
+          "text": "Fairlie stopped my allowance five years ago. Said the trust couldn't afford me. Funny, that; the trust was worth half a million.",
+          "choices": [{ "id": "ra-fairlie-back", "label": "Go back to your questions", "next": "ra-start" }] },
+        "ra-e015": { "speaker": "S05", "mood": "defeated", "narration": "He laughs, badly.",
+          "text": "All right. Half-three bus. I went up to the Hall and hid in the library to listen at the door, to hear if I was in the will. The maid saw me. I never went in the drawing room. I ran when Gerald fell.",
+          "choices": [{ "id": "ra-e015-back", "label": "Go back to your questions", "next": "ra-start" }] },
+        "ra-saw": { "speaker": "S05", "mood": "nervous",
+          "text": "At ten past four old Fairlie came out of the drawing room white as a sheet and went straight out to his car. I saw him through the library window. He was back in five minutes, and then Mrs Hobbs brought the tea.",
+          "choices": [{ "id": "ra-saw-back", "label": "Go back to your questions", "next": "ra-start" }] },
+        "ra-unmoved": { "speaker": "S05", "mood": "suspicious",
+          "text": "Never seen it. Next.",
+          "choices": [{ "id": "ra-unmoved-back", "label": "Go back to your questions", "next": "ra-start" }] }
+      }
+    }
+  }
+}

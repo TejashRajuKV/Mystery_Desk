@@ -1,0 +1,11 @@
+[
+  { "id": "T01", "timestamp": "1984-06-05T11:00:00", "title": "The roadster is revalued", "description": "The insurer's assessor doubles the agreed value.", "locationId": "L01", "personIds": ["S04"], "evidenceIds": ["E002", "E014"] },
+  { "id": "T02", "timestamp": "1984-06-06T14:00:00", "title": "A transporter is booked", "description": "Someone books a night pickup for Sunday morning by telephone.", "locationId": "L05", "personIds": ["S03"], "evidenceIds": ["E012"] },
+  { "id": "T03", "timestamp": "1984-06-09T17:00:00", "title": "The spare key goes out", "description": "The son signs out the roadster's spare key at the workshop.", "locationId": "L04", "personIds": ["S01"], "evidenceIds": ["E007", "E008"] },
+  { "id": "T04", "timestamp": "1984-06-09T23:00:00", "title": "The garage is armed", "description": "The owner arms the alarm for the night.", "locationId": "L01", "personIds": [], "evidenceIds": ["E003"] },
+  { "id": "T05", "timestamp": "1984-06-09T23:45:00", "title": "A Bentley on the lane", "description": "A grey Bentley waits on Ashgrove Lane for ten minutes.", "locationId": "L01", "personIds": ["S05"], "evidenceIds": ["E005", "E009"] },
+  { "id": "T06", "timestamp": "1984-06-10T02:04:00", "title": "The alarm is disarmed", "description": "Someone switches the garage alarm off with a valid code.", "locationId": "L01", "personIds": ["S03"], "evidenceIds": ["E003"] },
+  { "id": "T07", "timestamp": "1984-06-10T02:20:00", "title": "The roadster rolls down the drive", "description": "Pushed, not driven, to a transporter waiting on the lane.", "locationId": "L05", "personIds": ["S03"], "evidenceIds": ["E013", "E004"] },
+  { "id": "T08", "timestamp": "1984-06-10T02:30:00", "title": "The alarm is re-armed", "description": "The same code switches the alarm back on.", "locationId": "L01", "personIds": ["S03"], "evidenceIds": ["E003"] },
+  { "id": "T09", "timestamp": "1984-06-10T07:00:00", "title": "The empty bay is found", "description": "The chauffeur arrives for the Sunday polish and raises the alarm.", "locationId": "L01", "personIds": ["S03"], "evidenceIds": ["E001"] }
+]

@@ -1,0 +1,51 @@
+.tut { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; padding: 20px; background: var(--vignette); backdrop-filter: blur(3px); animation: page-in 0.25s ease both; }
+.tut__book {
+  position: relative; width: min(820px, 100%); min-height: 430px; padding: 34px 38px 26px;
+  display: grid; grid-template-columns: 220px minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 18px 34px;
+  box-shadow: 20px 20px 0 var(--bg-base); transform: rotate(-0.6deg); color: var(--paper-ink);
+}
+.tut__figure { align-self: center; animation: tut-in 0.35s var(--ease-out) both; }
+.tut__figure svg { width: 100%; height: auto; overflow: visible; }
+.tut__page { display: flex; flex-direction: column; gap: 10px; animation: tut-in 0.35s var(--ease-out) both; }
+.tut__kicker { color: var(--red); letter-spacing: 2px; }
+.tut__title { font-size: 40px; line-height: 1.05; }
+.tut__text { line-height: 1.6; }
+.tut__tip { margin-top: 4px; padding: 10px 12px; border-left: 3px solid var(--red); background: color-mix(in srgb, var(--paper-shade) 55%, transparent); line-height: 1.55; }
+.tut__tip .t-label { display: block; color: var(--red); margin-bottom: 2px; }
+
+.tut__nav { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 14px; border-top: 1.5px dashed var(--brass-dim); }
+.tut__btn { padding: 10px 18px; background: var(--paper-ink); color: var(--paper); border: 0; font-family: var(--font-heading); font-size: 20px; letter-spacing: 2px; transition: background 0.15s, transform 0.15s; }
+.tut__btn:hover:not(:disabled), .tut__btn:focus-visible { background: var(--red); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--paper-ink); outline: none; }
+.tut__btn:disabled { opacity: 0.3; }
+.tut__btn--ghost { background: none; color: var(--paper-ink); }
+.tut__btn--ghost:hover:not(:disabled) { color: var(--white); }
+.tut__dots { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+.tut__dot { width: 11px; height: 11px; padding: 0; border-radius: 50%; border: 1.5px solid var(--paper-ink); background: none; transition: background 0.15s, transform 0.15s; }
+.tut__dot--on { background: var(--red); border-color: var(--red); transform: scale(1.25); }
+.tut__close { position: absolute; top: 12px; right: 14px; background: none; border: 0; color: var(--paper-ink); letter-spacing: 2px; }
+.tut__close:hover { color: var(--red); }
+
+.fig-paper { fill: var(--paper); stroke: var(--paper-ink); stroke-width: 1.5; }
+.fig-cork { fill: var(--cork); stroke: var(--wood); stroke-width: 3; }
+.fig-ink { fill: none; stroke: var(--paper-ink); stroke-width: 1.8; stroke-linecap: round; }
+.fig-rule { fill: none; stroke: var(--brass-dim); stroke-width: 0.8; }
+.fig-thick { fill: none; stroke: var(--paper-ink); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.fig-route { fill: none; stroke: var(--red-string); stroke-width: 3; stroke-dasharray: 7 5; stroke-linecap: round; }
+.fig-string { fill: none; stroke: var(--red-string); stroke-width: 2.2; }
+.fig-tack { fill: var(--red); }
+.fig-lens { fill: color-mix(in srgb, var(--paper) 40%, transparent); stroke: var(--paper-ink); stroke-width: 4; }
+.fig-clock { fill: var(--paper); stroke: var(--red); stroke-width: 2.5; }
+.fig-badge { fill: var(--paper); stroke: var(--paper-ink); stroke-width: 2; color: var(--paper-ink); }
+.fig-badge--on { fill: var(--red); stroke: var(--paper-ink); }
+.fig-stamp { font-family: var(--font-heading); font-size: 18px; letter-spacing: 3px; fill: var(--paper-ink); }
+.fig-stamp--red { fill: var(--red); font-size: 22px; }
+.fig-mono { font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: 1px; fill: var(--paper-ink); }
+.fig-bang { font-family: var(--font-display); font-size: 30px; font-weight: 900; fill: var(--red); }
+.tut__figure g { color: var(--paper-ink); }
+
+@keyframes tut-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+@media (max-width: 720px) {
+  .tut__book { grid-template-columns: 1fr; padding: 28px 22px 20px; }
+  .tut__figure { max-width: 180px; justify-self: center; }
+  .tut__title { font-size: 30px; }
+}

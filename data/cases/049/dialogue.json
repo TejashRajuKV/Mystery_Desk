@@ -1,0 +1,241 @@
+{
+  "defaultUnlockedEvidence": [],
+  "interviews": {
+    "S01": {
+      "startNode": "gp-start", "presentFallback": "gp-unmoved",
+      "nodes": {
+        "gp-start": {
+          "speaker": "S01", "mood": "nervous", "presentable": true,
+          "narration": "Graham Pike keeps straightening a pen that is already straight.",
+          "text": "Twenty-two years, Detective, and never so much as a pound out of place. Now this. Whatever you need.",
+          "variants": [
+            { "requires": { "flags": { "file.F1": { "ne": true } } }, "mood": "suspicious",
+              "text": "Have you read the report? Forty boxes, Detective. I'd rather not explain it from the beginning to someone who hasn't." }
+          ],
+          "choices": [
+            { "id": "gp-start-found", "label": "Ask how he found the vault", "next": "gp-found", "requires": { "flags": { "file.F1": { "eq": true } } } },
+            { "id": "gp-start-weekend", "label": "Ask about his weekend", "next": "gp-weekend" },
+            { "id": "gp-start-combo", "label": "Ask who can open the vault", "next": "gp-combo", "requires": { "flags": { "file.F4": { "eq": true } } } },
+            { "id": "gp-start-kemp", "label": "Ask about the locksmith across the road", "next": "gp-kemp" },
+            { "id": "gp-start-e005", "present": "E005", "next": "gp-e005",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST01-A", "evidenceId": "E005" },
+                { "type": "unlock_evidence", "evidenceId": "E007" }
+              ] },
+            { "id": "gp-start-e016", "present": "E016", "next": "gp-e016" },
+            { "id": "gp-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "gp-found": { "speaker": "S01", "mood": "defeated",
+          "text": "Five past nine. The door, the time lock, the alarm: everything exactly as I left it on Thursday. And behind the door, forty drawers hanging open like mouths.",
+          "choices": [{ "id": "gp-found-back", "label": "Go back to your questions", "next": "gp-start" }] },
+        "gp-weekend": { "speaker": "S01", "mood": "defensive",
+          "text": "At home. With my wife. The whole holiday. I didn't come near the place.",
+          "choices": [{ "id": "gp-weekend-back", "label": "Go back to your questions", "next": "gp-start" }] },
+        "gp-combo": { "speaker": "S01", "mood": "neutral",
+          "text": "Nobody alone. I hold one half, the chief clerk the other, in sealed envelopes. The only person who ever sees both is the auditor, and only for a few minutes, once a quarter. Mr Thorne did it on Thursday.",
+          "choices": [{ "id": "gp-combo-back", "label": "Go back to your questions", "next": "gp-start" }] },
+        "gp-kemp": { "speaker": "S01", "mood": "suspicious",
+          "text": "Walter Kemp did twelve years for safes and then opened a shop fifty yards from my vault. I've said so to your constable. I've said so to head office, twice.",
+          "choices": [{ "id": "gp-kemp-back", "label": "Go back to your questions", "next": "gp-start" }] },
+        "gp-e005": { "speaker": "S01", "mood": "defeated", "narration": "He closes his eyes.",
+          "text": "My spectacles. I left my reading glasses in the office on Thursday and I couldn't do the crossword. The guard walked me in and out. Six minutes. I didn't go downstairs. I didn't say because it looks exactly like this.",
+          "choices": [{ "id": "gp-e005-back", "label": "Go back to your questions", "next": "gp-start" }] },
+        "gp-e016": { "speaker": "S01", "mood": "neutral",
+          "text": "Mr Thorne was very thorough on Thursday. He opened both envelopes and resealed them. That's the procedure. He's been doing it for twenty years.",
+          "choices": [{ "id": "gp-e016-back", "label": "Go back to your questions", "next": "gp-start" }] },
+        "gp-unmoved": { "speaker": "S01", "mood": "nervous",
+          "text": "I'm sorry, I don't follow. What has that to do with the branch?",
+          "choices": [{ "id": "gp-unmoved-back", "label": "Go back to your questions", "next": "gp-start" }] }
+      }
+    },
+
+    "S02": {
+      "startNode": "rd-start", "presentFallback": "rd-unmoved",
+      "nodes": {
+        "rd-start": {
+          "speaker": "S02", "mood": "defensive", "presentable": true,
+          "narration": "Rosa Delgado doesn't put down her screwdriver.",
+          "text": "I know how it looks. Alarm engineer, Saturday, vault gets done Saturday night. Ask your questions and let me get back to work.",
+          "choices": [
+            { "id": "rd-start-sat", "label": "Ask about Saturday", "next": "rd-sat" },
+            { "id": "rd-start-booked", "label": "Ask who booked the service call", "next": "rd-booked",
+              "consequences": [{ "type": "unlock_evidence", "evidenceId": "E011" }] },
+            { "id": "rd-start-codes", "label": "Ask who can bypass the vault sensor", "next": "rd-codes" },
+            { "id": "rd-start-e003", "present": "E003", "next": "rd-e003",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST02-B", "evidenceId": "E003" },
+                { "type": "unlock_evidence", "evidenceId": "E011" }
+              ] },
+            { "id": "rd-start-e010", "present": "E010", "next": "rd-e010" },
+            { "id": "rd-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "rd-sat": { "speaker": "S02", "mood": "defensive",
+          "text": "Four o'clock, doors and windows, out by quarter to five. Then my cousin's wedding. I danced till one. Fifty people watched me do the conga.",
+          "choices": [{ "id": "rd-sat-back", "label": "Go back to your questions", "next": "rd-start" }] },
+        "rd-booked": { "speaker": "S02", "mood": "neutral",
+          "text": "Head office booked it on Thursday. Someone from audit, very particular: full sensor test, vault included, and it had to be the weekend. I thought it was odd. Head office never wants weekends; they don't like paying the overtime.",
+          "choices": [{ "id": "rd-booked-back", "label": "Go back to your questions", "next": "rd-start" }] },
+        "rd-codes": { "speaker": "S02", "mood": "neutral",
+          "text": "Three codes will bypass that vault sensor: the manager's, mine, and head office's audit code. Four-seven. Mine was used at four in the afternoon, with the front keypad. The log will tell you who used what at the back.",
+          "choices": [{ "id": "rd-codes-back", "label": "Go back to your questions", "next": "rd-start" }] },
+        "rd-e003": { "speaker": "S02", "mood": "angry",
+          "text": "Of course I was at the vault sensor at twenty past four. It was on the ticket. I lied because I knew what it would look like. And look who entered code four-seven at eight minutes past eleven. That's not my code.",
+          "choices": [{ "id": "rd-e003-back", "label": "Go back to your questions", "next": "rd-start" }] },
+        "rd-e010": { "speaker": "S02", "mood": "neutral",
+          "text": "Maria's wedding. Ring her mother. She'll tell you more than you want to know.",
+          "choices": [{ "id": "rd-e010-back", "label": "Go back to your questions", "next": "rd-start" }] },
+        "rd-unmoved": { "speaker": "S02", "mood": "neutral",
+          "text": "That's not an alarm. I do alarms.",
+          "choices": [{ "id": "rd-unmoved-back", "label": "Go back to your questions", "next": "rd-start" }] }
+      }
+    },
+
+    "S03": {
+      "startNode": "wk-start", "presentFallback": "wk-unmoved",
+      "nodes": {
+        "wk-start": {
+          "speaker": "S03", "mood": "suspicious", "presentable": true,
+          "narration": "Walter Kemp finishes cutting the key before he looks at you.",
+          "text": "Go on, then. Convicted safe-breaker, fifty yards from a vault. I'd arrest me too, if I were lazy.",
+          "choices": [
+            { "id": "wk-start-record", "label": "Ask about his record", "next": "wk-record" },
+            { "id": "wk-start-sat", "label": "Ask where he was on Saturday night", "next": "wk-sat" },
+            { "id": "wk-start-saw", "label": "Ask what he saw on Harbour Street that night", "next": "wk-saw",
+              "consequences": [{ "type": "set_flag", "key": "lead.car", "value": true }] },
+            { "id": "wk-start-vault", "label": "Ask how he'd open that vault", "next": "wk-vault" },
+            { "id": "wk-start-e008", "present": "E008", "next": "wk-e008",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST03-A", "evidenceId": "E008" },
+                { "type": "unlock_evidence", "evidenceId": "E009" }
+              ] },
+            { "id": "wk-start-e015", "present": "E015", "next": "wk-record" },
+            { "id": "wk-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "wk-record": { "speaker": "S03", "mood": "angry",
+          "text": "Twelve years. I came out and opened a key shop across the road from a bank. That's either very stupid or very honest, and I was never stupid.",
+          "choices": [{ "id": "wk-record-back", "label": "Go back to your questions", "next": "wk-start" }] },
+        "wk-sat": { "speaker": "S03", "mood": "defensive",
+          "text": "In bed by ten. My van was nowhere near that bank.",
+          "choices": [{ "id": "wk-sat-back", "label": "Go back to your questions", "next": "wk-start" }] },
+        "wk-saw": { "speaker": "S03", "mood": "neutral", "narration": "He puts the key down.",
+          "text": "Saturday, gone eleven, I got up for a glass of water. A big Rover crawled down the side of the bank to the loading bay with its lights off. Nobody drives like that unless they don't want to be seen. Grey, or silver. A head-office sort of car.",
+          "choices": [{ "id": "wk-saw-back", "label": "Go back to your questions", "next": "wk-start" }] },
+        "wk-vault": { "speaker": "S03", "mood": "neutral",
+          "text": "You don't pick that vault. Nobody picks that vault. You get the combination, you wait out the time lock or you know the service override, and you silence the sensor with a code. That's not a thief. That's someone with a desk at head office.",
+          "choices": [{ "id": "wk-vault-back", "label": "Go back to your questions", "next": "wk-start" }] },
+        "wk-e008": { "speaker": "S03", "mood": "angry",
+          "text": "I live over the shop! My van lives on this street! I got a ticket for parking outside my own front door. Look at the rent book.",
+          "choices": [{ "id": "wk-e008-back", "label": "Go back to your questions", "next": "wk-start" }] },
+        "wk-unmoved": { "speaker": "S03", "mood": "suspicious",
+          "text": "Never seen it. And I'd tell you if I had. I'm out of the business of lying.",
+          "choices": [{ "id": "wk-unmoved-back", "label": "Go back to your questions", "next": "wk-start" }] }
+      }
+    },
+
+    "S04": {
+      "startNode": "et-start", "presentFallback": "et-unmoved",
+      "nodes": {
+        "et-start": {
+          "speaker": "S04", "mood": "neutral", "presentable": true,
+          "narration": "Edwin Thorne pours the tea himself and slides a cup across to you.",
+          "text": "Edwin Thorne, Head Office Audit. A dreadful business. I audited that branch only last Thursday, so I'll help however I can.",
+          "variants": [
+            { "requires": { "flags": { "threatened.S04": { "eq": true } } }, "mood": "angry",
+              "text": "My sister is seventy-one, Detective. I've told her not to speak to you. Ask me whatever you like, but leave her out of it." }
+          ],
+          "choices": [
+            { "id": "et-start-weekend", "label": "Ask where he spent the weekend", "next": "et-weekend",
+              "consequences": [{ "type": "set_flag", "key": "lead.sister", "value": true }] },
+            { "id": "et-start-audit", "label": "Ask about Thursday's audit", "next": "et-audit" },
+            { "id": "et-start-pike", "label": "Ask about the branch manager", "next": "et-pike" },
+            { "id": "et-start-kemp", "label": "Ask about the locksmith", "next": "et-kemp" },
+            { "id": "et-start-threat", "label": "Threaten to charge his sister as an accomplice", "next": "et-threat",
+              "requires": { "flags": { "threatened.S04": { "ne": true } } },
+              "consequences": [{ "type": "set_flag", "key": "threatened.S04", "value": true }] },
+            { "id": "et-start-e012", "present": "E012", "next": "et-e012",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-A", "evidenceId": "E012" }] },
+            { "id": "et-start-e013", "present": "E013", "next": "et-e013",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-B", "evidenceId": "E013" }] },
+            { "id": "et-start-e011", "present": "E011", "next": "et-e011",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-C", "evidenceId": "E011" }] },
+            { "id": "et-start-e003", "present": "E003", "next": "et-e003",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-D", "evidenceId": "E003" }] },
+            { "id": "et-start-e014", "present": "E014", "next": "et-e014" },
+            { "id": "et-start-e016", "present": "E016", "next": "et-audit" },
+            { "id": "et-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "et-weekend": { "speaker": "S04", "mood": "neutral",
+          "text": "At my sister Margaret's in Millbrook, from Thursday evening until this morning. I didn't stir. You're very welcome to telephone her; she'll be delighted to have someone to talk to.",
+          "choices": [{ "id": "et-weekend-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-audit": { "speaker": "S04", "mood": "neutral",
+          "text": "Routine. Cash, ledgers, and the combination envelopes: opened, verified, resealed, signed. Seven minutes. I've done it a hundred times.",
+          "choices": [{ "id": "et-audit-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-pike": { "speaker": "S04", "mood": "suspicious", "narration": "He lowers his voice as if the walls were listening.",
+          "text": "I'd rather not say it. But Mr Pike's personal account is badly overdrawn, and his books were untidy on Thursday. If I were you, I'd look at who needs the money.",
+          "choices": [{ "id": "et-pike-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-kemp": { "speaker": "S04", "mood": "suspicious",
+          "text": "A convicted safe-breaker opposite a vault. I wrote a memorandum about it in 1982. Nobody listened.",
+          "choices": [{ "id": "et-kemp-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-threat": { "speaker": "S04", "mood": "angry", "narration": "His cup goes down on the saucer with a crack.",
+          "text": "My sister is seventy-one years old. You will not frighten her. I'll make sure she speaks to nobody without a solicitor present.",
+          "choices": [{ "id": "et-threat-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-e012": { "speaker": "S04", "mood": "defensive",
+          "text": "Margaret is seventy-one and she naps in the afternoons. Perhaps I went for a drive. People drive. It's a holiday.",
+          "choices": [{ "id": "et-e012-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-e013": { "speaker": "S04", "mood": "surprised", "narration": "For the first time, he doesn't have the next sentence ready.",
+          "text": "Millbrook toll. Southbound. I... may have driven towards Ridgeway. For the air. I didn't come into the city.",
+          "choices": [{ "id": "et-e013-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-e011": { "speaker": "S04", "mood": "defensive",
+          "text": "The service call? A routine audit follow-up. The sensors should be tested every quarter. I simply made sure it was done.",
+          "choices": [{ "id": "et-e011-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-e003": { "speaker": "S04", "mood": "defeated", "narration": "He reads the line with the code on it twice.",
+          "text": "Four-seven. Anyone at head office could have had that code. It's written in a manual. Anyone.",
+          "choices": [{ "id": "et-e003-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-e014": { "speaker": "S04", "mood": "nervous",
+          "text": "Bay rum? Half of Ridgeway wears bay rum, Detective. I really don't see what a cleaner's nose has to do with anything.",
+          "choices": [{ "id": "et-e014-back", "label": "Go back to your questions", "next": "et-start" }] },
+        "et-unmoved": { "speaker": "S04", "mood": "neutral",
+          "text": "I'm afraid that's outside my department. More tea?",
+          "choices": [{ "id": "et-unmoved-back", "label": "Go back to your questions", "next": "et-start" }] }
+      }
+    },
+
+    "S05": {
+      "startNode": "dw-start", "presentFallback": "dw-unmoved",
+      "nodes": {
+        "dw-start": {
+          "speaker": "S05", "mood": "nervous", "presentable": true,
+          "narration": "Doreen Walsh has dusted the same leaf three times.",
+          "text": "I don't know nothing about any vault, love. I do the floors and the bins.",
+          "choices": [
+            { "id": "dw-start-holiday", "label": "Ask whether she worked over the holiday", "next": "dw-holiday" },
+            { "id": "dw-start-staff", "label": "Ask about the people who work here", "next": "dw-staff" },
+            { "id": "dw-start-e005", "present": "E005", "next": "dw-e005",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST05-A", "evidenceId": "E005" },
+                { "type": "unlock_evidence", "evidenceId": "E006" },
+                { "type": "unlock_evidence", "evidenceId": "E014" }
+              ] },
+            { "id": "dw-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "dw-holiday": { "speaker": "S05", "mood": "defensive",
+          "text": "The branch was shut, wasn't it? I was at home with my Frank.",
+          "choices": [{ "id": "dw-holiday-back", "label": "Go back to your questions", "next": "dw-start" }] },
+        "dw-staff": { "speaker": "S05", "mood": "neutral",
+          "text": "Mr Pike's a gent. The chief clerk's all right. The auditor from head office tips nobody and smells like a barber's shop. Always has.",
+          "choices": [{ "id": "dw-staff-back", "label": "Go back to your questions", "next": "dw-start" }] },
+        "dw-e005": { "speaker": "S05", "mood": "defeated", "narration": "She sits down on the nearest chair.",
+          "text": "Mr Pike asked me to do his office on Sunday. Cash. Don't tell head office, he'll get the sack. But listen: the corridor down to the vault was already mopped when I got there. Wet. And it smelled of bay rum. Nobody here wears bay rum.",
+          "choices": [{ "id": "dw-e005-back", "label": "Go back to your questions", "next": "dw-start" }] },
+        "dw-unmoved": { "speaker": "S05", "mood": "nervous",
+          "text": "I wouldn't know about that, love. Is it important?",
+          "choices": [{ "id": "dw-unmoved-back", "label": "Go back to your questions", "next": "dw-start" }] }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+.scene {
+  position: fixed; inset: 0; z-index: 900; display: flex; flex-direction: column;
+  background: var(--bg-base); overflow-y: auto; outline: none; animation: scene-in 0.5s ease both;
+}
+.scene__bar {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 16px var(--gutter); border-bottom: 1.5px solid var(--line-subtle); color: var(--text-secondary);
+}
+.scene__body {
+  flex: 1; display: grid; grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr); gap: clamp(24px, 4vw, 56px);
+  padding: clamp(20px, 4vh, 48px) var(--gutter) 48px; align-items: start; max-width: 1400px; width: 100%; margin: 0 auto;
+}
+.scene__subject { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 12px; }
+.scene__portrait { width: 100%; max-height: 72vh; }
+.scene__plate { display: flex; align-items: center; gap: 12px; }
+.scene__talk { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.scene__talk .state { min-height: 0; padding: 32px 0; align-items: flex-start; text-align: left; }
+.scene__you { color: var(--text-muted); }
+.scene__clue { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 1.5px solid var(--white); animation: page-in 0.3s ease both; }
+.scene__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.scene__chips .stamp { text-decoration: none; white-space: normal; }
+.scene__out { display: flex; flex-direction: column; gap: 12px; padding-top: 12px; animation: page-in 0.3s ease both; }
+.scene__row { display: flex; flex-wrap: wrap; gap: 12px; }
+.scene__error { border-left: 3px solid var(--white); padding-left: 12px; }
+
+.scene__intro {
+  position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  background: var(--bg-base); color: var(--white); text-align: center; padding: 24px;
+  animation: scene-intro 1.9s ease both;
+}
+.scene__intro > * { animation: page-in 0.6s ease 0.25s both; }
+
+@keyframes scene-in { from { opacity: 0; } }
+@keyframes scene-intro { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+
+@media (max-width: 860px) {
+  .scene__body { grid-template-columns: 1fr; }
+  .scene__subject { position: static; flex-direction: row; align-items: flex-end; }
+  .scene__portrait { width: min(46vw, 220px); }
+  .scene__plate { flex-direction: column; align-items: flex-start; }
+}

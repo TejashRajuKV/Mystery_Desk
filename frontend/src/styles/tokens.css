@@ -1,27 +1,92 @@
-/* Mirrors the Figma "Color" variable collection (mode: Noir) and the shared text styles. */
+/*
+ * Warm noir (owner's decision, 2026-09-23): a 1984 detective's desk at night.
+ * Dark wood and charcoal, aged cream paper, brass, and one muted red for danger and string.
+ * Token names are unchanged from the grayscale set so every screen moves together.
+ */
 :root {
-  --bg-base: #0a0a0a;
-  --bg-raised: #141414;
-  --bg-panel: #1c1c1c;
-  --line-subtle: #2e2e2e;
-  --line-strong: #5a5a5a;
-  --text-muted: #8c8c8c;
-  --text-secondary: #b8b8b8;
-  --text-primary: #ededed;
-  --paper: #dcdcdc;
-  --paper-ink: #111111;
-  --white: #ffffff;
-  --vignette: rgba(0, 0, 0, 0.55);
+  --bg-base: #120e0b;
+  --bg-raised: #1d1611;
+  --bg-panel: #271e17;
+  --line-subtle: #3a2d23;
+  --line-strong: #6a5543;
+  --text-muted: #9a8670;
+  --text-secondary: #c9b59a;
+  --text-primary: #efe3cc;
+  --paper: #e6d8bb;
+  --paper-shade: #cdbb98;
+  --paper-ink: #2a1c12;
+  --white: #f5ead3;
+  --vignette: rgba(6, 3, 1, 0.72);
+
+  --wood: #3a2517;
+  --wood-dark: #24170e;
+  --wood-grain: #4a3020;
+  --brass: #b8925a;
+  --brass-dim: #7d6340;
+  --cork: #9c7449;
+  --cork-dark: #7b5936;
+  --red: #9b2f25;
+  --red-bright: #c2402f;
+  --red-string: #a8322a;
+  --lamp: rgba(255, 196, 120, 0.16);
+
+  /* The office on the title screen: a night city through the window, and the detective against it. */
+  --noir-sky: #22170f;
+  --noir-haze: #5b3b1f;
+  --noir-building: #110c08;
+  --noir-lit: #e6b467;
+  --noir-frame: #0b0806;
+  --noir-figure: #070504;
+  --noir-desk: #1c120b;
+  --noir-desk-edge: #3b2616;
+  --noir-coffee: #1a0f08;
+  --neon: #d9432f;
+  --flash: #f4e9d4;
+
+  /* The street map: an old town plan on cream paper. */
+  --map-ground: #e9dcc0;
+  --map-road: #f4ead3;
+  --map-road-edge: #a88d66;
+  --map-block: #cfba93;
+  --map-block-shadow: #a88d66;
+  --map-water: #b7ab8c;
+  --map-water-line: #8e8266;
+  --map-park: #bdb07c;
+  --map-tree: #8a7d4c;
+  --map-ink: #3a2a1c;
+
+  /* Portrait palette, used by the code-drawn portraits (data names a tone, not a colour). */
+  --skin-porcelain: #efd9c6;
+  --skin-fair: #e2c1a4;
+  --skin-golden: #d9b184;
+  --skin-olive: #c29a70;
+  --skin-tan: #b4845c;
+  --skin-brown: #8a5a3a;
+  --skin-deep: #5e3a25;
+  --hair-black: #1c1512;
+  --hair-brown: #4b3021;
+  --hair-auburn: #7a3a22;
+  --hair-blond: #c9a86a;
+  --hair-grey: #8f877d;
+  --hair-white: #ddd6ca;
+  --cloth-charcoal: #2e2b29;
+  --cloth-navy: #232b3a;
+  --cloth-brown: #4a3324;
+  --cloth-cream: #d8cbb0;
+  --cloth-oxblood: #5a1f1c;
+  --cloth-olive: #4a4a2c;
 
   --font-display: 'Playfair Display', Georgia, serif;
   --font-heading: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
   --font-body: 'Special Elite', 'Courier New', monospace;
   --font-mono: 'Courier Prime', 'Courier New', monospace;
 
-  --sidebar-w: 260px;
   --gutter: 40px;
+  --hud-h: 64px;
+  --dock-h: 84px;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @media (max-width: 960px) {
-  :root { --gutter: 20px; }
+  :root { --gutter: 18px; --hud-h: 56px; --dock-h: 72px; }
 }

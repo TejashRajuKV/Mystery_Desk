@@ -1,0 +1,2 @@
+.restart { display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1.5px solid var(--white); animation: page-in 0.2s ease both; max-width: 460px; }
+.restart__row { display: flex; flex-wrap: wrap; gap: 10px; }

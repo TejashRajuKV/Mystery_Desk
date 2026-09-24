@@ -1,0 +1,81 @@
+[
+  {
+    "id": "L01", "map": { "x": 1.5, "y": 0.5, "kind": "garage" }, "name": "The Garage", "floor": "Ground", "district": "Hale House, Ashgrove Road",
+    "description": "Six bays of polished concrete. Five cars under dust sheets, and one empty space with an oil drip in the middle.",
+    "people": [],
+    "arrival": "The empty bay has been swept. At the back, a tack room with the alarm panel on the wall.",
+    "spots": [
+      {"id": "L01-e001", "label": "Take the uniformed officer’s theft report", "text": "The chauffeur found the roadster's bay empty at seven. Doors locked, alarm armed.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E001"}]},
+      { "id": "L01-panel", "label": "Read the alarm panel's printout", "requires": { "flags": { "file.F2": { "eq": true } } },
+        "text": "Saturday 23:00, armed. Sunday 02:04, disarmed, code 3. 02:30, re-armed, code 3. 07:02, disarmed, code 3.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E003" }] },
+      { "id": "L01-bay", "label": "Examine the empty bay and the drive", "text": "No soot on the wall behind the bay, where the exhaust would have been. Scuffs on the gravel all the way down the drive. It was pushed, not driven.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E004" }] },
+      { "id": "L01-neighbour", "label": "Knock on the neighbour's door across the lane", "text": "Mrs Albury, who doesn't sleep: 'A big grey Bentley sat on the lane with its engine running from quarter to twelve for ten minutes. Then it went.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E005" }] }
+    ]
+  },
+  {
+    "id": "L02", "map": { "x": 0.5, "y": 0.5, "kind": "mansion" }, "name": "Hale House", "floor": "Ground", "district": "Ashgrove Road",
+    "description": "A Victorian pile full of motor-racing trophies. The old man stays upstairs; his son has the run of the drawing room.",
+    "people": ["S01"],
+    "arrival": "Oliver Hale is in the drawing room with a gin he poured before lunch. He raises it to you.",
+    "spots": [
+      { "id": "L02-desk", "label": "Look at the letters on Oliver's desk", "text": "A letter from the Regency Club: 'outstanding balance of £22,000 ... within fourteen days'.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E006" }] },
+      { "id": "L02-study", "label": "Ask to see Augustus Hale", "text": "The housekeeper shakes her head. Mr Hale is in bed with his heart and seeing no one. That took longer than it should have." }
+    ]
+  },
+  {
+    "id": "L03", "map": { "x": 1.0, "y": 1.5, "kind": "house" }, "name": "The Coach-House Flat", "floor": "First", "district": "Hale House, stable yard",
+    "description": "Two neat rooms over the old coach house, with a window onto the garage doors and the lane.",
+    "people": ["S03"],
+    "arrival": "Tommy Reece puts the kettle on before you've finished knocking. The flat is spotless. So are his shoes.",
+    "spots": [
+      { "id": "L03-bin", "label": "Check the waste-paper basket", "text": "Torn betting slips from a bookmaker on Mill Lane, and a final demand: £9,000.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E010" }] },
+      { "id": "L03-bureau", "label": "Go through the bureau", "requires": { "flags": { "lead.buyer": { "eq": true }, "burned.S03": { "ne": true } } },
+        "text": "Under the road atlas, a letter from Rotterdam in careful English: 'We can take a 1961 Castellane Sprint, no papers required, on delivery.' Addressed to T.R.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E011" }] },
+      { "id": "L03-window", "label": "Look out of the window", "text": "A clear view of the garage doors and the lane. Anyone awake in here would have seen everything." }
+    ]
+  },
+  {
+    "id": "L04", "map": { "x": 3.5, "y": 2.5, "kind": "wrench" }, "name": "Ferri's Workshop", "floor": "Ground", "district": "Tannery Lane",
+    "description": "A lift, a paint booth, and a board of keys on hooks by the office door.",
+    "people": ["S02"],
+    "arrival": "Marco Ferri slides out from under a Bentley on a creeper and wipes his hands on a rag that makes them dirtier.",
+    "spots": [
+      { "id": "L04-keys", "label": "Check the key board", "text": "The roadster's spare key hangs on hook 12. The sign-out card: 'Sat 17:00 O.H. — back 19:30.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E007" }] },
+      { "id": "L04-book", "label": "Read the roadster's service book", "text": "Thursday: 'Handbrake cable adjusted — releases fully now, car will roll on the slope. T. Reece informed.'" }
+    ]
+  },
+  {
+    "id": "L05", "map": { "x": 5.5, "y": 3.6, "kind": "truck" }, "name": "Kingsway Transport Yard", "floor": "Ground", "district": "Ring Road Industrial Estate",
+    "description": "Car transporters in a row, a dispatcher's hut, and a clipboard of job sheets.",
+    "people": [],
+    "arrival": "The dispatcher looks at your warrant card for a long time before he lets you into the hut.",
+    "spots": [
+      { "id": "L05-sheets", "label": "Go through the week's job sheets", "requires": { "flags": { "lead.transport": { "eq": true } } },
+        "text": "Job 6612, booked by telephone Wednesday: 'Night pickup Sun 02:20, Ashgrove Lane. One classic roadster, drive-on. Cash. Contact: T. Reece.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E012" }] },
+      { "id": "L05-driver", "label": "Talk to the night driver", "requires": { "flags": { "lead.transport": { "eq": true } } },
+        "text": "'The bloke who rolled it on was the chauffeur from the big house. Uniform trousers, pullover over the top. He pushed it down the drive himself.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E013" }] },
+      { "id": "L05-yard", "label": "Look over the transporters", "text": "Eight lorries, all empty, all washed. Whatever they carried last night is long gone." }
+    ]
+  },
+  {
+    "id": "L06", "map": { "x": 3.5, "y": 0.5, "kind": "club" }, "name": "The Royal Motor Club", "floor": "Ground", "district": "Regent Terrace",
+    "description": "Leather armchairs, framed Grand Prix posters, and a night porter who has seen everything and says nothing.",
+    "people": ["S04", "S05"],
+    "arrival": "Philippa Crowe is reading the racing pages at the bar. Across the room, Desmond Pryce pretends he hasn't seen you come in.",
+    "spots": [
+      { "id": "L06-porter", "label": "Ask the night porter about Saturday", "text": "The porter's book: 'Mr Pryce returned 00:20, retired to his room. Breakfast 08:00.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E009" }] },
+      { "id": "L06-file", "label": "Ask Philippa Crowe for her valuation file", "text": "Her report from Tuesday, including a security note: 'Alarm codes held by the owner and the chauffeur only. Recommend a second code holder.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E014" }] }
+    ]
+  }
+]

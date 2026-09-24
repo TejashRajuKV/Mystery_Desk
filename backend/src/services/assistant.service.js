@@ -1,5 +1,6 @@
 import * as cases from '../models/case.model.js';
 import * as investigation from './investigation.service.js';
+import { unlockedEvidenceIds } from './case.service.js';
 import { HttpError } from '../middleware/errorHandler.js';
 import { datePart, toTimestamp } from '../utils/time.js';
 
@@ -31,7 +32,7 @@ function unique(list) {
   return [...new Set(list)];
 }
 
-function answerContradictions(suspects, pairs) {
+export function answerContradictions(suspects, pairs) {
   const scoped = suspects.length ? pairs.filter((p) => suspects.some((s) => s.id === p.suspectId)) : pairs;
   if (scoped.length === 0) {
     const who = suspects.length ? suspects.map((s) => s.name).join(' and ') : 'any suspect';
@@ -60,7 +61,7 @@ function answerContradictions(suspects, pairs) {
   };
 }
 
-function answerWindow(times) {
+export function answerWindow(times) {
   const date = datePart(cases.getCase().incidentWindow.from);
   let from = toTimestamp(date, times[0]);
   let to = toTimestamp(date, times[1]);
@@ -82,8 +83,8 @@ function answerWindow(times) {
   };
 }
 
-function answerConnection(suspect, location) {
-  const items = investigation.findSuspectConnections(suspect.id, location.id);
+export function answerConnection(suspect, location, unlocked) {
+  const items = investigation.findSuspectConnections(suspect.id, location.id).filter((e) => unlocked.has(e.id));
   const ids = items.map((e) => e.id);
   if (items.length === 0) {
     return { answer: `No exhibit places ${suspect.name} at ${location.name}.`, confidence: 'medium', contradiction: false, evidence: [], suspectIds: [suspect.id], events: [], pairs: [] };
@@ -111,17 +112,27 @@ export function query(body) {
   const suspects = mentionedSuspects(question, cases.listSuspects());
   const locations = mentionedLocations(question, cases.listLocations());
   const times = findClockTimes(question);
+  // The analyst only knows what is in the player's case file: locked exhibits don't exist yet.
+  const unlocked = unlockedEvidenceIds();
+  const knownPairs = () => investigation.findContradictions()
+    .filter((p) => unlocked.has(p.evidenceId))
+    .map((p) => ({ ...p, mitigatedBy: p.mitigatedBy.filter((id) => unlocked.has(id)) }));
 
   let result = null;
   if (times.length >= 2) result = answerWindow(times);
-  else if (suspects.length && locations.length) result = answerConnection(suspects[0], locations[0]);
-  else if (suspects.length || CONTRADICTION_WORDS.test(question)) result = answerContradictions(suspects, investigation.findContradictions());
+  else if (suspects.length && locations.length) result = answerConnection(suspects[0], locations[0], unlocked);
+  else if (suspects.length || CONTRADICTION_WORDS.test(question)) result = answerContradictions(suspects, knownPairs());
 
   if (!result) {
     return { answer: HELP, confidence: 'low', relatedEvidence: [], relatedSuspects: [], relatedEvents: [], contradiction: false };
   }
 
-  const evidenceIds = new Set(cases.listEvidence().map((e) => e.id));
+  return shapeAnswer(result, unlocked);
+}
+
+/** The fixed reply shape, with every id checked against the case and the player's case file. */
+export function shapeAnswer(result, unlocked) {
+  const evidenceIds = unlocked;
   const suspectIds = new Set(cases.listSuspects().map((s) => s.id));
   const timeline = cases.listTimeline();
   const events = result.events ?? timeline.filter((t) => t.evidenceIds.some((id) => result.evidence.includes(id))).map((t) => t.id);
