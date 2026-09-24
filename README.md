@@ -1,10 +1,10 @@
 # MysteryDesk
 
-**A full-stack, game-style detective investigation platform.**
+**A choice-based noir detective game that runs in the browser.**
 
-MysteryDesk puts you in a digital investigation room to solve one fictional case: **Case #047 — "The Missing Prototype."** You read evidence, interview suspects, rebuild a timeline, connect clues on an investigation board, question a rule-based investigation assistant, and submit a conclusion that's checked against the case file — then get a final report generated from what you actually found.
+It's 1984 in the city of Ridgeway, and five case files are waiting on your desk. Pick one, decide whether to read the file or head straight out, then work the case in person: travel across town, search the scenes, question people where you find them, put evidence in front of them and catch their lies. The clock is ticking. When it runs out, you have to name someone. There are five endings, and the right name on thin evidence can still let a killer walk.
 
-It's built to *look* like a game (a dark, noir investigation room, typewriter-style labels, case-file language, sound and animation) but *behave* like a real web application underneath: a React frontend talking to a real REST API and database, with no case data hardcoded into the UI.
+It looks and plays like a game: a lamp-lit title screen, a detective's office, drawn portraits, a street map, typewriter text, sound and scene transitions. Underneath it's a normal web app: a React frontend talking to a real REST API and database, with every name, clue and piece of progress coming from the backend.
 
 ---
 
@@ -19,54 +19,64 @@ It's built to *look* like a game (a dark, noir investigation room, typewriter-st
 
 ---
 
-## 📁 The Case
+## 📁 The Cases
 
-**Case #047 — The Missing Prototype**, set in March 1984 at Halden Dynamics, Ridgeway Industrial Park. The Argus-7 prototype has vanished from a locked storage room overnight — no forced entry, no witnesses. Five people had the means, and one of them is lying.
+| # | Case | Crime | Difficulty | Clock | Where |
+|---|---|---|---|---|---|
+| 047 | **The Missing Prototype** | Industrial theft | Standard | 16 h | Northgate Industrial Park |
+| 048 | **Last Curtain at the Orpheum** | Murder | Hard | 14 h | Canal Street & the West End |
+| 049 | **The Harbour Street Vault** | Bank heist | Hard | 14 h | Harbour Street & City Square |
+| 050 | **Midnight Chrome** | Grand theft auto | Standard | 12 h | Ashgrove & the Ring Road |
+| 051 | **The Ashcombe Tea** | Poisoning | Standard | 12 h | Ashcombe village |
 
-- **5 suspects**, each with a motive, opportunity and a recorded statement
-- **18 pieces of evidence** — keycard logs, CCTV records, phone records, documents, forensic reports
-- **6 locations** across the building
-- **12 timeline events** reconstructing the night in question
+Every case has its own five people, six places, 14–18 pieces of evidence, a timeline, statements, interviews and endings.
 
-The investigator's job: examine the evidence, profile the suspects, rebuild the timeline, connect the clues, catch the contradictions in their statements, and name the culprit with enough evidence to prove it.
-
-## 🕵️ The Investigation Loop
+## 🕵️ How a Case Plays
 
 ```
-Enter Case → Case Dashboard → Explore Evidence → Investigate Suspects
-→ Reconstruct Timeline → Connect Clues on the Board → Discover Contradictions
-→ Form a Theory → Ask the Investigation Assistant → Submit Conclusion → Final Report
+Main menu → Pick a case from the desk → Read the brief → Take the case
+→ Read the case file, or go straight out → Travel the city map → Search places
+→ Question people in person → Present evidence, catch contradictions
+→ Pin and link clues on the case board → Accuse (or admit you can't) → Ending
 ```
+
+- **Everything costs time.** Reading a file page takes 20 minutes, a trip across town 30, searching a spot 15, and each question or piece of evidence you present 10. When the clock runs out, you must accuse with what you have.
+- **Evidence is collected, never handed out.** Your evidence starts empty. Anything that belongs to a place is found by going there and searching, or by getting someone there to talk. Only paperwork with no address of its own comes with the case file. The timeline fills in as you find the evidence behind each event.
+- **Choices have consequences.** Skip the file and people won't take your questions seriously, and some lines of questioning never open. Push someone too hard and they call a lawyer or stop talking.
+- **The accusation is final.** Name one person and present the exhibits that prove it, or say you can't tell. One of five endings follows: *Perfect Investigation*, *True Criminal*, *Criminal Escapes*, *Wrong Suspect* or *Innocent Person Accused*. The best one needs the right person, the proving exhibits, links to them on your board, and their lies caught.
 
 ## ✨ Features
 
-- **Case Entry** — the case briefing, styled like a noir case file
-- **Dashboard** — case status, objectives, progress and recent discoveries
-- **Evidence Room** — browse and inspect every exhibit, filterable by type
-- **Suspects** — dossiers for all five suspects, with their recorded statements. Test any claim in a statement directly against a piece of evidence and see whether it holds up
-- **Timeline** — a scrubbable, minute-by-minute reconstruction of the night, with a detail view for each event
-- **Investigation Board** — pin evidence, suspects, locations and events, then draw connections between them; the backend tells you whether a link is actually supported by the case files
-- **Investigation Assistant** — a rule-based analyst (no external AI model) that answers three kinds of question from the real case data: what contradicts a suspect's statement, what happened in a given time window, and what evidence ties a suspect to a place
-- **Final Report** — submit a suspect and the evidence that proves it; the conclusion is validated against the case, and a report is generated from what you actually did — your theory, your evidence, your discovered contradictions, your board connections
-- **Sound & polish** — procedurally synthesized sound effects and ambience (no audio files), and tactile animation throughout, with a mute toggle and full `prefers-reduced-motion` support
+- **Main menu:** a noir title screen with a drawn detective's office: rain on the window, a neon sign, lightning, and the detective with his cigar.
+- **Case desk:** five folders to pick from, each with a brief you can expand (*Read more*) before taking the case.
+- **Case file:** pages you choose to read, each costing time, typed out onto the page.
+- **City map:** a street plan drawn in SVG for each case, with named streets, water, parks and walled sites. Every place is marked with a building for what it is (garage, bank, theatre, pub…). A red route shows where you're headed.
+- **Places:** arrive, see who's there, and search spots that can turn up evidence.
+- **Interviews:** full-screen, with portraits drawn in code whose mood changes as you talk. Choices, not typing. Put an exhibit on the table and watch the story crack.
+- **Evidence, People and Timeline:** read exhibits closely, test any claim in a statement against an exhibit, and line up what people said against when things happened.
+- **Case board:** a cork board where you pin exhibits, people, places and events and link them with red string.
+- **Detective's Notes:** pick a question (what doesn't add up, what happened in a half hour, how two clues connect). Answers come only from the evidence you've collected.
+- **Tutorial:** an illustrated "How to play" casebook, from the main menu or the pause menu (Esc).
+- **Sound and motion:** procedurally synthesized sound (no audio files), GSAP scene transitions, a mute toggle, and `prefers-reduced-motion` support.
 
 ## 🛠 Tech Stack
 
 **Frontend**
 - React 18 + Vite
 - react-router-dom
-- Hand-written CSS (no component library, no Tailwind)
+- GSAP for animation
+- Hand-written CSS on design tokens (no component library, no Tailwind); all art is SVG drawn in code
 
 **Backend**
 - Node.js (22.13+) + Express
-- SQLite via Node's built-in `node:sqlite` (no external database, no ORM)
+- SQLite through Node's built-in `node:sqlite` (no external database, no ORM)
 - REST API
 
 **Data**
-- The case (suspects, evidence, timeline, statements, locations) lives as JSON in `data/`, seeded into SQLite on every server start
-- The answer key (`solution.json`) is backend-only — it's never served to the client, so nothing in the UI can leak the solution
+- Each case lives as JSON in `data/cases/<id>/` and is seeded into SQLite every time the server starts.
+- The answer keys (`solution.json`) stay in the backend. They're never sent to the browser, so nothing in the UI can leak who did it.
 
-No AI/LLM API is used anywhere — the Investigation Assistant is entirely rule-based, deriving its answers from the case data at request time.
+No AI or LLM API is used anywhere. Detective's Notes is rule-based: its answers come from the case data at request time.
 
 ## 🚀 How to Run It
 
@@ -78,7 +88,7 @@ No AI/LLM API is used anywhere — the Investigation Assistant is entirely rule-
    npm install
    npm run dev
    ```
-   This seeds the case into SQLite and starts the API on **http://localhost:4000**.
+   This loads all five cases into SQLite and starts the API on **http://localhost:4000**.
 
 2. **Start the frontend** (in a second terminal):
    ```bash
@@ -86,9 +96,9 @@ No AI/LLM API is used anywhere — the Investigation Assistant is entirely rule-
    npm install
    npm run dev
    ```
-   This starts the website on **http://localhost:5173** — open that URL in your browser to play.
+   This starts the game on **http://localhost:5173**. Open that URL in your browser.
 
-   The frontend automatically proxies API calls to the backend, so both need to be running together. If port 4000 is already in use on your machine, start the backend with a different port and point the frontend at it:
+   The frontend passes API calls through to the backend, so both need to be running. If port 4000 is already taken on your machine, run the backend on another port and point the frontend at it:
    ```bash
    # backend
    PORT=4001 npm run dev
@@ -96,33 +106,36 @@ No AI/LLM API is used anywhere — the Investigation Assistant is entirely rule-
    API_TARGET=http://localhost:4001
    ```
 
-3. **Play.** Open http://localhost:5173, click **OPEN CASE FILE**, and start investigating.
+3. **Play.** On the main menu choose **Select a case**, or **How to play** first if it's your first time.
 
-Your progress (evidence viewed, connections made, contradictions found, your theory and conclusion) is saved on the backend and survives a page refresh or a server restart. To start the case over from scratch, stop the backend and delete `backend/storage/mysterydesk.sqlite` (plus its `-wal`/`-shm` files if present).
+Progress is saved on the backend, separately for each case, and survives a page refresh or a server restart. **Continue** on the main menu takes you back to a case in progress, and **Play Again** at the end of a case starts it over. To wipe everything, stop the backend and delete `backend/storage/mysterydesk.v2.sqlite` (plus its `-wal`/`-shm` files if present).
 
 ## 📂 Project Structure
 
 ```
 mysterydesk/
-├── data/              Case content: case, locations, suspects, evidence, timeline,
-│                      statements — plus the backend-only solution.json answer key
-├── backend/           Express REST API + SQLite database + investigation logic
+├── data/cases/<id>/   One folder per case: case (brief, clock, file pages, city map),
+│                      locations, suspects, evidence, timeline, statements, dialogue,
+│                      endings, and the backend-only solution.json
+├── backend/           Express REST API + SQLite + game logic
 │   └── src/
-│       ├── routes/        thin route handlers
+│       ├── routes/         thin route handlers, all under /api/cases/:caseId
 │       ├── controllers/
-│       ├── services/       InvestigationService: contradictions, connections,
-│       │                   conclusion validation, progress, the rule-based assistant
+│       ├── services/       investigation, dialogue, field work (file, travel, search),
+│       │                   notes, endings, report
 │       ├── models/
-│       └── database/       schema + seeder (reloads data/ on every start)
-├── frontend/          Vite + React UI
+│       └── database/       schema, seeder, per-request case scope
+├── frontend/          Vite + React game
 │   └── src/
-│       ├── components/     shared UI: cards, board nodes, the assistant panel, etc.
-│       ├── pages/          the eight screens of the investigation loop
+│       ├── components/     scene transitions, HUD and dock, city map, interview scene,
+│       │                   portraits, noir title scene, tutorial, shared UI
+│       ├── pages/          main menu, case desk, case start, case file, city map, place,
+│       │                   people, evidence, timeline, case board, notes, accusation
 │       ├── services/api.js the only file that talks to the backend
-│       ├── hooks/           loads the case once, exposes investigation actions
-│       └── utils/           sound engine, formatting, board layout storage
-├── docs/PRD.md        Full functional specification — API shapes, data model, rules
+│       ├── hooks/          loads a case and exposes the investigation actions
+│       └── utils/          sound engine, motion, formatting, board layout storage
+├── docs/PRD.md        Functional specification: API shapes, data model, rules
 └── CLAUDE.md          Project rules and conventions for anyone working on the code
 ```
 
-For the full functional specification (API routes, data shapes, validation rules), see [`docs/PRD.md`](docs/PRD.md).
+For the API routes, data shapes and game rules in detail, see [`docs/PRD.md`](docs/PRD.md) and [`CLAUDE.md`](CLAUDE.md).
