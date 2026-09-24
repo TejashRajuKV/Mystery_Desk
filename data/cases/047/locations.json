@@ -1,0 +1,217 @@
+[
+  {
+    "id": "L01", "map": { "x": 2.5, "y": 1.5, "kind": "lab" },
+    "name": "Main Laboratory",
+    "floor": "2nd Floor",
+    "description": "Lab 2, where the Argus-7 was built and calibrated. Work benches, oscilloscopes, and a locked calibration cabinet. Only lab staff hold cards for this door.",
+    "district": "Halden Dynamics, 2nd floor",
+    "people": [
+      "S01",
+      "S02"
+    ],
+    "arrival": "Oscilloscopes hum on every bench. Dr. Voss looks up from her notes; across the room, Alex Reyes is already on his feet to greet you.",
+    "spots": [
+      {
+        "id": "L01-locker",
+        "label": "Search Reyes's locker",
+        "text": "Behind a spare lab coat, a bank envelope, torn open. Ridgeway Savings & Loan. FINAL NOTICE, in red.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E015"
+          }
+        ]
+      },
+      {
+        "id": "L01-desk",
+        "label": "Look over Dr. Voss's desk",
+        "text": "Her notebook lies open where she left it. The handwriting gets angrier the further you read.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E017"
+          }
+        ]
+      },
+      {
+        "id": "L01-bench",
+        "label": "Inspect the calibration bench",
+        "text": "Neat as a pin. The gyro rig has been switched off since Friday. Nothing here but good housekeeping."
+      }
+    ]
+  },
+  {
+    "id": "L02", "map": { "x": 4.5, "y": 1.5, "kind": "radio" },
+    "name": "Communications Room",
+    "floor": "Basement",
+    "description": "Houses the switchboard, the modem bank for remote maintenance, and the CCTV recorders that feed every camera in the building.",
+    "district": "Halden Dynamics, basement",
+    "people": [
+      "S05"
+    ],
+    "arrival": "Warm air and the chatter of relays. Daniel Cho is already explaining something before you reach him.",
+    "spots": [
+      {
+        "id": "L02-recorder",
+        "label": "Check CCTV recorder three",
+        "text": "The recorder's timer log is taped to its lid. Thirty minutes in SERVICE MODE on Friday night.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E005"
+          }
+        ]
+      },
+      {
+        "id": "L02-modem",
+        "label": "Read the modem bank printout",
+        "text": "Every dial-in, line by line. One call at 21:09 from a residential number.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E010"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L03", "map": { "x": 2.5, "y": 2.6, "kind": "crate" },
+    "name": "Storage Room B",
+    "floor": "1st Floor",
+    "description": "A windowless secure room with a single magnetic-card door. The Argus-7 prototype was kept here in a foam-lined case. One camera covers the door.",
+    "district": "Halden Dynamics, 1st floor",
+    "people": [],
+    "arrival": "A windowless room, a single shelf, and a foam-lined case with nothing in it.",
+    "spots": [
+      {"id": "L03-e013", "label": "Take the fingerprint report from the scene team", "text": "Prints on the case: Voss's, and a fresh partial that matches Reyes.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E013"}]},
+      {"id": "L03-e002", "label": "Examine the storage-room door", "text": "No forced entry. Door opened only by a valid magnetic card.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E002"}]},
+      {"id": "L03-e001", "label": "Look at the empty prototype case", "text": "The Argus-7 case, found open and empty on the shelf.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E001"}]},
+      {
+        "id": "L03-case",
+        "label": "Examine the empty case",
+        "text": "The foam cut-out is undisturbed. Whoever lifted the unit out knew exactly how it seated. Nothing the file doesn't already tell you."
+      },
+      {
+        "id": "L03-reader",
+        "label": "Take the scene report to Facilities for the card-reader log",
+        "requires": {
+          "flags": {
+            "file.F2": {
+              "eq": true
+            }
+          }
+        },
+        "text": "Facilities read the reference off the locksmith's report and hand over the Storage Room B reader printout.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E014"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L04", "map": { "x": 3.5, "y": 1.5, "kind": "office" },
+    "name": "Executive Office",
+    "floor": "3rd Floor",
+    "description": "The managing director's suite. Board papers, a private line, and a typewriter that never seems to stop.",
+    "district": "Halden Dynamics, 3rd floor",
+    "people": [
+      "S03"
+    ],
+    "arrival": "Deep carpet, a view of the whole industrial park, and Victor Lang already standing at the window.",
+    "spots": [
+      {
+        "id": "L04-outbox",
+        "label": "Try Lang's outbox",
+        "text": "His secretary steps in front of it. \"Not without Mr. Lang's say-so, Detective.\" Twenty minutes of polite refusal."
+      }
+    ]
+  },
+  {
+    "id": "L05", "map": { "x": 4.5, "y": 2.75, "kind": "garage" },
+    "name": "Parking Garage",
+    "floor": "Ground",
+    "description": "Staff garage with a ticket barrier on the exit ramp and a card-locked stairwell door that opens into the ground-floor corridor.",
+    "district": "Halden Dynamics, ground",
+    "people": [],
+    "arrival": "Concrete, oil stains, a ticket barrier on the ramp, and a stairwell door with a card reader and no camera.",
+    "spots": [
+      {
+        "id": "L05-exec",
+        "label": "Read the executive bay barrier roll",
+        "text": "Only one permit used the executive bay on Friday night.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E008"
+          }
+        ]
+      },
+      {
+        "id": "L05-staff",
+        "label": "Go through the staff barrier roll",
+        "text": "Hundreds of tickets for Friday alone. Without a permit number to look for, it's a haystack. You give up after an hour of squinting."
+      },
+      {
+        "id": "L05-stairs",
+        "label": "Check the stairwell door reader",
+        "text": "The reader's memory still holds Friday night. One card, after hours.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E007"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L06", "map": { "x": 3.5, "y": 3.55, "kind": "door" },
+    "name": "Lobby & Security Desk",
+    "floor": "Ground",
+    "description": "The main entrance. A turnstile logs every card in and out, and a pressure mat under the night guard's chair records when the desk is unattended.",
+    "district": "Halden Dynamics, ground",
+    "people": [
+      "S04"
+    ],
+    "arrival": "The turnstile clicks behind you. Nina Okafor sits very straight at the night desk, a cold coffee at her elbow.",
+    "spots": [
+      {
+        "id": "L06-turnstile",
+        "label": "Pull the turnstile printer roll",
+        "text": "Friday evening's exits, in faded purple ink.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E003"
+          }
+        ]
+      },
+      {
+        "id": "L06-tape",
+        "label": "Watch lobby camera tape 3",
+        "text": "You spool to 21:00. A man leaves with a canvas bag over his shoulder.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E004"
+          }
+        ]
+      },
+      {
+        "id": "L06-desk",
+        "label": "Check the night desk's sensor printout",
+        "text": "The pressure mat under the guard's chair prints when the desk is empty.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E012"
+          }
+        ]
+      }
+    ]
+  }
+]

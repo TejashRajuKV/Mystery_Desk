@@ -1,7 +1,8 @@
 import * as cases from '../models/case.model.js';
 import * as caseService from './case.service.js';
 import * as investigation from './investigation.service.js';
-import { CASE_ID } from '../config/index.js';
+import { describeEnding } from './ending.service.js';
+import { currentCase } from '../database/caseScope.js';
 import { HttpError } from '../middleware/errorHandler.js';
 
 /** Built entirely from what the player did. */
@@ -14,9 +15,10 @@ export function getReport() {
   const primary = suspects[state.conclusion.suspectId];
 
   return {
-    case: CASE_ID,
+    case: currentCase(),
     title: cases.getCase().title,
-    primarySuspect: { id: primary.id, name: primary.name },
+    primarySuspect: primary ? { id: primary.id, name: primary.name } : null,
+    ending: describeEnding(state.conclusion),
     theory: state.theory,
     supportingEvidence: state.conclusion.evidenceIds.map((id) => {
       const e = evidence[id];

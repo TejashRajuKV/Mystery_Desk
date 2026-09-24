@@ -1,0 +1,37 @@
+[
+  { "id": "perfect_investigation", "title": "Perfect Investigation", "stamp": "CASE CLOSED",
+    "verdict": "Every lie answered, down to the paint on his hand.",
+    "narrative": [
+      "You lay it out for {accused} in the house manager's office: the box door, the pass-door key, the gilt still tacky on the candlestick, the letter from Hollywood. He doesn't wait for the last one.",
+      "He confesses before the Sunday papers go to press. Eighteen years, he says, and a carbon copy. The insurance would have lapsed on Monday.",
+      "The Orpheum dims its lights for a week. Felix Marsh opens as Edmund in September, to the best notices of the year."
+    ] },
+  { "id": "true_criminal", "title": "True Criminal", "stamp": "CASE SOLVED",
+    "verdict": "The right name, and enough to hold it.",
+    "narrative": [
+      "{accused} is charged on Sunday morning, still insisting he wept in the last act.",
+      "The case holds, though his counsel makes much of the questions you never asked and the statements you never broke.",
+      "He is convicted in the autumn. The Orpheum never puts on The Glass Widow again."
+    ] },
+  { "id": "wrong_suspect", "title": "Wrong Suspect", "stamp": "CASE REOPENED",
+    "verdict": "A careful case, built around the wrong person.",
+    "narrative": [
+      "Your case against {accused} is careful. It has a motive, a lie, and a timeline. It is also wrong.",
+      "The charges collapse at the committal hearing. By then, someone has cleared out an office and burned a great deal of paper.",
+      "The file is reopened in the winter and handed to somebody else."
+    ] },
+  { "id": "innocent_accused", "title": "Innocent Person Accused", "stamp": "WRONGFUL ARREST",
+    "verdict": "An arrest on a hunch, in front of the whole company.",
+    "narrative": [
+      "{accused} is taken out through the stage door in handcuffs while the press photographers wait on Canal Street.",
+      "The charges are dropped within the week. The photographs aren't.",
+      "Julian Crane's killer is never named. The Orpheum's ghost stories get a new chapter."
+    ] },
+  { "id": "criminal_escapes", "title": "Criminal Escapes", "stamp": "UNSOLVED",
+    "verdict": "The curtain came down, and nobody was holding the rope.",
+    "narrative": [
+      "The Sunday papers go to press with 'MYSTERY AT THE ORPHEUM' and no name beneath it.",
+      "Whoever walked into Dressing Room 1 walked out again, and has kept walking.",
+      "Case #048 is filed under Unsolved. The candlestick is returned to the props table, polished."
+    ] }
+]

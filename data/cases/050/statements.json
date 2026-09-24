@@ -1,0 +1,31 @@
+[
+  { "id": "ST01", "suspectId": "S01", "takenAt": "1984-06-10T08:00:00",
+    "text": "I was at the Regency until three. I didn't touch the garage keys on Saturday, I haven't been near that car in weeks, and I don't want to talk about my father's collection.",
+    "assertions": [
+      { "id": "ST01-A", "claim": "I didn't touch any of the roadster's keys on Saturday.", "kind": "did_not_perform", "actions": ["took_key"], "target": "spare_key", "severity": "minor",
+        "mitigatedBy": ["E008"], "note": "He borrowed the spare key to have the car photographed for a sale brochure, behind his father's back." }
+    ] },
+  { "id": "ST02", "suspectId": "S02", "takenAt": "1984-06-10T10:30:00",
+    "text": "I serviced her on Thursday and I haven't set eyes on her since. The spare key is on my board where it always is.",
+    "assertions": [
+      { "id": "ST02-A", "claim": "I haven't been to the garage since Thursday.", "kind": "did_not_perform", "actions": ["present", "enter"], "target": "L01", "from": "1984-06-07T18:00:00", "severity": "minor" }
+    ] },
+  { "id": "ST03", "suspectId": "S03", "takenAt": "1984-06-10T07:30:00",
+    "text": "I went to bed at eleven and slept till six. I didn't go into the garage and I didn't go out onto the lane. I came down at seven for the Sunday polish and the bay was empty. I've never had anything to do with car transporters in my life.",
+    "assertions": [
+      { "id": "ST03-A", "claim": "I didn't go into the garage between eleven and six.", "kind": "did_not_perform", "actions": ["enter"], "target": "L01", "from": "1984-06-09T23:00:00", "to": "1984-06-10T06:00:00", "severity": "major" },
+      { "id": "ST03-B", "claim": "I didn't go out onto the lane that night.", "kind": "did_not_perform", "actions": ["present"], "target": "ashgrove_lane", "from": "1984-06-09T23:00:00", "to": "1984-06-10T06:00:00", "severity": "major" },
+      { "id": "ST03-C", "claim": "I've never had anything to do with a transport firm.", "kind": "did_not_perform", "actions": ["filed_request"], "target": "transporter_hire", "severity": "major" }
+    ] },
+  { "id": "ST04", "suspectId": "S04", "takenAt": "1984-06-10T11:00:00",
+    "text": "My valuation was routine and overdue. I've never been told the alarm codes and I wouldn't want them.",
+    "assertions": [
+      { "id": "ST04-A", "claim": "I've never been told the alarm codes.", "kind": "did_not_perform", "actions": ["knows_of"], "target": "alarm_code", "severity": "minor" }
+    ] },
+  { "id": "ST05", "suspectId": "S05", "takenAt": "1984-06-10T11:40:00",
+    "text": "I was at the Motor Club all evening and slept there. I never went near Ashgrove Road on Saturday night. If I wanted that car, I'd buy it.",
+    "assertions": [
+      { "id": "ST05-A", "claim": "I never went near Ashgrove Road on Saturday night.", "kind": "did_not_perform", "actions": ["present"], "target": "ashgrove_lane", "from": "1984-06-09T20:00:00", "to": "1984-06-10T06:00:00", "severity": "minor",
+        "mitigatedBy": ["E009"], "note": "He drove out to make one last offer, lost his nerve at the gate, and was back at the club by twenty past twelve." }
+    ] }
+]

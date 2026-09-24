@@ -1,0 +1,34 @@
+[
+  { "id": "ST01", "suspectId": "S01", "takenAt": "1984-07-14T18:00:00",
+    "text": "I sat in the drawing room from four o'clock and heard my husband's will read. I didn't go near the kitchen or the pantry all afternoon. I have staff for that.",
+    "assertions": [
+      { "id": "ST01-A", "claim": "I didn't go into the kitchen or the pantry that afternoon.", "kind": "did_not_perform", "actions": ["enter"], "target": "L02", "from": "1984-07-14T15:00:00", "to": "1984-07-14T16:40:00", "severity": "minor",
+        "mitigatedBy": ["E009"], "note": "She went for her own saccharin, as she does every afternoon, and was too proud to say so." }
+    ] },
+  { "id": "ST02", "suspectId": "S02", "takenAt": "1984-07-14T18:20:00",
+    "text": "I destroyed the Colonel's medicines myself after he died, as I'm supposed to. I haven't had any digoxin since June. I wasn't in the drawing room; nurses don't sit with the family.",
+    "assertions": [
+      { "id": "ST02-A", "claim": "I haven't had any of the Colonel's digoxin since he died.", "kind": "did_not_perform", "actions": ["handled"], "target": "digoxin", "from": "1984-06-15T00:00:00", "severity": "major",
+        "mitigatedBy": ["E013"], "note": "She kept the medicines a month longer than she should have, then handed every tablet to the solicitor, and was afraid to admit either." }
+    ] },
+  { "id": "ST03", "suspectId": "S03", "takenAt": "1984-07-14T18:40:00",
+    "text": "I was in the walled garden from three till five. I never came near the house.",
+    "assertions": [
+      { "id": "ST03-A", "claim": "I was in the garden from three until five.", "kind": "stayed_at_post", "target": "L05", "from": "1984-07-14T15:00:00", "to": "1984-07-14T17:00:00", "severity": "minor",
+        "note": "He went round to the drive to move a car for the wine van, and saw more than he wanted to." }
+    ] },
+  { "id": "ST04", "suspectId": "S04", "takenAt": "1984-07-14T17:40:00",
+    "text": "I read the will from four o'clock until poor Gerald fell, and I never left the room. I never touched the tea things; Mrs Hobbs did all that. I've never had any of the Colonel's medicines. And the trust accounts, which I have kept for twenty-two years, are in perfect order.",
+    "assertions": [
+      { "id": "ST04-A", "claim": "I never touched the tea things.", "kind": "did_not_perform", "actions": ["handled"], "target": "tea_tray", "from": "1984-07-14T16:00:00", "to": "1984-07-14T16:45:00", "severity": "major" },
+      { "id": "ST04-B", "claim": "I've never had any of the Colonel's medicines.", "kind": "did_not_perform", "actions": ["handled"], "target": "digoxin", "severity": "major" },
+      { "id": "ST04-C", "claim": "The trust accounts are in perfect order.", "kind": "did_not_perform", "actions": ["knows_of"], "target": "trust_shortfall", "severity": "major" },
+      { "id": "ST04-D", "claim": "I never left the drawing room during the reading.", "kind": "stayed_at_post", "target": "L01", "from": "1984-07-14T16:00:00", "to": "1984-07-14T16:40:00", "severity": "major" }
+    ] },
+  { "id": "ST05", "suspectId": "S05", "takenAt": "1984-07-14T19:00:00",
+    "text": "I didn't get to Ashcombe until half past four. By the time I walked up to the Hall, the doctor's car was already there.",
+    "assertions": [
+      { "id": "ST05-A", "claim": "I didn't reach Ashcombe until half past four.", "kind": "did_not_perform", "actions": ["present"], "target": "ashcombe_village", "from": "1984-07-14T12:00:00", "to": "1984-07-14T16:25:00", "severity": "minor",
+        "mitigatedBy": ["E014"], "note": "He came early and hid in the library to hear whether he was in the will. The maid watched him the whole time." }
+    ] }
+]

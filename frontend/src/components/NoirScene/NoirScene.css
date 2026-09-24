@@ -1,0 +1,88 @@
+.noir { display: block; overflow: visible; }
+
+.noir__stop-sky { stop-color: var(--noir-sky); }
+.noir__stop-haze { stop-color: var(--noir-haze); }
+.noir__stop-spill { stop-color: var(--noir-haze); stop-opacity: 0.35; }
+.noir__stop-pool { stop-color: var(--noir-lit); stop-opacity: 0.16; }
+.noir__stop-none { stop-color: var(--noir-sky); stop-opacity: 0; }
+.noir__stop-desk-top { stop-color: var(--noir-desk-edge); }
+.noir__stop-desk-bottom { stop-color: var(--noir-desk); }
+
+.noir__lightning { fill: var(--flash); opacity: 0; animation: noir-lightning 13s linear infinite; }
+.noir__building { fill: var(--noir-building); stroke: var(--noir-building); }
+.noir__tower { stroke-width: 2; }
+.noir__beacon { fill: var(--neon); animation: noir-blink 2.4s steps(1) infinite; }
+.noir__lit { fill: var(--noir-lit); opacity: 0.7; }
+.noir__lit--flicker { animation: noir-window 6s steps(1) infinite; }
+
+.noir__neon-box { fill: var(--noir-building); stroke: var(--neon); stroke-width: 1.5; }
+.noir__neon-text { font-family: var(--font-heading); font-size: 19px; fill: var(--neon); }
+.noir__neon-halo { fill: none; stroke: var(--neon); stroke-width: 6; opacity: 0.55; }
+.noir__neon { animation: noir-neon 9s steps(1) infinite; }
+
+.noir__rain line { stroke: var(--flash); stroke-width: 1; opacity: 0.22; animation: noir-rain 0.9s linear infinite; }
+.noir__slat { fill: var(--noir-frame); stroke: var(--noir-desk-edge); stroke-width: 0.6; }
+
+.noir__frame-outer { fill: none; stroke: var(--noir-frame); stroke-width: 16; }
+.noir__mullion { fill: none; stroke: var(--noir-frame); stroke-width: 9; }
+.noir__sill { fill: var(--noir-frame); }
+.noir__cord { stroke: var(--noir-desk-edge); stroke-width: 1.5; }
+.noir__tassel { fill: var(--noir-desk-edge); }
+
+.noir__figure { fill: var(--noir-figure); }
+.noir__collar { fill: var(--noir-frame); stroke: var(--noir-desk-edge); stroke-width: 1; }
+.noir__band { fill: var(--noir-desk-edge); }
+.noir__hat-crease { fill: none; stroke: var(--noir-frame); stroke-width: 1.5; opacity: 0.8; }
+.noir__button { fill: var(--noir-desk-edge); }
+.noir__neck { fill: var(--skin-brown); }
+.noir__shirt { fill: var(--paper-shade); }
+.noir__tie { fill: var(--cloth-oxblood); }
+.noir__ear { fill: var(--skin-tan); }
+.noir__face { fill: var(--skin-golden); }
+.noir__stop-shade { stop-color: var(--noir-figure); stop-opacity: 0.88; }
+.noir__stop-clear { stop-color: var(--noir-figure); stop-opacity: 0; }
+.noir__cheek-shade { fill: var(--skin-brown); opacity: 0.45; }
+.noir__brow { fill: none; stroke: var(--hair-black); stroke-width: 3; stroke-linecap: round; }
+.noir__eye { fill: none; stroke: var(--hair-black); stroke-width: 2; stroke-linecap: round; }
+.noir__glint { fill: var(--noir-lit); }
+.noir__nose { fill: none; stroke: var(--skin-brown); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.noir__mouth { fill: none; stroke: var(--skin-deep); stroke-width: 1.6; stroke-linecap: round; }
+.noir__moustache { fill: var(--hair-brown); stroke: var(--hair-black); stroke-width: 0.8; }
+.noir__cigar { stroke: var(--hair-brown); stroke-width: 6; stroke-linecap: round; }
+.noir__cigar-band { stroke: var(--red); stroke-width: 6.4; }
+.noir__cigar-ash { stroke: var(--hair-grey); stroke-width: 6; stroke-linecap: round; }
+.noir__seam { fill: none; stroke: var(--noir-desk-edge); stroke-width: 1.4; opacity: 0.8; }
+.noir__belt { fill: none; stroke: var(--noir-frame); stroke-width: 10; }
+.noir__buckle { fill: none; stroke: var(--brass-dim); stroke-width: 2; }
+.noir__rim { fill: none; stroke: var(--noir-lit); stroke-width: 1.4; opacity: 0.45; }
+.noir__ember { fill: var(--red-bright); filter: drop-shadow(0 0 3px var(--neon)); animation: noir-ember 3.2s ease-in-out infinite; }
+.noir__smoke { fill: none; stroke: var(--flash); stroke-width: 2.5; stroke-linecap: round; opacity: 0; animation: noir-smoke 6s ease-out infinite; }
+.noir__smoke--late { animation-delay: 3s; }
+
+.noir__desk-edge { fill: var(--brass-dim); opacity: 0.6; }
+.noir__folder-back { fill: var(--paper-shade); }
+.noir__folder { fill: var(--paper); }
+.noir__line { fill: var(--paper-shade); }
+.noir__stamp-box { fill: none; stroke: var(--red); stroke-width: 2.5; }
+.noir__stamp { font-family: var(--font-heading); font-size: 17px; letter-spacing: 2px; fill: var(--red); }
+.noir__photo { fill: var(--white); }
+.noir__photo-image { fill: var(--noir-sky); }
+.noir__photo-face { fill: var(--noir-haze); }
+
+.noir__glass-handle { stroke: var(--wood-grain); stroke-width: 10; stroke-linecap: round; }
+.noir__glass-lens { fill: var(--noir-lit); opacity: 0.12; }
+.noir__glass-rim { fill: none; stroke: var(--brass); stroke-width: 6; }
+.noir__glass-shine { fill: none; stroke: var(--white); stroke-width: 2.5; stroke-linecap: round; opacity: 0.5; }
+
+.noir__cup { fill: var(--paper-shade); }
+.noir__cup-handle { fill: none; stroke: var(--paper-shade); stroke-width: 5; }
+.noir__coffee { fill: var(--noir-coffee); }
+.noir__steam { fill: none; stroke: var(--flash); stroke-width: 2; stroke-linecap: round; opacity: 0; animation: noir-smoke 5s ease-out infinite 1.2s; }
+
+@keyframes noir-rain { from { transform: translate(0, -60px); } to { transform: translate(-17px, 60px); } }
+@keyframes noir-lightning { 0%, 88%, 90.5%, 92%, 100% { opacity: 0; } 89% { opacity: 0.55; } 91% { opacity: 0.35; } }
+@keyframes noir-neon { 0%, 60%, 63%, 100% { opacity: 1; } 61% { opacity: 0.25; } 62% { opacity: 0.8; } 62.5% { opacity: 0.2; } }
+@keyframes noir-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
+@keyframes noir-window { 0%, 100% { opacity: 0.7; } 40% { opacity: 0.08; } }
+@keyframes noir-ember { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+@keyframes noir-smoke { 0% { opacity: 0; transform: translateY(6px); } 25% { opacity: 0.22; } 100% { opacity: 0; transform: translate(10px, -40px); } }

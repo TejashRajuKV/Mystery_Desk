@@ -1,0 +1,81 @@
+[
+  {
+    "id": "L01", "map": { "x": 2.0, "y": 3.5, "kind": "bank" }, "name": "The Banking Hall", "floor": "Ground", "district": "Harbour Street branch",
+    "description": "Marble floor, brass grilles, a clock that is always two minutes fast. The staff entrance is at the back.",
+    "people": ["S01", "S05"],
+    "arrival": "Graham Pike is pacing behind the counter. Doreen Walsh is pretending to dust a rubber plant.",
+    "spots": [
+      { "id": "L01-staff", "label": "Read the staff-entrance log", "text": "Two entries over the holiday. Sunday 07:00: D. Walsh. Sunday 10:02: G. Pike.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E005" }] },
+      { "id": "L01-patrol", "label": "Check the guard's patrol book", "text": "The weekend guard's hand: 'Sun 10:02, Mr Pike, escorted to his office for spectacles, out 10:08.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E007" }] },
+      { "id": "L01-counters", "label": "Look over the counters", "text": "Deposit slips and pens on chains. Nobody robbed the counters. Nothing here." }
+    ]
+  },
+  {
+    "id": "L02", "map": { "x": 1.5, "y": 2.45, "kind": "office" }, "name": "The Manager's Office", "floor": "Ground", "district": "Harbour Street branch",
+    "description": "A walnut desk, a safe in the wall, and a window onto the loading bay.",
+    "people": [],
+    "arrival": "The safe in the wall is closed. On the desk, a stack of papers from last Thursday's audit.",
+    "spots": [
+      { "id": "L02-chits", "label": "Go through the overtime chits", "text": "A chit in Pike's hand: 'D. Walsh, extra clean of manager's office, Sun 22 Apr, £12 cash.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E006" }] },
+      { "id": "L02-audit", "label": "Read Thursday's audit working papers", "text": "Thorne's neat columns. 'Combination envelopes A and B opened 15:02, contents verified, resealed 15:09.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E016" }] }
+    ]
+  },
+  {
+    "id": "L03", "map": { "x": 2.5, "y": 2.45, "kind": "vault" }, "name": "The Vault & Loading Bay", "floor": "Basement", "district": "Harbour Street branch",
+    "description": "The vault door stands open on forty gaping boxes. Beyond the vault lobby, a steel door onto the rear loading bay.",
+    "people": [],
+    "arrival": "Forty drawers pulled out and prised open. The vault smells of steel and, faintly, of something like a barber's shop.",
+    "spots": [
+      {"id": "L03-e001", "label": "Walk through the emptied vault", "text": "Forty boxes forced and empty; door, time lock and alarm untouched.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E001"}]},
+      { "id": "L03-panel", "label": "Pull the alarm panel printout", "requires": { "flags": { "file.F2": { "eq": true } } },
+        "text": "Saturday, in dot-matrix: 16:00 engineer test mode; 16:20 vault sensor tested; 16:40 re-armed. 23:08 rear keypad, override code 4-7; vault sensor bypassed. 02:14 re-armed.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E003" }] },
+      { "id": "L03-timelock", "label": "Examine the time lock", "text": "The time lock's own paper tape: opened at 23:40 on Saturday by the service procedure.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E004" }] },
+      { "id": "L03-bay", "label": "Look at the loading-bay floor", "text": "Someone mopped this floor before the cleaner ever arrived. Tyre marks outside, from a big car, not a van." }
+    ]
+  },
+  {
+    "id": "L04", "map": { "x": 2.0, "y": 4.45, "kind": "key" }, "name": "Kemp's Key Shop", "floor": "Street level", "district": "Harbour Street, opposite the bank",
+    "description": "Keys on hooks from floor to ceiling. Walter Kemp lives in the two rooms above.",
+    "people": ["S03"],
+    "arrival": "A bell over the door. Walter Kemp doesn't look up from the key he's cutting. 'I wondered how long you'd be.'",
+    "spots": [
+      { "id": "L04-van", "label": "Look at the van outside", "text": "A parking ticket still under the wiper: Harbour Street, Saturday 23:30, wrong side for the street cleaners.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E008" }] },
+      { "id": "L04-rent", "label": "Read the rent book on the counter", "text": "Kemp Keys & Locks, shop and living quarters above, 14 Harbour Street. Paid up to date.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E009" }] }
+    ]
+  },
+  {
+    "id": "L05", "map": { "x": 5.8, "y": 0.85, "kind": "warehouse" }, "name": "Fortress Alarms Depot", "floor": "Unit 7", "district": "Eastfield Trading Estate",
+    "description": "Vans, cable drums, and a wall of service files.",
+    "people": ["S02"],
+    "arrival": "Rosa Delgado is elbow-deep in an alarm panel on a workbench. She wipes her hands before she shakes yours.",
+    "spots": [
+      { "id": "L05-ticket", "label": "Find the Harbour Street service ticket", "text": "Ticket #881. 'Full sensor test incl. vault. Weekend please.' Requested Thursday 16:50 by Head Office Audit, E. Thorne.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E011" }] },
+      { "id": "L05-calendar", "label": "Check Rosa's desk calendar", "text": "Saturday 21 April: 'Service HS branch 4pm. Maria's wedding 7pm, Eastfield Hall!!'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E010" }] }
+    ]
+  },
+  {
+    "id": "L06", "map": { "x": 4.5, "y": 3.5, "kind": "tower" }, "name": "Mercantile Head Office", "floor": "4th floor", "district": "City Square",
+    "description": "Oak panelling, hushed carpets, and the audit department behind frosted glass.",
+    "people": ["S04"],
+    "arrival": "Edwin Thorne rises from behind a very tidy desk and offers you a chair and a cup of tea, in that order.",
+    "spots": [
+      { "id": "L06-sister", "label": "Telephone Thorne's sister in Millbrook", "requires": { "flags": { "lead.sister": { "eq": true }, "threatened.S04": { "ne": true } } },
+        "text": "Margaret Thorne is happy to help. 'Edwin? He was here. Well, he went out on Saturday, about half past eight, to see a friend. I heard his car come back at three.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E012" }, { "type": "set_flag", "key": "lead.car", "value": true }] },
+      { "id": "L06-car", "label": "Look inside Thorne's Rover in the staff car park", "requires": { "flags": { "lead.car": { "eq": true } } },
+        "text": "Spotless, except the ashtray. A Millbrook toll receipt: Saturday 21:40, southbound.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E013" }] },
+      { "id": "L06-records", "label": "Ask Records for Thorne's file", "text": "Twenty years of glowing appraisals. Nothing a man would want to steal a million pounds to get away from. An hour of reading." }
+    ]
+  }
+]

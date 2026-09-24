@@ -1,0 +1,57 @@
+{
+  "id": "051",
+  "title": "The Ashcombe Tea",
+  "crime": "Poisoning",
+  "difficulty": "Standard",
+  "teaser": "At the reading of a colonel's will, the new heir drinks his tea and dies before the last codicil. Everyone at the table stood to gain.",
+  "status": "active",
+  "classification": "HOMICIDE",
+  "company": "The Ashcombe estate",
+  "site": "Ashcombe Hall, near Ridgeway",
+  "openedAt": "1984-07-15T09:00:00",
+  "incidentWindow": { "from": "1984-07-14T15:00:00", "to": "1984-07-14T16:45:00" },
+  "leadInvestigator": "You",
+  "accusationQuestion": "Who poisoned Gerald Ashcombe?",
+  "summary": "A month after Colonel Edmund Ashcombe's death, the family gathered at Ashcombe Hall to hear his will read over afternoon tea. It left the estate, and the running of the family trust, to his brother Gerald. At 16:40, before the reading was finished, Gerald collapsed at the tea table and died.",
+  "briefing": [
+    "Colonel Edmund Ashcombe died of heart failure in June. On Saturday 14 July his family met in the drawing room at Ashcombe Hall for the reading of his will.",
+    "The will disinherited his widow in favour of his younger brother, Gerald, and made Gerald executor of the family trust. Tea was served at a quarter past four. At twenty to five Gerald complained of his heart racing, and collapsed.",
+    "He was dead before the doctor arrived. The coroner wants a name before the inquest opens tomorrow morning."
+  ],
+  "objectives": [
+    "Read the file.",
+    "Go to the Hall, its grounds, and the village inn.",
+    "Find out where the poison came from.",
+    "Break the statements that don't hold.",
+    "Name the poisoner, and prove it."
+  ],
+  "clock": { "start": "1984-07-15T09:00:00", "hours": 12, "deadlineNote": "The inquest opens at nine tomorrow; the coroner wants a name tonight." },
+  "city": {"district": "Ashcombe village", "streets": {"v": ["Church Lane", null, null, "Keeper’s Lane", "The Street", "Mill Lane"], "h": ["Rookery Lane", null, "Ashcombe Road", "Brook Lane"]}, "major": ["Ashcombe Road"], "water": {"name": "Ashcombe Brook", "edge": "west"}, "parks": [{"name": "Ashcombe Woods", "cells": [0, 3, 1, 4]}, {"name": "The Green", "cells": [5, 2, 5, 2]}], "sites": [{"name": "Ashcombe Hall", "cells": [1, 1, 3, 2], "building": [1.1, 1.1, 3.9, 1.92]}]},
+  "file": [
+    { "id": "F1", "title": "Incident report",
+      "body": [
+        "Deceased: Gerald Ashcombe, 61, brother of the late Colonel. Collapsed at the tea table in the drawing room of Ashcombe Hall at 16:40 on Saturday 14 July, during the reading of the Colonel's will. Pronounced dead at 17:05.",
+        "Present in the drawing room: the widow, Lady Constance Ashcombe; the family solicitor, Ambrose Fairlie, who was reading the will; and the deceased. The housekeeper served tea at 16:15."
+      ],
+      "attachments": [] },
+    { "id": "F2", "title": "Toxicology",
+      "body": [
+        "Cause of death: cardiac arrest from a massive dose of digoxin, taken by mouth within the hour before death. Residue found in the deceased's teacup only.",
+        "The glycoside is pharmaceutical digoxin from ground tablets, not a plant preparation. It did not come from foxglove leaves or flowers."
+      ],
+      "attachments": ["E002"] },
+    { "id": "F3", "title": "Persons of interest",
+      "body": [
+        "Lady Constance Ashcombe, the widow. Disinherited by the will. In the Drawing Room.",
+        "Agnes Mora, the Colonel's nurse. Kept his medicines, including his digoxin. In the Nurse's Room.",
+        "Silas Brook, head gardener for forty years. Grows foxgloves in the border. In the Grounds.",
+        "Ambrose Fairlie, the family solicitor for thirty years. Read the will. Working in the Library.",
+        "Rory Ashcombe, the Colonel's estranged nephew. Arrived uninvited. Staying at the Ashcombe Arms in the village."
+      ] },
+    { "id": "F4", "title": "The will reading",
+      "body": [
+        "Seating: Mr Fairlie at the head of the tea table with the will; Gerald Ashcombe on his right; Lady Constance opposite. The housekeeper, Mrs Hobbs, brought the tea tray at 16:15 and was in and out with hot water.",
+        "The will names Gerald executor of the Ashcombe family trust, which Mr Fairlie has administered since 1962, and directs him 'to examine the trust accounts forthwith'."
+      ] }
+  ]
+}

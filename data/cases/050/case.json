@@ -1,0 +1,52 @@
+{
+  "id": "050",
+  "title": "Midnight Chrome",
+  "crime": "Grand theft auto",
+  "difficulty": "Standard",
+  "teaser": "A collector's 1961 roadster vanishes from a locked, alarmed garage in the middle of the night. Nobody heard an engine.",
+  "status": "active",
+  "classification": "GRAND THEFT AUTO",
+  "company": "The Hale Collection",
+  "site": "Hale House, Ashgrove Road",
+  "openedAt": "1984-06-10T09:00:00",
+  "incidentWindow": { "from": "1984-06-09T23:00:00", "to": "1984-06-10T07:00:00" },
+  "leadInvestigator": "You",
+  "accusationQuestion": "Who stole the Castellane?",
+  "summary": "Augustus Hale's 1961 Castellane Sprint roadster, one of four ever built, was taken from his locked garage on Ashgrove Road between Saturday night and Sunday morning. The alarm was armed when the chauffeur found the bay empty at seven. Nobody heard an engine.",
+  "briefing": [
+    "Augustus Hale has spent forty years building Ridgeway's finest private car collection. Its jewel is a 1961 Castellane Sprint roadster, newly revalued at £180,000.",
+    "At 07:00 on Sunday 10 June his chauffeur, Tommy Reece, found the roadster's bay empty and raised the alarm. The garage doors were locked and the alarm was armed.",
+    "Cars like this leave the country quickly. The insurers give you until nine tonight before they assume it's gone for good."
+  ],
+  "objectives": [
+    "Read the file.",
+    "Go to the house, the garage, the workshop and the club.",
+    "Find out how the car left without a sound.",
+    "Break the stories that don't hold.",
+    "Name the thief, and prove it."
+  ],
+  "clock": { "start": "1984-06-10T09:00:00", "hours": 12, "deadlineNote": "The insurers write it off at nine tonight." },
+  "city": {"district": "Ashgrove & the Ring Road", "streets": {"v": ["Hale Lane", "Albury Road", null, "Kingsway", "Mill Hill", null], "h": ["Regent Terrace", "Ashgrove Road", "Tannery Lane", "Ring Road"]}, "major": ["Kingsway", "Ring Road"], "water": {"name": "River Wend", "edge": "east"}, "parks": [{"name": "Albury Green", "cells": [2, 1, 2, 1]}], "sites": [{"name": "Hale House", "cells": [0, 0, 1, 1]}, {"name": "Ring Road Industrial Estate", "cells": [5, 3, 6, 4]}]},
+  "file": [
+    { "id": "F1", "title": "Incident report",
+      "body": [
+        "Reported 07:05 Sunday 10 June by Thomas Reece, chauffeur, who lives in the flat over the coach house. The roadster's bay in the main garage was empty; the garage doors were locked and the alarm was armed.",
+        "No damage to doors or locks. No witness heard an engine during the night."
+      ],
+      "attachments": [] },
+    { "id": "F2", "title": "Insurance schedule and security survey",
+      "body": [
+        "1961 Castellane Sprint roadster, chassis 004 of 4. Agreed value £180,000, revalued on Tuesday 5 June by Sterling Mutual's assessor, Philippa Crowe.",
+        "Security: the garage alarm panel is in the tack room at the back of the garage. It prints every code used, with the time. Codes are held by the owner and the chauffeur only."
+      ],
+      "attachments": ["E002"] },
+    { "id": "F3", "title": "Persons of interest",
+      "body": [
+        "Oliver Hale, the owner's son. Wants the collection sold. At Hale House.",
+        "Marco Ferri, restorer. Services the roadster. At Ferri's Workshop.",
+        "Thomas 'Tommy' Reece, chauffeur for six years. Found the bay empty. In the coach-house flat.",
+        "Philippa Crowe, insurance assessor, Sterling Mutual. Revalued the car on Tuesday. Often at the Royal Motor Club.",
+        "Desmond Pryce, rival collector. Has tried to buy the roadster for years. A member of the Royal Motor Club."
+      ] }
+  ]
+}

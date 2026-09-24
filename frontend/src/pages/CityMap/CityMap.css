@@ -1,0 +1,45 @@
+.map { padding: 26px var(--gutter) 30px; display: flex; flex-direction: column; gap: 18px; max-width: 1400px; margin: 0 auto; }
+.map__kicker { font-size: 22px; color: var(--text-secondary); }
+.map__layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 26px; align-items: start; }
+.map__paper {
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden; border: 10px solid var(--paper); outline: 1px solid var(--paper-shade);
+  box-shadow: 18px 18px 0 var(--bg-base), inset 0 0 60px color-mix(in srgb, var(--map-ink) 25%, transparent);
+}
+.map__paper::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 70px color-mix(in srgb, var(--map-ink) 28%, transparent); }
+.map__route { fill: none; stroke: var(--red-string); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 10 7; }
+
+.pin { position: absolute; z-index: 1; width: 0; height: 0; background: none; border: 0; padding: 0; color: var(--map-ink); }
+.pin:hover, .pin:focus-visible, .pin--on { z-index: 2; outline: none; }
+.pin__badge {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: 50%; background: var(--map-road); border: 2.5px solid var(--map-ink);
+  box-shadow: 2px 3px 0 color-mix(in srgb, var(--map-ink) 40%, transparent); transition: transform 0.2s var(--ease-out), background 0.2s, color 0.2s;
+}
+.pin__badge svg { width: 23px; height: 23px; }
+.pin__label {
+  position: absolute; left: 0; top: 24px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;
+  padding: 2px 7px; background: var(--map-road); border: 1px solid var(--map-road-edge); width: max-content; max-width: 132px; text-align: center; pointer-events: none;
+}
+.pin__name { font-family: var(--font-heading); font-size: 14px; letter-spacing: 1px; line-height: 15px; text-transform: uppercase; }
+.pin__state { font-size: 9px; color: var(--red); }
+.pin:hover .pin__badge, .pin:focus-visible .pin__badge, .pin--on .pin__badge { transform: translate(-50%, -50%) scale(1.18); background: var(--red); color: var(--white); border-color: var(--red); }
+.pin--here .pin__badge { background: var(--red); color: var(--white); border-color: var(--map-ink); animation: pin-pulse 1.8s ease-in-out infinite; }
+.pin--visited:not(.pin--here) .pin__badge { background: var(--map-block); }
+.pin--on .pin__label { border-color: var(--red); }
+
+.map__card { position: sticky; top: calc(var(--hud-h) + 16px); background: var(--bg-raised); border: 1.5px solid var(--line-subtle); padding: 22px; min-height: 220px; }
+.map__detail { display: flex; flex-direction: column; gap: 10px; animation: page-in 0.3s ease both; }
+.map__district { color: var(--brass); }
+.map__people { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.map__go {
+  margin-top: 6px; padding: 14px 18px; background: var(--white); color: var(--paper-ink); border: 0;
+  font-family: var(--font-heading); font-size: 22px; letter-spacing: 3px; transition: transform 0.15s, background 0.15s;
+}
+.map__go:hover:not(:disabled) { background: var(--red); color: var(--white); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--bg-base); }
+.map__go:disabled { opacity: 0.5; }
+.map__error { border-left: 3px solid var(--red); padding-left: 10px; }
+.map__hint { display: flex; flex-direction: column; gap: 8px; }
+
+@keyframes pin-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--red-bright) 60%, transparent); } 50% { box-shadow: 0 0 0 10px transparent; } }
+@media (max-width: 1000px) { .map__layout { grid-template-columns: 1fr; } .map__card { position: static; } }
+@media (max-width: 640px) { .pin__badge { width: 28px; height: 28px; } .pin__badge svg { width: 16px; height: 16px; } .pin__label { top: 16px; max-width: 90px; } .pin__name { font-size: 11px; line-height: 12px; } }

@@ -1,0 +1,13 @@
+[
+  { "id": "T01", "timestamp": "1984-05-18T19:30:00", "title": "Curtain up", "description": "The Glass Widow opens to a full house.", "locationId": "L01", "personIds": ["S01", "S03"], "evidenceIds": ["E003"] },
+  { "id": "T02", "timestamp": "1984-05-18T20:52:00", "title": "Raised voices in Dressing Room 1", "description": "In the interval, Cordelia Vane collects her gown from Crane's room. Wardrobe hears shouting.", "locationId": "L03", "personIds": ["S01"], "evidenceIds": ["E011"] },
+  { "id": "T03", "timestamp": "1984-05-18T21:05:00", "title": "Act 2 begins", "description": "Crane and Vane on stage together.", "locationId": "L01", "personIds": ["S01"], "evidenceIds": ["E003"] },
+  { "id": "T04", "timestamp": "1984-05-18T21:40:00", "title": "Crane's last exit", "description": "Crane's character dies. He walks off to his dressing room to wait for the curtain call.", "locationId": "L01", "personIds": [], "evidenceIds": ["E003", "E002"] },
+  { "id": "T05", "timestamp": "1984-05-18T21:44:00", "title": "The pass-door key goes out", "description": "Someone signs the pass-door key out from the front-of-house board.", "locationId": "L05", "personIds": ["S04"], "evidenceIds": ["E007"] },
+  { "id": "T06", "timestamp": "1984-05-18T21:45:00", "title": "Box B door opens", "description": "The usher notes a gentleman stepping out of Box B.", "locationId": "L05", "personIds": ["S04"], "evidenceIds": ["E006"] },
+  { "id": "T07", "timestamp": "1984-05-18T21:50:00", "title": "Felix leaves by the stage door", "description": "The understudy goes out of the stage door.", "locationId": "L02", "personIds": ["S02"], "evidenceIds": ["E004", "E005"] },
+  { "id": "T08", "timestamp": "1984-05-18T21:52:00", "title": "The prompt corner changes hands", "description": "The assistant calls four cues while the stage manager is away.", "locationId": "L01", "personIds": ["S03"], "evidenceIds": ["E003", "E012"] },
+  { "id": "T09", "timestamp": "1984-05-18T22:00:00", "title": "Tea left outside Crane's door", "description": "The dresser leaves a tray outside Dressing Room 1.", "locationId": "L02", "personIds": ["S05"], "evidenceIds": ["E015"] },
+  { "id": "T10", "timestamp": "1984-05-18T22:05:00", "title": "Box B door closes", "description": "The gentleman returns to Box B.", "locationId": "L05", "personIds": ["S04"], "evidenceIds": ["E006", "E007"] },
+  { "id": "T11", "timestamp": "1984-05-18T22:18:00", "title": "Crane found dead", "description": "He misses the curtain call. The stage manager goes to fetch him and finds him on the floor.", "locationId": "L03", "personIds": ["S03"], "evidenceIds": ["E001", "E002", "E008"] }
+]

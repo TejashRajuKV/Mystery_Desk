@@ -1,0 +1,35 @@
+[
+  { "id": "ST01", "suspectId": "S01", "takenAt": "1984-04-24T09:40:00",
+    "text": "I locked up at half past five on Thursday and I didn't set foot in the branch again until this morning. I spent the whole holiday at home with my wife.",
+    "assertions": [
+      { "id": "ST01-A", "claim": "I didn't come into the branch over the holiday.", "kind": "did_not_perform", "actions": ["enter"], "target": "L01", "from": "1984-04-19T18:00:00", "to": "1984-04-24T08:00:00", "severity": "major",
+        "mitigatedBy": ["E007"], "note": "He came in for six minutes on Sunday for his spectacles, escorted by the guard, and was ashamed to say so." }
+    ] },
+  { "id": "ST02", "suspectId": "S02", "takenAt": "1984-04-24T12:15:00",
+    "text": "I did the service on Saturday afternoon and I was out by five. I tested the doors and the windows. I never touched the vault sensor; that's head office's business.",
+    "assertions": [
+      { "id": "ST02-A", "claim": "I was out of the branch by five on Saturday.", "kind": "departed_by", "time": "1984-04-21T17:00:00", "severity": "major" },
+      { "id": "ST02-B", "claim": "I never touched the vault sensor.", "kind": "did_not_perform", "actions": ["present"], "target": "L03", "from": "1984-04-21T00:00:00", "severity": "minor",
+        "mitigatedBy": ["E011"], "note": "The vault sensor test was on the ticket she was sent. She lied because the vault was emptied the same night." }
+    ] },
+  { "id": "ST03", "suspectId": "S03", "takenAt": "1984-04-24T11:30:00",
+    "text": "I was in bed by ten on Saturday. My van wasn't anywhere near that bank. I haven't been inside it in thirteen years and I never will be.",
+    "assertions": [
+      { "id": "ST03-A", "claim": "My van was nowhere near the bank on Saturday night.", "kind": "did_not_perform", "actions": ["present"], "target": "harbour_street", "from": "1984-04-21T20:00:00", "to": "1984-04-22T06:00:00", "severity": "minor",
+        "mitigatedBy": ["E009"], "note": "He lives on Harbour Street. His van is always outside his own door." }
+    ] },
+  { "id": "ST04", "suspectId": "S04", "takenAt": "1984-04-24T13:00:00",
+    "text": "I finished the audit on Thursday and drove straight to my sister's in Millbrook. I didn't leave her house all weekend and I certainly didn't drive back to Ridgeway. I've had nothing to do with the alarm company, and I haven't been to that branch since Thursday.",
+    "assertions": [
+      { "id": "ST04-A", "claim": "I didn't leave my sister's house all weekend.", "kind": "did_not_perform", "actions": ["exit"], "target": "sisters_house", "severity": "major" },
+      { "id": "ST04-B", "claim": "I didn't drive back to Ridgeway over the holiday.", "kind": "did_not_perform", "actions": ["present"], "target": "millbrook_toll", "severity": "major" },
+      { "id": "ST04-C", "claim": "I've had nothing to do with the alarm company.", "kind": "did_not_perform", "actions": ["filed_request"], "target": "alarm_service", "severity": "major" },
+      { "id": "ST04-D", "claim": "I haven't been to the branch since Thursday.", "kind": "did_not_perform", "actions": ["enter", "present"], "target": "L03", "from": "1984-04-19T18:00:00", "severity": "major" }
+    ] },
+  { "id": "ST05", "suspectId": "S05", "takenAt": "1984-04-24T10:10:00",
+    "text": "I didn't work over the holiday. The branch was shut. I was at home with my husband.",
+    "assertions": [
+      { "id": "ST05-A", "claim": "I didn't work over the holiday.", "kind": "did_not_perform", "actions": ["enter"], "target": "L01", "from": "1984-04-19T18:00:00", "to": "1984-04-24T08:00:00", "severity": "minor",
+        "mitigatedBy": ["E006"], "note": "The manager paid her cash for an extra clean on Sunday morning, which is against the rules." }
+    ] }
+]

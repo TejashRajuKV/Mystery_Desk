@@ -1,0 +1,57 @@
+[
+  {
+    "id": "perfect_investigation",
+    "title": "Perfect Investigation",
+    "stamp": "CASE CLOSED",
+    "verdict": "Every lie on the record, answered by an exhibit.",
+    "narrative": [
+      "You take {accused}'s statement apart one line at a time, and every line has an exhibit waiting for it. The defence reads your file on Monday morning and asks for a plea by Monday afternoon.",
+      "The Argus-7 turns up on Tuesday in a rented lock-up off Route 9, still in its foam wrap, never switched on.",
+      "The District Attorney calls it the cleanest file her office has seen all year. Nobody at Halden Dynamics ever quite looks at a keycard the same way again."
+    ]
+  },
+  {
+    "id": "true_criminal",
+    "title": "True Criminal",
+    "stamp": "CASE SOLVED",
+    "verdict": "The right name, and enough to hold it.",
+    "narrative": [
+      "{accused} is charged on Monday morning, a few hours before the demonstration that never happens.",
+      "The case holds. The defence finds a few loose threads in court — questions you never asked, statements you never tested — but not enough to pull.",
+      "The Argus-7 is recovered in the spring. Somewhere in the file, a few lies were never answered. You keep it in your bottom drawer anyway."
+    ]
+  },
+  {
+    "id": "wrong_suspect",
+    "title": "Wrong Suspect",
+    "stamp": "CASE REOPENED",
+    "verdict": "A careful case, built around the wrong person.",
+    "narrative": [
+      "Your case against {accused} is careful. It places them, it tests their story, it holds up in the squad room. It is also wrong.",
+      "The charges fall apart before trial. By then, whoever really walked out of Halden that night has had months to cover their tracks.",
+      "In the autumn a prototype very like the Argus-7 appears in a competitor's catalogue. The file is reopened, and handed to somebody else."
+    ]
+  },
+  {
+    "id": "innocent_accused",
+    "title": "Innocent Person Accused",
+    "stamp": "WRONGFUL ARREST",
+    "verdict": "An accusation with almost nothing behind it.",
+    "narrative": [
+      "{accused} is arrested on a Monday morning with the evidence you had, which was not much.",
+      "The charges are dropped within the week. The damage isn't. The newspapers ran the name; they never ran the apology.",
+      "The Argus-7 is never recovered. The file is closed without a culprit, and yours is the name on the cover."
+    ]
+  },
+  {
+    "id": "criminal_escapes",
+    "title": "Criminal Escapes",
+    "stamp": "UNSOLVED",
+    "verdict": "The file never became a case.",
+    "narrative": [
+      "The file goes to the District Attorney's office and comes back stamped INSUFFICIENT.",
+      "Whoever took the Argus-7 knew exactly how thin that file would be. The demonstration on Monday is cancelled. The sale falls through by summer.",
+      "Case #047 is shelved in a basement archive at Ridgeway, beside a great many others."
+    ]
+  }
+]

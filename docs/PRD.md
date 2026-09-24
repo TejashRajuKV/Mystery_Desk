@@ -116,7 +116,9 @@ mysterydesk/
 │   │   ├── components/
 │   │   │   ├── CaseHeader/  Sidebar/  EvidenceCard/  SuspectCard/
 │   │   │   ├── TimelineEvent/  InvestigationNode/  AssistantPanel/
-│   │   │   ├── ProgressIndicator/  ReportSection/
+│   │   │   ├── ProgressIndicator/  ReportSection/  EndingScreen/
+│   │   │   ├── InterviewScene/  Portrait/  DialogueBox/  ChoiceList/
+│   │   │   ├── EvidencePresentation/  GameNotice/  NewInvestigation/
 │   │   │   └── Layout/  ui/          (shared shell and primitives)
 │   │   ├── pages/
 │   │   │   ├── CaseEntry/  Dashboard/  EvidenceRoom/  Suspects/
@@ -130,7 +132,7 @@ mysterydesk/
 ├── backend/
 │   ├── src/
 │   │   ├── routes/         case, evidence, suspects, timeline, connections,
-│   │   │                   investigation, assistant, report
+│   │   │                   investigation, assistant, report, dialogue, notes
 │   │   ├── controllers/
 │   │   ├── services/
 │   │   ├── models/
@@ -141,7 +143,8 @@ mysterydesk/
 │   └── package.json
 ├── data/
 │   ├── case.json  locations.json  suspects.json  evidence.json
-│   └── timeline.json  statements.json  solution.json
+│   ├── timeline.json  statements.json  solution.json
+│   └── dialogue.json  endings.json
 ├── docs/
 │   └── PRD.md
 ├── .claude/skills/mysterydesk-dev-rules/SKILL.md
@@ -166,7 +169,7 @@ CaseEntry ──► Dashboard ─┬─► EvidenceRoom ─────► evide
 | CaseEntry | `GET /cases/:caseId` |
 | Dashboard | `GET /cases/:caseId`, `GET /cases/:caseId/investigation` (progress), `GET /cases/:caseId/evidence` (latest leads) |
 | EvidenceRoom | `GET /cases/:caseId/evidence`, `GET /evidence/:id`, `POST /cases/:caseId/viewed` |
-| Suspects | `GET /cases/:caseId/suspects`, `GET /cases/:caseId/statements`, `POST /cases/:caseId/viewed`, `POST /cases/:caseId/contradictions` |
+| Suspects | `GET /cases/:caseId/suspects`, `GET /cases/:caseId/statements`, `POST /cases/:caseId/viewed`, `POST /cases/:caseId/contradictions`, `GET /cases/:caseId/dialogue/:suspectId`, `POST /cases/:caseId/dialogue/:suspectId/choice` |
 | Timeline | `GET /cases/:caseId/timeline`, `POST /cases/:caseId/viewed` |
 | InvestigationBoard | connections (GET, POST, DELETE), `GET /investigation` |
 | Assistant | `POST /assistant/query`, `POST /contradictions` (logging a contradiction the assistant found) |
@@ -263,7 +266,41 @@ Add a kind only when the case data needs one. `severity`, `mitigatedBy` (evidenc
 }
 ```
 
-It loads into its own table. Only `validateConclusion` reads it. No API route returns it, `GET /api/cases/:caseId` does not include it, the assistant never receives it, and rejection reasons never name the missing item (say "not enough evidence linked to this suspect", not "you need E011"). A required connection matches in either direction. The file holds the answer key only; no prose that the report could reuse.
+It loads into its own table. Only `ending.service` reads it. No API route returns it, `GET /api/cases/:caseId` does not include it, the assistant never receives it, and nothing names a missing item. A required connection matches in either direction. The file holds the answer key only; no prose that the report could reuse.
+
+**Dialogue** (`data/dialogue.json`) holds `defaultUnlockedEvidence` (the exhibits in the case file from the start) and one interview tree per suspect:
+
+```json
+{
+  "defaultUnlockedEvidence": ["E001", "E002"],
+  "interviews": {
+    "S02": {
+      "startNode": "a-start",
+      "nodes": {
+        "a-start": {
+          "speaker": "S02", "narration": "Optional stage direction.", "text": "What he says.",
+          "choices": [
+            { "id": "a-start-parked", "label": "Ask where he parked on Friday", "next": "a-parked",
+              "consequences": [{ "type": "unlock_evidence", "evidenceId": "E011" }] },
+            { "id": "a-start-e014", "label": "Show Evidence: Keycard Access (E014)", "next": "a-e014",
+              "requires": { "evidenceViewed": ["E014"] },
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST02-A", "evidenceId": "E014" }] },
+            { "id": "a-start-leave", "label": "Leave", "next": null }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Nodes may also carry `mood` (neutral, suspicious, nervous, angry, surprised, defeated, defensive), `voice` (a recorded line under `frontend/public`; without one the UI falls back to the browser's own speech synthesis, and the game works with neither), `variants` (`{ requires, mood?, narration?, text? }`; the first whose conditions hold replaces the node's mood and lines, so a suspect reacts to what the player has done) and `presentable: true` (the player may present any exhibit here). An evidence reaction is a choice with `present: "E014"` and no label; it is never listed, so the UI can't hint at which exhibit matters. Presenting anything else plays the interview's `presentFallback` node.
+
+`requires` knows exactly two conditions: `evidenceViewed` (every listed exhibit unlocked and viewed) and `flags` (`{ "hostile.S01": { "ne": true } }`, with `eq`, `ne`, `gte`, `lte`). Consequences are exactly `unlock_evidence { evidenceId }`, `set_flag { key, value }` and `reveal_contradiction { assertionId, evidenceId }`, which records the pair through the same check as `POST /contradictions`. `next: null` leaves; the next visit starts at `startNode`. The backend validates the file at seed time (unknown IDs, nodes, conditions or consequences, a revealed pair that isn't a derived contradiction, evidence nothing ever unlocks) and refuses to start on bad data. The trees are written so the culprit can look innocent and innocents can look guilty.
+
+**Locked evidence.** Evidence not in `defaultUnlockedEvidence` is locked until a consequence unlocks it. For the player, a locked exhibit does not exist yet: the evidence list leaves it out, `GET /evidence/:id` is a 404, timeline `evidenceIds` and `relatedEvidenceIds` are filtered, the assistant doesn't reason over it, and viewed, contradictions, connections and the conclusion reject it. Progress still counts all 18.
+
+**Endings** (`data/endings.json`): one entry per ending (`id`, `title`, `stamp`, `verdict`, `narrative[]`), with `{accused}` filled in by the backend. It never names the culprit.
 
 ## 7. Backend API
 
@@ -346,13 +383,48 @@ POST /api/cases/:caseId/conclusion      { "suspectId": "S02", "evidenceIds": ["E
 GET  /api/cases/:caseId/report
 ```
 
-A valid conclusion returns 200 with `{ "suspectId", "evidenceIds" }` as saved. `GET /report` before a conclusion is accepted returns 422.
+A valid conclusion returns 200 with `{ "suspectId", "evidenceIds", "ending" }` as saved. `suspectId: null` is "cannot determine". A second conclusion is a 422: the first is final. `GET /report` before a conclusion is accepted returns 422.
 
 ### Assistant
 
 ```text
 POST /api/assistant/query               { "question": "..." }
 ```
+
+### Detective's Notes, facts, reset
+
+```text
+GET  /api/cases/:caseId/notes                 [{ "id": "statement:S02", "label": "Review Alex Reyes’s statement" }, ..., { "id": "connect", "label": "...", "picks": 2 }]
+POST /api/cases/:caseId/notes                 { "promptId": "connect", "items": ["S02", "L03"] }
+GET  /api/cases/:caseId/facts/:suspectId      { "suspectId", "name", "lines": [{ "mark": "✓" | "?", "text", "evidenceId"?, "assertionId"? }] }
+POST /api/cases/:caseId/reset                 the fresh investigation state
+```
+
+A note is the assistant's response shape plus `promptId`, `title` and, for statement and theory prompts, `facts`. Notes only reason over evidence the player has examined and never say who did it. Unknown prompt: 404; malformed or unknown `items`: 400. Facts list ✓ for what the record shows about a suspect (placements from examined exhibits, contradictions found, innocent explanations on file) and ? for every claim not yet disproved — true claims stay "?" forever, so nothing is given away. Reset wipes every player-state table, restores `defaultUnlockedEvidence`, and returns the investigation state.
+
+### Interviews
+
+```text
+GET  /api/cases/:caseId/dialogue/:suspectId
+POST /api/cases/:caseId/dialogue/:suspectId/choice    { "choiceId": "a-start-parked" } | { "presentEvidenceId": "E014" }
+```
+
+```json
+// GET: the suspect's current node, with only the choices whose `requires` are met
+{ "suspectId": "S02", "nodeId": "a-start", "speaker": "S02", "speakerName": "Alex Reyes",
+  "narration": "...", "text": "...",
+  "choices": [{ "id": "a-start-parked", "label": "Ask where he parked on Friday", "asked": false, "leaves": false }] }
+
+// POST: the new node, what the choice did, and the full investigation state
+{ "dialogue": { "...": "as GET" }, "ended": false,
+  "effects": { "unlockedEvidence": [{ "id": "E011", "title": "..." }],
+               "contradictions": [{ "assertionId": "ST02-A", "evidenceId": "E011", "explanation": "..." }] },
+  "investigation": { "...": "as GET /investigation" } }
+```
+
+GET also returns `mood`, `voice` and `canPresent`. POST with `presentEvidenceId` needs an unlocked exhibit (422 otherwise), records it as viewed, and adds `presented: { id, title, reaction: "reaction" | "unmoved" }`.
+
+`asked` marks a question already put (returning to the opening line and leaving don't count). A `choiceId` that isn't on the current node or whose `requires` isn't met is a 422 with one shared reason; so is any choice after the case is closed. Unknown suspect: 404. Missing `choiceId`: 400.
 
 ## 8. Investigation State
 
@@ -382,13 +454,17 @@ Investigation
       "claim": "I left the building at 21:00 and went straight home.",
       "explanation": "...", "mitigatedBy": [] }
   ],
+  "unlockedEvidence": ["E001", "E002", "E014"],
+  "interviewedSuspects": ["S01", "S02"],
+  "interviewLeads": { "S01": 3, "S02": 4 },
+  "storyFlags": { "lawyered.S02": true },
   "theory": "",
   "conclusion": null,
   "progress": 42
 }
 ```
 
-The viewed lists are in the order items were first viewed (the Dashboard shows the latest as leads). `explanation` is composed by the service from the statement and the evidence at query time. Once a conclusion is accepted, `conclusion` is `{ "suspectId": "S02", "evidenceIds": ["E014", "E006"] }`.
+The viewed lists are in the order items were first viewed (the Dashboard shows the latest as leads). `explanation` is composed by the service from the statement and the evidence at query time. Once a conclusion is accepted, `conclusion` is `{ "suspectId": "S02", "evidenceIds": ["E014", "E006"], "ending": "true_criminal" }`. `mitigatedBy` lists only unlocked exhibits. Interview progress (each suspect's node, choices made, flags) is server state too, read back through `GET /dialogue/:suspectId`.
 
 `progress` is an integer percentage, calculated server-side: the average of four ratios, equally weighted — evidence viewed, suspects viewed, events viewed, and contradictions found (of all contradictions the service can derive). The UI derives the "x / N" counts from the list lengths it already has.
 
@@ -492,39 +568,30 @@ The board stores relationships as connections (§7). The backend stores and vali
 
 ## 12. Final Conclusion
 
-The user submits a primary suspect and the evidence supporting it, after saving a theory with `PUT /theory`:
+The player cites evidence, saves a theory with `PUT /theory`, and then makes the accusation as a choice (`[Accuse <name>]` for each suspect, or `[Cannot determine]`), confirmed once more because it is final:
 
 ```text
 POST /api/cases/047/conclusion   { "suspectId": "S02", "evidenceIds": [...] }
+POST /api/cases/047/conclusion   { "suspectId": null }          (cannot determine)
 ```
 
 The backend checks, in order:
 
-1. The body is well-formed (`suspectId` is a string, `evidenceIds` a non-empty array) — otherwise 400.
-2. The suspect exists.
-3. Every cited evidence item exists.
-4. The suspect is the culprit and the cited evidence covers `requiredEvidence` — otherwise "not enough evidence linked to this suspect". A wrong suspect and too little evidence get the same reason, so the answer can't be found by elimination.
-5. The required connections (from `solution.json`) have actually been made by the player.
+1. The body is well-formed (`suspectId` is a string with a non-empty `evidenceIds` array, or `null`) — otherwise 400.
+2. No conclusion has been accepted yet — otherwise 422: the case is closed.
+3. The suspect exists, and every cited exhibit exists and is unlocked — otherwise 422.
 
-Any failure after step 1 is a 422 with a reason the UI can show, without naming what is missing. Duplicate cited IDs are collapsed.
+Anything that passes is accepted, and `ending.service.evaluateEnding` fixes the ending from what the player has done at that moment:
 
-```text
-POST /conclusion { suspectId, evidenceIds }
-             ↓
-     well-formed body? ───── no ──► 400
-             ↓ yes
-     suspect exists? ─────── no ──► 422
-             ↓ yes
-     all evidence exists? ── no ──► 422
-             ↓ yes
-     culprit + required evidence cited? ── no ──► 422  (same reason for both)
-             ↓ yes
-     required connections made? ── no ──► 422  (reason, without naming the answer)
-             ↓ yes
-     save conclusion
-             ↓
-     report available at GET /report
-```
+| Ending | When |
+|---|---|
+| Perfect Investigation | the culprit, `requiredEvidence` cited, `requiredConnections` made, and every contradiction derivable against the culprit found |
+| True Criminal | the culprit, `requiredEvidence` cited and `requiredConnections` made, but not every contradiction found |
+| Criminal Escapes | "cannot determine", or the culprit on a case short of that bar |
+| Wrong Suspect | an innocent, with a reasoned case: at least 2 of cited exhibits naming them, contradictions found against them, board links to them |
+| Innocent Person Accused | an innocent, on less than that |
+
+The right name on thin evidence and the wrong name both get an ending, never a 422, so the answer can't be found by elimination; and because the first accusation is final, it can't be found by retrying either. Duplicate cited IDs are collapsed.
 
 ## 13. Final Report
 
@@ -535,6 +602,9 @@ POST /conclusion { suspectId, evidenceIds }
   "case": "047",
   "title": "The Missing Prototype",
   "primarySuspect": { "id": "S02", "name": "Alex Reyes" },
+  "ending": { "id": "true_criminal", "title": "True Criminal", "stamp": "CASE SOLVED",
+              "verdict": "...", "narrative": ["paragraph", "..."],
+              "whatHappened": [{ "id": "T08", "time": "21:14", "title": "...", "description": "...", "evidence": [{ "id": "E014", "title": "..." }] }] },
   "theory": "the player's saved theory",
   "supportingEvidence": [
     { "id": "E014", "title": "Keycard Access", "time": "21:14", "location": "Storage Room B", "summary": "..." }
@@ -549,7 +619,7 @@ POST /conclusion { suspectId, evidenceIds }
 }
 ```
 
-`supportingEvidence` is what the conclusion cited, `timeline` is the events the player reviewed in order, `contradictions` and `connections` are the ones they found and made. The frontend turns this into the cinematic final report.
+`primarySuspect` is `null` for "cannot determine". `whatHappened` is present only for Perfect Investigation and True Criminal (null otherwise): the timeline events involving the culprit or resting on a proving exhibit. `ending` is the ending's copy with the accused's name filled in; the frontend opens the report with it as a cinematic ending screen (`EndingScreen`). `supportingEvidence` is what the conclusion cited, `timeline` is the events the player reviewed in order, `contradictions` and `connections` are the ones they found and made. The frontend turns this into the cinematic final report.
 
 ## 14. Figma + Claude Code Workflow
 
@@ -612,7 +682,7 @@ Loading, empty and error states are built with each screen that fetches, not def
 
 Phases 1, 2, 4, 5 and 6 are built and were played end to end in the browser through the real API: reading evidence, testing claims, linking on the board, asking the assistant, a rejected then accepted conclusion, the report, and a refresh and a server restart that lose nothing. **The eight screens were built before their endpoints**, at the owner's request, so the phase order above was not followed for the frontend. No case data is hardcoded in the UI.
 
-Phase 7 is done except the Figma diff. Timeline, Board, Assistant and Report were checked at desktop (1440px) and tablet (768px) width, on top of the phone width already checked when they were built — the drawer, the canvas scroll and node geometry, the two-column report, and the "revise conclusion" prefill all hold up. The assistant's network-error state was exercised (backend stopped mid-question) and degrades correctly, and so was the top-level error state (`Layout`'s `ErrorState`, shown when the initial case load fails) — including its "try again" recovering cleanly once the backend comes back. Every animation was checked against the Web Animations API at runtime (exact duration, easing, fill mode and keyframe values), not just eyeballed: all match their declared CSS, the report stamp's delay lines up exactly with the report fade's duration with no gap or overlap, and `prefers-reduced-motion` correctly disables the ambient grain and clamps every other animation. Still open: the Figma diff for all four screens. There is still no Figma frame to diff against — the Figma MCP plan limit was checked again on 2026-09-22 and is still in effect; don't retry it without the owner's say-so. No automated tests exist yet, by request.
+Phase 7 is done except the Figma diff. Timeline, Board, Assistant and Report were checked at desktop (1440px) and tablet (768px) width, on top of the phone width already checked when they were built — the drawer, the canvas scroll and node geometry, the two-column report, and the "revise conclusion" prefill all hold up. The assistant's network-error state was exercised (backend stopped mid-question) and degrades correctly, and so was the top-level error state (`Layout`'s `ErrorState`, shown when the initial case load fails) — including its "try again" recovering cleanly once the backend comes back. Every animation was checked against the Web Animations API at runtime (exact duration, easing, fill mode and keyframe values), not just eyeballed: all match their declared CSS, the report stamp's delay lines up exactly with the report fade's duration with no gap or overlap, and `prefers-reduced-motion` correctly disables the ambient grain and clamps every other animation. The game layer from `Prompts/transform the EXISTING MysteryDesk.txt` is built on top: the full-screen interview scene, portrait moods and state-dependent reactions, voice, evidence presentation, in-game notices, Detective's Notes (no typed questions), the Case Hub, statements on the timeline and board, the "who did it → present evidence → file" sequence, the CASE CLOSED intro, What Happened and Play Again. The Case Hub replaced the Figma-framed Dashboard at the owner's request and needs a Figma diff. The story layer (interviews, locked evidence, the choice-list accusation and five endings) is built and was played through the API to every ending on fresh databases and in the browser, including phone width and the interview's error state. The interview panel and ending screen have no Figma frame. Still open: the Figma diff for all four screens. There is still no Figma frame to diff against — the Figma MCP plan limit was checked again on 2026-09-22 and is still in effect; don't retry it without the owner's say-so. No automated tests exist yet, by request.
 
 ## 16. Definition of Done
 

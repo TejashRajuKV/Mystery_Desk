@@ -1,0 +1,37 @@
+[
+  { "id": "perfect_investigation", "title": "Perfect Investigation", "stamp": "CASE CLOSED",
+    "verdict": "Every lie answered, down to the code on the alarm.",
+    "narrative": [
+      "You put it to {accused} over his own kitchen table: the code, the handbrake, the job sheet, the driver. He finishes his tea before he answers.",
+      "The roadster is stopped at Harwich an hour before its ferry sails, still wrapped in the Hale House dust sheet.",
+      "Augustus Hale comes downstairs for the first time in a month to see it rolled back into its bay."
+    ] },
+  { "id": "true_criminal", "title": "True Criminal", "stamp": "CASE SOLVED",
+    "verdict": "The right name, and enough to hold it.",
+    "narrative": [
+      "{accused} is charged before the insurers close the file.",
+      "The case holds, though his counsel makes much of the lies you never broke.",
+      "The roadster is traced to Rotterdam in the autumn and comes home the long way."
+    ] },
+  { "id": "wrong_suspect", "title": "Wrong Suspect", "stamp": "CASE REOPENED",
+    "verdict": "A careful case, built around the wrong person.",
+    "narrative": [
+      "Your case against {accused} has a motive, a lie and a night on the timeline. It is still wrong.",
+      "The charges are dropped. By then the roadster has changed hands twice on the continent.",
+      "The file is reopened in the winter and handed to somebody else."
+    ] },
+  { "id": "innocent_accused", "title": "Innocent Person Accused", "stamp": "WRONGFUL ARREST",
+    "verdict": "An arrest on a rumour.",
+    "narrative": [
+      "{accused} is arrested in front of half the Motor Club.",
+      "The charges are dropped within the week. The club doesn't forget.",
+      "Chassis four of four is never seen in Ridgeway again."
+    ] },
+  { "id": "criminal_escapes", "title": "Criminal Escapes", "stamp": "UNSOLVED",
+    "verdict": "The car rolled away in the dark, and so did the case.",
+    "narrative": [
+      "At nine o'clock the insurers write the roadster off.",
+      "Whoever pushed it down the drive knew the house, the car and the codes, and knew you wouldn't get there in time.",
+      "Case #050 is filed under Unsolved. A Castellane Sprint appears at a Geneva auction three years later, chassis number filed off."
+    ] }
+]

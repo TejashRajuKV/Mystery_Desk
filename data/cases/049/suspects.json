@@ -1,0 +1,180 @@
+[
+  {
+    "id": "S01",
+    "name": "Graham Pike",
+    "alias": "The Manager",
+    "age": 49,
+    "role": "Branch Manager",
+    "department": "Harbour Street branch",
+    "background": "Twenty-two years with Mercantile, the last six running Harbour Street. Discovered the empty boxes on Tuesday morning.",
+    "motive": "His own accounts are overdrawn and head office has been asking why.",
+    "opportunity": "Holds one half of the combination and keys to every door in the branch.",
+    "personality": "Anxious, correct, mortified.",
+    "accessLevel": "Branch keys; half the vault combination",
+    "locationIds": [
+      "L01",
+      "L02"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S05",
+        "note": "Pays Doreen for extra cleans out of his own pocket."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "receding",
+      "hairColor": "brown",
+      "face": "round",
+      "outfit": "suit",
+      "outfitColor": "navy",
+      "extras": [
+        "glasses"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.95,
+      "rate": 1.0
+    }
+  },
+  {
+    "id": "S02",
+    "name": "Rosa Delgado",
+    "alias": "The Engineer",
+    "age": 36,
+    "role": "Alarm Engineer",
+    "department": "Fortress Alarms",
+    "background": "Senior engineer at Fortress Alarms. Services the Harbour Street panel every quarter, and did so on Saturday afternoon.",
+    "motive": "Fortress has lost two contracts this year; the rumour is she's looking for a way out.",
+    "opportunity": "Was inside the branch with the alarm in test mode on the Saturday.",
+    "personality": "Blunt, technical, impatient with fools.",
+    "accessLevel": "Engineer's code for the alarm panel",
+    "locationIds": [
+      "L05"
+    ],
+    "relationships": [],
+    "look": {
+      "skin": "olive",
+      "hair": "long",
+      "hairColor": "black",
+      "face": "oval",
+      "outfit": "overalls",
+      "outfitColor": "navy",
+      "extras": []
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 0.95,
+      "rate": 1.05
+    }
+  },
+  {
+    "id": "S03",
+    "name": "Walter Kemp",
+    "alias": "The Locksmith",
+    "age": 58,
+    "role": "Locksmith",
+    "department": "Kemp Keys & Locks",
+    "background": "Served twelve years for safe-breaking. Came out in 1983 and opened a key shop directly across Harbour Street from the bank.",
+    "motive": "Old habits, say the police. He says he's never been more honest.",
+    "opportunity": "Knows safes better than anyone in Ridgeway, and lives fifty yards from the vault.",
+    "personality": "Gruff, dry, tired of being the first name on every list.",
+    "accessLevel": "None",
+    "locationIds": [
+      "L04"
+    ],
+    "relationships": [],
+    "look": {
+      "skin": "fair",
+      "hair": "bald",
+      "hairColor": "grey",
+      "face": "square",
+      "outfit": "jacket",
+      "outfitColor": "brown",
+      "extras": [
+        "beard",
+        "cap"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.7,
+      "rate": 0.9
+    }
+  },
+  {
+    "id": "S04",
+    "name": "Edwin Thorne",
+    "alias": "The Auditor",
+    "age": 51,
+    "role": "Senior Auditor",
+    "department": "Mercantile Head Office",
+    "background": "Head Office Audit for twenty years. Audited Harbour Street on Thursday afternoon, then drove to his sister's in Millbrook for the holiday.",
+    "motive": "None on the record. Unmarried, careful, respected.",
+    "opportunity": "Was fifty miles away all weekend. Or so he says.",
+    "personality": "Courteous, precise, very helpful.",
+    "accessLevel": "Head Office audit code; access to the combination envelopes at audit",
+    "locationIds": [
+      "L06"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S01",
+        "note": "Has written Pike up for untidy books."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "slick",
+      "hairColor": "grey",
+      "face": "long",
+      "outfit": "suit",
+      "outfitColor": "charcoal",
+      "extras": [
+        "glasses"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.9,
+      "rate": 0.9
+    }
+  },
+  {
+    "id": "S05",
+    "name": "Doreen Walsh",
+    "alias": "The Cleaner",
+    "age": 44,
+    "role": "Contract Cleaner",
+    "department": "Brightside Cleaning",
+    "background": "Has cleaned the Harbour Street branch for nine years. Knows which floorboard squeaks and who leaves their coffee cups.",
+    "motive": "Short of money since her husband's layoff.",
+    "opportunity": "Holds a staff-entrance key.",
+    "personality": "Chatty until she's frightened, then not at all.",
+    "accessLevel": "Staff entrance key",
+    "locationIds": [
+      "L01"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S01",
+        "note": "Likes Mr Pike. Doesn't like the man from head office."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "curly",
+      "hairColor": "brown",
+      "face": "round",
+      "outfit": "cardigan",
+      "outfitColor": "cream",
+      "extras": []
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 1.1,
+      "rate": 1.05
+    }
+  }
+]

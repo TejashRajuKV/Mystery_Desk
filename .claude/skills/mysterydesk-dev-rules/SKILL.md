@@ -83,11 +83,11 @@ behaviour) first. This file is the checklist.
      pair is real before saving it, `422` if it isn't.
 
 9. Treat `solution.json` as the answer key it is:
-   - loads into its own table, only `validateConclusion` reads it,
+   - loads into its own table, only `ending.service` reads it,
    - no route returns it, `GET /api/cases/:caseId` excludes it, the
      assistant never sees it, the report never quotes it,
-   - rejection reasons stay general ("not enough evidence linked to this
-     suspect") — never name the missing id.
+   - nothing ever names a missing id, and ending copy (`endings.json`) never
+     names the culprit.
 
 10. Keep the assistant structured and scoped:
     - it is rule-based: no model, no API key, no `.env`, no network call,
@@ -102,18 +102,30 @@ behaviour) first. This file is the checklist.
       `{ assertionId, evidenceId }` pairs) with every id checked against the
       database before it leaves the backend.
 
-11. Validate a conclusion in order, stop at the first failure:
-    - `400` — body isn't well-formed (`suspectId` not a string, or
-      `evidenceIds` not a non-empty array),
-    - `422` — suspect doesn't exist,
-    - `422` — cited evidence doesn't exist,
-    - `422` — suspect isn't the culprit, or `requiredEvidence` isn't all cited
-      (one shared reason, so the answer can't be found by elimination),
-    - `422` — required connections from `solution.json` weren't made
-      (either direction counts),
-    - only then save the conclusion and open `GET /report`,
+11. The accusation is a choice and it is final (PRD §12):
+    - `400` — body isn't well-formed (`suspectId` a string with a non-empty
+      `evidenceIds` array, or `null` for "cannot determine"),
+    - `422` — a conclusion is already on file (the case is closed),
+    - `422` — suspect doesn't exist, or cited evidence doesn't exist or is
+      locked,
+    - anything else is accepted, and `ending.service.evaluateEnding` picks one
+      of five endings; right-name-thin-case and wrong-name both get an ending,
+      never a 422, so the answer can't be found by elimination,
     - build the report from what the player actually did — nothing
-      pre-written.
+      pre-written beyond the ending's copy.
+
+11b. Interviews and locked evidence (PRD §6, §7):
+    - dialogue content lives in `data/dialogue.json`, never in `.jsx` — moods,
+      variants, voice paths and evidence reactions (`present`) included; evidence
+      reactions are never listed to the player,
+    - the player never types a question: interviews and Detective's Notes are
+      predefined choices only,
+    - `requires` is only `evidenceViewed` and `flags`; consequences are only
+      `unlock_evidence`, `set_flag`, `reveal_contradiction` — add a kind to
+      `dialogue.service` first, and `validateDialogue` will reject the rest,
+    - interview progress, flags and unlocked evidence are server state,
+    - locked evidence doesn't exist for the player: filter it from every
+      read, reject it in every write.
 
 12. Follow the build order:
     - (1) scaffolding, (2) seed data + read routes, (3) tokens then

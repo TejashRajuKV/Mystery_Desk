@@ -1,0 +1,191 @@
+[
+  {
+    "id": "S01",
+    "name": "Oliver Hale",
+    "alias": "The Son",
+    "age": 32,
+    "role": "Heir",
+    "department": "The Hale family",
+    "background": "Augustus Hale's only son. Lives at the house, works nowhere in particular, and has been trying to persuade his father to sell the collection for two years.",
+    "motive": "Owes a casino £22,000 and stands to inherit a garage full of money.",
+    "opportunity": "Lives in the house and knows where every key is kept.",
+    "personality": "Charming, bitter, quick to take offence.",
+    "accessLevel": "House keys",
+    "locationIds": [
+      "L02"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S03",
+        "note": "Grew up with Tommy driving him to school."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "wavy",
+      "hairColor": "blond",
+      "face": "long",
+      "outfit": "suit",
+      "outfitColor": "navy",
+      "extras": []
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 1.0,
+      "rate": 1.0
+    }
+  },
+  {
+    "id": "S02",
+    "name": "Marco Ferri",
+    "alias": "The Restorer",
+    "age": 45,
+    "role": "Restorer",
+    "department": "Ferri Coachworks",
+    "background": "Has restored and serviced every car in the Hale collection for fifteen years. Holds the roadster's spare key at his workshop.",
+    "motive": "Hale owes him eight months of invoices.",
+    "opportunity": "Knows the roadster better than its owner, and has a key.",
+    "personality": "Warm, proud of his work, hot-tempered about money.",
+    "accessLevel": "Spare key to the roadster (kept at the workshop)",
+    "locationIds": [
+      "L04"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S03",
+        "note": "Tells the chauffeur everything about the cars."
+      }
+    ],
+    "look": {
+      "skin": "olive",
+      "hair": "curly",
+      "hairColor": "black",
+      "face": "square",
+      "outfit": "overalls",
+      "outfitColor": "olive",
+      "extras": [
+        "moustache"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.85,
+      "rate": 1.1
+    }
+  },
+  {
+    "id": "S03",
+    "name": "Thomas Reece",
+    "alias": "The Chauffeur",
+    "age": 38,
+    "role": "Chauffeur",
+    "department": "Hale House",
+    "background": "Six years as Augustus Hale's chauffeur and mechanic's mate. Lives over the coach house. Found the empty bay and raised the alarm.",
+    "motive": "None anyone has noticed. The old man calls him 'the only honest man in the house'.",
+    "opportunity": "Holds one of the two alarm codes and lives forty yards from the garage.",
+    "personality": "Quiet, polite, devoted to the cars.",
+    "accessLevel": "Garage keys and alarm code",
+    "locationIds": [
+      "L03",
+      "L01"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S01",
+        "note": "Drove Oliver to school every day for years."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "short",
+      "hairColor": "brown",
+      "face": "oval",
+      "outfit": "uniform",
+      "outfitColor": "charcoal",
+      "extras": [
+        "cap"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.95,
+      "rate": 0.9
+    }
+  },
+  {
+    "id": "S04",
+    "name": "Philippa Crowe",
+    "alias": "The Assessor",
+    "age": 44,
+    "role": "Insurance Assessor",
+    "department": "Sterling Mutual",
+    "background": "Senior assessor for classic cars. Revalued the roadster from £95,000 to £180,000 on Tuesday.",
+    "motive": "A theft four days after doubling the valuation looks very convenient for someone.",
+    "opportunity": "Walked round the garage and its alarm on Tuesday with a notebook.",
+    "personality": "Brisk, sardonic, unshockable.",
+    "accessLevel": "None",
+    "locationIds": [
+      "L06"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S05",
+        "note": "Values Pryce's collection too."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "bob",
+      "hairColor": "black",
+      "face": "long",
+      "outfit": "suit",
+      "outfitColor": "charcoal",
+      "extras": [
+        "earrings"
+      ]
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 0.95,
+      "rate": 1.0
+    }
+  },
+  {
+    "id": "S05",
+    "name": "Desmond Pryce",
+    "alias": "The Rival",
+    "age": 60,
+    "role": "Collector",
+    "department": "The Pryce Collection",
+    "background": "Owns the second-finest collection in Ridgeway, and two of the other three Castellane Sprints. Has offered to buy Hale's roadster five times.",
+    "motive": "Told the whole Motor Club last month he'd 'have that car one way or another'.",
+    "opportunity": "Knows the house, the garage and the family.",
+    "personality": "Haughty, theatrical, wounded by any suggestion of vulgarity.",
+    "accessLevel": "None",
+    "locationIds": [
+      "L06"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S04",
+        "note": "Old sparring partner at the club."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "slick",
+      "hairColor": "white",
+      "face": "square",
+      "outfit": "tweed",
+      "outfitColor": "brown",
+      "extras": [
+        "moustache"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.8,
+      "rate": 0.85
+    }
+  }
+]

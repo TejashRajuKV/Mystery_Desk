@@ -6,10 +6,8 @@
 .sus-card:hover { transform: translate(-3px, -3px); box-shadow: 5px 5px 0 var(--line-strong); }
 .sus-card--selected { border-color: var(--white); box-shadow: 0 0 0 3px var(--white); }
 .sus-card--selected:hover { box-shadow: 0 0 0 3px var(--white), 5px 5px 0 var(--line-strong); }
-.sus-card__portrait { position: relative; display: block; height: 200px; background: var(--bg-panel); overflow: hidden; }
-.sus-card__head, .sus-card__shoulders { position: absolute; background: var(--line-strong); border-radius: 50%; }
-.sus-card__head { width: 84px; height: 96px; left: 50%; margin-left: -42px; top: 40px; }
-.sus-card__shoulders { width: 78%; height: 170px; left: 11%; top: 138px; }
+.sus-card__portrait { position: relative; display: block; background: var(--bg-panel); overflow: hidden; }
+.sus-card__face { width: 100%; border: 0; box-shadow: none; }
 .sus-card__id { position: absolute; top: 12px; left: 12px; padding: 3px 8px; }
 .sus-card__seen { position: absolute; top: 12px; right: 12px; padding: 3px 8px; background: var(--bg-panel); }
 .sus-card__info { display: flex; flex-direction: column; gap: 4px; padding: 16px; }

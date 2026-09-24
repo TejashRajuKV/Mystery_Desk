@@ -1,0 +1,25 @@
+.tray { display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1.5px solid var(--line-strong); background: var(--bg-raised); animation: page-in 0.25s ease both; }
+.tray__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.tray__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; max-height: 320px; overflow-y: auto; }
+.tray__card {
+  display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 12px 14px; min-height: 84px;
+  background: var(--paper); color: var(--paper-ink); border: 1.5px solid var(--paper); transition: transform 0.12s, box-shadow 0.12s;
+}
+.tray__card:hover:not(:disabled), .tray__card:focus-visible { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--line-strong); outline: none; }
+.tray__card:disabled { opacity: 0.5; }
+
+.present { position: fixed; inset: 0; z-index: 1150; display: grid; place-items: center; padding: 24px; background: var(--vignette); animation: present-dim 0.3s ease both; }
+.present__card {
+  display: flex; flex-direction: column; gap: 10px; width: min(520px, 100%); padding: 28px 32px;
+  background: var(--paper); color: var(--paper-ink); border: 1.5px solid var(--paper); box-shadow: 14px 14px 0 var(--bg-base);
+  animation: present-slam 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) 0.15s both;
+}
+.present__title { color: var(--paper-ink); }
+@keyframes present-dim { from { background: transparent; } }
+@keyframes present-slam { from { opacity: 0; transform: rotate(-4deg) scale(1.6); } to { opacity: 1; transform: rotate(-1.5deg) scale(1); } }
+
+.clash { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: var(--white); color: var(--paper-ink); animation: clash-in 0.5s ease both; }
+.clash__head { letter-spacing: 3px; }
+.clash__claim { color: var(--paper-ink); }
+.clash__why { color: var(--line-strong); }
+@keyframes clash-in { 0% { opacity: 0; transform: translateX(-12px); } 40% { opacity: 1; } 55% { transform: translateX(4px); } 100% { transform: none; } }

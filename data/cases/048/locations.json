@@ -1,0 +1,81 @@
+[
+  {
+    "id": "L01", "map": { "x": 3.5, "y": 2.5, "kind": "theatre" }, "name": "The Stage & Prompt Corner", "floor": "Stage level", "district": "The Orpheum, Canal Street",
+    "description": "The set of The Glass Widow still stands under working lights. Stage left, the prompt corner: a desk, a cue-light panel and the prompt book.",
+    "people": ["S03"],
+    "arrival": "Harriet Pell is at the prompt desk with a pencil behind her ear, checking the book as if the show might go up again tonight.",
+    "spots": [
+      { "id": "L01-book", "label": "Read the prompt book", "text": "Every cue of last night, in Harriet's hand. Crane's exit is marked at 21:40. One page carries another hand: the assistant called four cues between 21:52 and 21:56.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E003" }] },
+      { "id": "L01-props", "label": "Check the props table", "text": "Everything is taped out in its place except one outline: a candlestick. Whoever took it knew where to look.",
+        "consequences": [{ "type": "set_flag", "key": "lead.props", "value": true }] }
+    ]
+  },
+  {
+    "id": "L02", "map": { "x": 4.5, "y": 2.5, "kind": "door" }, "name": "Backstage Corridor & Stage Door", "floor": "Stage level", "district": "The Orpheum, Canal Street",
+    "description": "A narrow painted corridor from the stage door, past the dressing rooms, to the pass door that opens into the auditorium.",
+    "people": [],
+    "arrival": "The stage-door keeper's cubby, a payphone on the wall, and at the far end, the pass door to the front of house.",
+    "spots": [
+      { "id": "L02-log", "label": "Read the stage-door keeper's log", "text": "Every company member in and out. One entry during the second act: F. Marsh, out 21:50, in 22:10.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E004" }] },
+      { "id": "L02-tray", "label": "Look at the tray outside Dressing Room 1", "text": "A tea tray on the floor by Crane's door, the tea long cold. Wardrobe's tag on the handle: 'Mr Crane, 22:00'.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E015" }] },
+      { "id": "L02-pass", "label": "Try the pass door", "text": "Locked, and heavy. From this side you'd need the key too. Nothing to learn by rattling it." }
+    ]
+  },
+  {
+    "id": "L03", "map": { "x": 3.5, "y": 1.45, "kind": "star" }, "name": "Dressing Room 1", "floor": "Stage level", "district": "The Orpheum, Canal Street",
+    "description": "Crane's dressing room: a lit mirror, a chaise, a writing desk, and the chalk outline on the carpet.",
+    "people": [],
+    "arrival": "The mirror bulbs are still on. Someone has put a sheet over the chaise. The room smells faintly of greasepaint and something sweeter.",
+    "spots": [
+      {"id": "L03-e001", "label": "Look at the body and the room", "text": "Crane found on the floor of Dressing Room 1 by the stage manager.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E001"}]},
+      { "id": "L03-radiator", "label": "Look behind the radiator", "text": "Wedged behind the radiator: the brass candlestick, its gilt still tacky from a retouch, a partial print pressed into it.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E008" }] },
+      { "id": "L03-ashtray", "label": "Check the ashtray", "text": "Crane never smoked. There's a cigar band in his ashtray anyway.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E009" }] },
+      { "id": "L03-desk", "label": "Go through the writing desk", "text": "Under the first-night telegrams, a letter on Hollywood letterhead. It has been read more than once.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E010" }] },
+      { "id": "L03-mirror", "label": "Read the cards around the mirror", "text": "Good-luck cards from half of Ridgeway. Nothing from his agent, which is odd for an agent." }
+    ]
+  },
+  {
+    "id": "L04", "map": { "x": 2.5, "y": 1.45, "kind": "chair" }, "name": "The Green Room", "floor": "Below stage", "district": "The Orpheum, Canal Street",
+    "description": "Sagging armchairs, a kettle, a tray of untouched sandwiches from last night's party that never happened.",
+    "people": ["S01", "S02"],
+    "arrival": "Cordelia Vane holds court from the best armchair. Felix Marsh stands when you come in, then doesn't know what to do with his hands.",
+    "spots": [
+      { "id": "L04-bag", "label": "Look through Felix's bag", "text": "A script, a comb, and a letter from a touring company offering him the lead 'should the role become available'.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E014" }] },
+      { "id": "L04-callboard", "label": "Read the call board", "text": "Rehearsal notes and the running order. It tells you who was on when, and nothing more." }
+    ]
+  },
+  {
+    "id": "L05", "map": { "x": 2.5, "y": 2.5, "kind": "ticket" }, "name": "Front of House & Box B", "floor": "Dress circle", "district": "The Orpheum, Canal Street",
+    "description": "Red velvet, gilt, and the house manager's office behind the bar. Box B hangs over the stage on the left.",
+    "people": ["S04"],
+    "arrival": "Leonard Voight is in the manager's office with a cigar he hasn't lit, being very kind to everyone.",
+    "spots": [
+      { "id": "L05-usher", "label": "Ask the house manager for the boxes' latecomers' book", "requires": { "flags": { "file.F4": { "eq": true } } },
+        "text": "The usher's neat hand: 'Box B door open 21:45 — gentleman stepped out. Closed 22:05.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E006" }] },
+      { "id": "L05-keys", "label": "Check the front-of-house key board", "requires": { "flags": { "lead.passdoor": { "eq": true } } },
+        "text": "The pass-door key's sign-out card: out 21:44, back 22:04, initialled 'L.V.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E007" }] },
+      { "id": "L05-office", "label": "Go through the manager's files", "text": "Box-office returns and a copy of Crane's contract. And an insurance schedule naming Voight Management.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E013" }] },
+      { "id": "L05-bar", "label": "Talk to the barman", "text": "He sold a lot of gin in the interval and noticed nothing after it. Twenty minutes you won't get back." }
+    ]
+  },
+  {
+    "id": "L06", "map": { "x": 4.5, "y": 1.45, "kind": "hanger" }, "name": "Wardrobe", "floor": "Below stage", "district": "The Orpheum, Canal Street",
+    "description": "Racks of costumes, two sewing machines, and a sign-in sheet on a clipboard by the door.",
+    "people": ["S05"],
+    "arrival": "Mae Donnelly is sewing a button that doesn't need sewing. She doesn't look up until you say her name.",
+    "spots": [
+      { "id": "L06-sheet", "label": "Read the wardrobe sign-in sheet", "text": "Costumes out and in, with times. 20:50: Miss Vane collects her Act 2 gown from Dressing Room 1 — '(raised voices)' in the margin.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E011" }] }
+    ]
+  }
+]

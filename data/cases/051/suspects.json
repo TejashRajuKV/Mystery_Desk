@@ -1,0 +1,184 @@
+[
+  {
+    "id": "S01",
+    "name": "Constance Ashcombe",
+    "alias": "The Widow",
+    "age": 58,
+    "role": "Widow",
+    "department": "Ashcombe Hall",
+    "background": "Married the Colonel in 1951 and ran Ashcombe Hall for thirty years. Learned at the tea table that he had left almost everything to his brother.",
+    "motive": "Disinherited, in public, an hour before Gerald died.",
+    "opportunity": "Sat opposite him at the tea table.",
+    "personality": "Proud, icy, magnificent under pressure.",
+    "accessLevel": "Mistress of the house",
+    "locationIds": [
+      "L01"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S04",
+        "note": "Has trusted Ambrose Fairlie for thirty years."
+      }
+    ],
+    "look": {
+      "skin": "porcelain",
+      "hair": "bun",
+      "hairColor": "white",
+      "face": "long",
+      "outfit": "dress",
+      "outfitColor": "navy",
+      "extras": [
+        "pearls"
+      ]
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 0.9,
+      "rate": 0.85
+    }
+  },
+  {
+    "id": "S02",
+    "name": "Agnes Mora",
+    "alias": "The Nurse",
+    "age": 30,
+    "role": "Private Nurse",
+    "department": "Ashcombe Hall",
+    "background": "Nursed the Colonel through his last year. Kept his medicines, including his daily digoxin. Stayed on after his death to help the widow.",
+    "motive": "The Colonel promised her a legacy. The will didn't mention her.",
+    "opportunity": "The only person in the house who knew the Colonel's medicines by heart.",
+    "personality": "Gentle, careful, frightened of being blamed.",
+    "accessLevel": "Medicine cabinet key",
+    "locationIds": [
+      "L03"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S01",
+        "note": "Devoted to Lady Constance."
+      }
+    ],
+    "look": {
+      "skin": "brown",
+      "hair": "bun",
+      "hairColor": "black",
+      "face": "oval",
+      "outfit": "uniform",
+      "outfitColor": "cream",
+      "extras": []
+    },
+    "voice": {
+      "gender": "female",
+      "pitch": 1.15,
+      "rate": 0.95
+    }
+  },
+  {
+    "id": "S03",
+    "name": "Silas Brook",
+    "alias": "The Gardener",
+    "age": 64,
+    "role": "Head Gardener",
+    "department": "Ashcombe estate",
+    "background": "Forty years in the Ashcombe gardens. Grows the foxgloves in the long border, and knows exactly what they can do.",
+    "motive": "Gerald had told him he would be pensioned off 'before the autumn'.",
+    "opportunity": "Cut foxgloves for the drawing-room vases on the morning of the reading.",
+    "personality": "Slow, stubborn, and suspicious of anyone in a good suit.",
+    "accessLevel": "The grounds and outbuildings",
+    "locationIds": [
+      "L05"
+    ],
+    "relationships": [],
+    "look": {
+      "skin": "tan",
+      "hair": "receding",
+      "hairColor": "white",
+      "face": "square",
+      "outfit": "jacket",
+      "outfitColor": "olive",
+      "extras": [
+        "beard",
+        "cap"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.7,
+      "rate": 0.85
+    }
+  },
+  {
+    "id": "S04",
+    "name": "Ambrose Fairlie",
+    "alias": "The Solicitor",
+    "age": 63,
+    "role": "Family Solicitor",
+    "department": "Fairlie & Pardoe",
+    "background": "The Ashcombes' solicitor since 1954 and trustee of the family trust since 1962. Drew up the Colonel's will and read it aloud on Saturday.",
+    "motive": "None. He had nothing to gain under the will and has been the family's friend for thirty years.",
+    "opportunity": "Sat at the head of the table, reading, from four o'clock until Gerald fell.",
+    "personality": "Courtly, precise, endlessly patient.",
+    "accessLevel": "The family's papers, and the Colonel's estate for probate",
+    "locationIds": [
+      "L04"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S01",
+        "note": "Calls her 'dear Constance'."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "receding",
+      "hairColor": "white",
+      "face": "long",
+      "outfit": "suit",
+      "outfitColor": "charcoal",
+      "extras": [
+        "glasses"
+      ]
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 0.85,
+      "rate": 0.85
+    }
+  },
+  {
+    "id": "S05",
+    "name": "Rory Ashcombe",
+    "alias": "The Nephew",
+    "age": 27,
+    "role": "Estranged Nephew",
+    "department": "None",
+    "background": "The Colonel's nephew, cut off five years ago after a scandal at university. Arrived in the village on the afternoon of the reading, uninvited.",
+    "motive": "Hoped to be in the will. He wasn't.",
+    "opportunity": "Was somewhere near the Hall that afternoon, and won't say where.",
+    "personality": "Sardonic, defensive, younger than he looks.",
+    "accessLevel": "None",
+    "locationIds": [
+      "L06"
+    ],
+    "relationships": [
+      {
+        "suspectId": "S04",
+        "note": "Fairlie arranged his allowance being stopped."
+      }
+    ],
+    "look": {
+      "skin": "fair",
+      "hair": "wavy",
+      "hairColor": "brown",
+      "face": "oval",
+      "outfit": "jacket",
+      "outfitColor": "oxblood",
+      "extras": []
+    },
+    "voice": {
+      "gender": "male",
+      "pitch": 1.05,
+      "rate": 1.05
+    }
+  }
+]

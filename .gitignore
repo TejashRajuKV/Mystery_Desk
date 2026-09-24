@@ -2,3 +2,6 @@
 # logs it writes to the CWD by default). The screenshots worth keeping are copied
 # into docs/qa/_plugin-usage/ with explicit names; this directory is scratch.
 .playwright-mcp/
+
+# Scratch prompt drafts — not part of the app, kept locally only.
+Prompts/

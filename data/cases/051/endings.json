@@ -1,0 +1,37 @@
+[
+  { "id": "perfect_investigation", "title": "Perfect Investigation", "stamp": "CASE CLOSED",
+    "verdict": "Every lie answered, down to the tablets he never destroyed.",
+    "narrative": [
+      "You lay it out for {accused} across the library table: the bank's letter, the sixty tablets, the glovebox, the cup he poured himself. He puts his spectacles on to read the bottle's label, as if it might have changed.",
+      "He confesses before the inquest opens. Twenty-two years of borrowing from the trust, and one afternoon to stop a man from looking.",
+      "Lady Constance keeps the Hall. Agnes Mora gets the legacy the Colonel forgot, from the widow's own pocket. Silas Brook stops cutting foxgloves for the house."
+    ] },
+  { "id": "true_criminal", "title": "True Criminal", "stamp": "CASE SOLVED",
+    "verdict": "The right name, and enough to hold it.",
+    "narrative": [
+      "{accused} is charged on the morning of the inquest.",
+      "The case holds, though his counsel makes much of the statements you never broke and the trust you never followed.",
+      "He is convicted at the autumn assizes. The Ashcombe trust is found to be £41,000 short."
+    ] },
+  { "id": "wrong_suspect", "title": "Wrong Suspect", "stamp": "CASE REOPENED",
+    "verdict": "A careful case, built around the wrong person.",
+    "narrative": [
+      "Your case against {accused} has a motive, a lie and a moment on the timeline. It is still wrong.",
+      "The charges fall at the inquest. By then a set of trust ledgers has quietly been rewritten.",
+      "The file is reopened in the winter and handed to someone else."
+    ] },
+  { "id": "innocent_accused", "title": "Innocent Person Accused", "stamp": "WRONGFUL ARREST",
+    "verdict": "An arrest on a hunch, at a family's worst moment.",
+    "narrative": [
+      "{accused} is taken from Ashcombe Hall in a police car while the whole village watches from the Arms.",
+      "The charges are dropped a week later. The village does not forget.",
+      "Gerald Ashcombe's killer goes on handling the family's affairs for another eleven years."
+    ] },
+  { "id": "criminal_escapes", "title": "Criminal Escapes", "stamp": "UNSOLVED",
+    "verdict": "A cup of tea, and nobody to answer for it.",
+    "narrative": [
+      "The inquest returns an open verdict. Death by digoxin, source unknown.",
+      "Whoever poured that cup knew exactly how little you would bring to the coroner.",
+      "Case #051 is filed under Unsolved. The foxgloves come up again the next summer, as they always do."
+    ] }
+]

@@ -1,0 +1,277 @@
+{
+  "defaultUnlockedEvidence": [],
+  "interviews": {
+    "S01": {
+      "startNode": "cv-start", "presentFallback": "cv-unmoved",
+      "nodes": {
+        "cv-start": {
+          "speaker": "S01", "mood": "defensive", "presentable": true,
+          "narration": "Cordelia Vane does not get up. She lets you cross the whole room to her.",
+          "text": "The detective. How thrilling. Julian always said he'd be the death of someone. He never said it would be himself. What do you want to know?",
+          "variants": [
+            { "requires": { "flags": { "file.F1": { "ne": true } } }, "mood": "suspicious",
+              "narration": "She looks you up and down, and finds you wanting.",
+              "text": "Darling, have they sent you on without your script? Read your file. Then come and ask me something worth answering." }
+          ],
+          "choices": [
+            { "id": "cv-start-night", "label": "Ask about last night", "next": "cv-night" },
+            { "id": "cv-start-julian", "label": "Ask about her marriage to Crane", "next": "cv-julian" },
+            { "id": "cv-start-money", "label": "Ask who gains from his death", "next": "cv-money",
+              "consequences": [{ "type": "unlock_evidence", "evidenceId": "E013" }] },
+            { "id": "cv-start-felix", "label": "Ask about Felix Marsh", "next": "cv-felix" },
+            { "id": "cv-start-voight", "label": "Ask about Leonard Voight", "next": "cv-voight" },
+            { "id": "cv-start-e011", "present": "E011", "next": "cv-e011",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST01-B", "evidenceId": "E011" }] },
+            { "id": "cv-start-e003", "present": "E003", "next": "cv-e003" },
+            { "id": "cv-start-e010", "present": "E010", "next": "cv-e010" },
+            { "id": "cv-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "cv-night": { "speaker": "S01", "mood": "neutral",
+          "text": "I played the best second act of my life to a man who wouldn't look me in the eye, and then I took my bow alone. That's last night.",
+          "choices": [{ "id": "cv-night-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-julian": { "speaker": "S01", "mood": "angry", "narration": "Something in her face closes like a fan.",
+          "text": "Six years married, four years divorced, and ten seasons of pretending the audience couldn't tell. He was leaving for Hollywood and taking the posters with him. Does that make me a murderer, or just a woman?",
+          "choices": [{ "id": "cv-julian-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-money": { "speaker": "S01", "mood": "suspicious",
+          "text": "Follow the money, darling. It's what they do in films. Julian was insured to the eyeballs, and not in my favour. The house manager keeps the paperwork.",
+          "choices": [{ "id": "cv-money-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-felix": { "speaker": "S01", "mood": "suspicious",
+          "text": "Felix gets Julian's part now. And the tour, I'd imagine. Such a promising boy. Draw your own conclusions. I certainly have.",
+          "choices": [{ "id": "cv-felix-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-voight": { "speaker": "S01", "mood": "neutral",
+          "text": "Leonard? Harmless. He sits in Box B every opening night with a cigar he never lights and cries in the last act. Julian was his whole career.",
+          "choices": [{ "id": "cv-voight-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-e011": { "speaker": "S01", "mood": "angry", "narration": "She reads Mae's margin note and laughs, once, without any humour in it.",
+          "text": "Yes, I went in. We screamed at each other for two minutes about Hollywood. Then he walked on stage with me at five past nine, alive and word-perfect, and I didn't leave that stage again until the curtain. Check the prompt book.",
+          "choices": [{ "id": "cv-e011-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-e003": { "speaker": "S01", "mood": "neutral",
+          "text": "There. On stage, every minute of the second act, in Harriet's own pencil. Satisfied?",
+          "choices": [{ "id": "cv-e003-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-e010": { "speaker": "S01", "mood": "surprised", "narration": "For once, she has no line ready.",
+          "text": "Sheldon Artists. So he'd done it. And sent Leonard a copy, the cruel little man. Eighteen years of Leonard's life, finished by carbon paper.",
+          "choices": [{ "id": "cv-e010-back", "label": "Go back to your questions", "next": "cv-start" }] },
+        "cv-unmoved": { "speaker": "S01", "mood": "neutral",
+          "text": "And what am I meant to do with that, darling? Emote?",
+          "choices": [{ "id": "cv-unmoved-back", "label": "Go back to your questions", "next": "cv-start" }] }
+      }
+    },
+
+    "S02": {
+      "startNode": "fm-start", "presentFallback": "fm-unmoved",
+      "nodes": {
+        "fm-start": {
+          "speaker": "S02", "mood": "nervous", "presentable": true,
+          "narration": "Felix Marsh sits on the edge of his chair, knees bouncing.",
+          "text": "Is it true they're saying I did it? Because I didn't. I was in here. I was going over the part. His part. That sounds bad. Sorry.",
+          "variants": [
+            { "requires": { "flags": { "confessed.S02": { "eq": true } } }, "mood": "defeated",
+              "text": "I've told you about the phone call. That's everything. Honestly, that's everything." }
+          ],
+          "choices": [
+            { "id": "fm-start-night", "label": "Ask about last night", "next": "fm-night" },
+            { "id": "fm-start-crane", "label": "Ask about Crane", "next": "fm-crane" },
+            { "id": "fm-start-part", "label": "Ask whether he gets the part now", "next": "fm-part" },
+            { "id": "fm-start-corridor", "label": "Ask what he saw when he came back in", "next": "fm-corridor",
+              "requires": { "flags": { "confessed.S02": { "eq": true } } },
+              "consequences": [{ "type": "set_flag", "key": "lead.passdoor", "value": true }] },
+            { "id": "fm-start-e004", "present": "E004", "next": "fm-e004",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST02-A", "evidenceId": "E004" },
+                { "type": "unlock_evidence", "evidenceId": "E005" },
+                { "type": "set_flag", "key": "confessed.S02", "value": true }
+              ] },
+            { "id": "fm-start-e014", "present": "E014", "next": "fm-e014" },
+            { "id": "fm-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "fm-night": { "speaker": "S02", "mood": "defensive",
+          "text": "Green Room. Lines. The whole of the second act. I didn't go anywhere. Ask anyone.",
+          "choices": [{ "id": "fm-night-back", "label": "Go back to your questions", "next": "fm-start" }] },
+        "fm-crane": { "speaker": "S02", "mood": "nervous",
+          "text": "He was brilliant. He was awful to me. Both at once, mostly. He called me 'the spare' in front of the whole company. But I'd never — I couldn't.",
+          "choices": [{ "id": "fm-crane-back", "label": "Go back to your questions", "next": "fm-start" }] },
+        "fm-part": { "speaker": "S02", "mood": "nervous", "narration": "He goes very red.",
+          "text": "I — yes. I suppose I do. And the tour. That sounds terrible, doesn't it. I didn't want it like this.",
+          "choices": [{ "id": "fm-part-back", "label": "Go back to your questions", "next": "fm-start" }] },
+        "fm-e004": { "speaker": "S02", "mood": "defeated", "narration": "He puts his face in his hands.",
+          "text": "All right. All right! I went out to the payphone. Hale and Partners were casting a film, they said ring at ten to ten, and I read for them down the phone for a quarter of an hour. Ring them. Please ring them.",
+          "choices": [
+            { "id": "fm-e004-corridor", "label": "Ask what he saw when he came back in", "next": "fm-corridor",
+              "consequences": [{ "type": "set_flag", "key": "lead.passdoor", "value": true }] },
+            { "id": "fm-e004-back", "label": "Go back to your questions", "next": "fm-start" }
+          ] },
+        "fm-corridor": { "speaker": "S02", "mood": "nervous",
+          "text": "When I came back in at ten past ten... the pass door at the end of the corridor was just swinging shut. Someone going back through to the front of house. I didn't see who. Just the door.",
+          "choices": [{ "id": "fm-corridor-back", "label": "Go back to your questions", "next": "fm-start" }] },
+        "fm-e014": { "speaker": "S02", "mood": "nervous",
+          "text": "That's a touring offer. Everyone gets those. 'Should the role become available' is just how they write them. It doesn't mean I knew anything.",
+          "choices": [{ "id": "fm-e014-back", "label": "Go back to your questions", "next": "fm-start" }] },
+        "fm-unmoved": { "speaker": "S02", "mood": "nervous",
+          "text": "I've never seen that. Should I have? Is that bad?",
+          "choices": [{ "id": "fm-unmoved-back", "label": "Go back to your questions", "next": "fm-start" }] }
+      }
+    },
+
+    "S03": {
+      "startNode": "hp-start", "presentFallback": "hp-unmoved",
+      "nodes": {
+        "hp-start": {
+          "speaker": "S03", "mood": "neutral", "presentable": true,
+          "narration": "Harriet Pell marks her place in the prompt book before she looks up.",
+          "text": "Stage manager. I found him. I've told the constable everything twice. What do you need?",
+          "variants": [
+            { "requires": { "flags": { "file.F1": { "ne": true } } }, "mood": "suspicious",
+              "text": "You haven't read the report, have you? It's all in there. I found him at 22:18. Read it, then come back." }
+          ],
+          "choices": [
+            { "id": "hp-start-found", "label": "Ask how she found him", "next": "hp-found",
+              "requires": { "flags": { "file.F1": { "eq": true } } } },
+            { "id": "hp-start-backstage", "label": "Ask how someone from the audience could get backstage", "next": "hp-backstage",
+              "consequences": [{ "type": "set_flag", "key": "lead.passdoor", "value": true }] },
+            { "id": "hp-start-props", "label": "Ask about the missing candlestick", "next": "hp-props",
+              "requires": { "flags": { "lead.props": { "eq": true } } } },
+            { "id": "hp-start-crane", "label": "Ask what Crane was like to work with", "next": "hp-crane" },
+            { "id": "hp-start-e003", "present": "E003", "next": "hp-e003",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST03-A", "evidenceId": "E003" },
+                { "type": "unlock_evidence", "evidenceId": "E012" }
+              ] },
+            { "id": "hp-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "hp-found": { "speaker": "S03", "mood": "neutral",
+          "text": "22:18. He missed the curtain call, so I went myself. Door unlocked. He was on the floor between the chaise and the mirror. I touched nothing but his wrist.",
+          "choices": [{ "id": "hp-found-back", "label": "Go back to your questions", "next": "hp-start" }] },
+        "hp-backstage": { "speaker": "S03", "mood": "neutral",
+          "text": "The pass door, between the stalls and our corridor. One key, on the front-of-house key board. You sign it out and you sign it back. If anyone came through from the audience last night, the card will say who.",
+          "choices": [{ "id": "hp-backstage-back", "label": "Go back to your questions", "next": "hp-start" }] },
+        "hp-props": { "speaker": "S03", "mood": "neutral",
+          "text": "Brass, heavy. Props retouched the gilt at half past nine; it was drying on the table by the corridor. Anyone walking past could have picked it up. Whoever did got paint on their hands, I'd imagine.",
+          "choices": [{ "id": "hp-props-back", "label": "Go back to your questions", "next": "hp-start" }] },
+        "hp-crane": { "speaker": "S03", "mood": "angry",
+          "text": "He had my assistant sacked last month for a cue that was two seconds late. Told me I'd be next. I'm not sorry he's gone, Detective. I'm sorry it happened in my theatre.",
+          "choices": [{ "id": "hp-crane-back", "label": "Go back to your questions", "next": "hp-start" }] },
+        "hp-e003": { "speaker": "S03", "mood": "defensive",
+          "text": "Three minutes. Line fourteen snagged and nobody else would go up the ladder. Both flymen watched me do it. Ask them; they wrote it down.",
+          "choices": [{ "id": "hp-e003-back", "label": "Go back to your questions", "next": "hp-start" }] },
+        "hp-unmoved": { "speaker": "S03", "mood": "neutral",
+          "text": "That's nothing to do with the stage. I run the stage.",
+          "choices": [{ "id": "hp-unmoved-back", "label": "Go back to your questions", "next": "hp-start" }] }
+      }
+    },
+
+    "S04": {
+      "startNode": "lv-start", "presentFallback": "lv-unmoved",
+      "nodes": {
+        "lv-start": {
+          "speaker": "S04", "mood": "neutral", "presentable": true,
+          "narration": "Leonard Voight takes your hand in both of his. His eyes are red.",
+          "text": "Detective. A terrible, terrible night. I found that boy in a rep company in sixty-six, you know. Anything you need. Anything at all.",
+          "variants": [
+            { "requires": { "flags": { "lawyered.S04": { "eq": true } } }, "mood": "angry",
+              "narration": "His solicitor's card is on the desk between you.",
+              "text": "My solicitor has advised me to say nothing further, Detective. I'm sure you understand." }
+          ],
+          "choices": [
+            { "id": "lv-start-night", "label": "Ask about last night", "next": "lv-night" },
+            { "id": "lv-start-plans", "label": "Ask about Crane's plans", "next": "lv-plans",
+              "requires": { "flags": { "lawyered.S04": { "ne": true } } } },
+            { "id": "lv-start-enemies", "label": "Ask who would want him dead", "next": "lv-enemies",
+              "requires": { "flags": { "lawyered.S04": { "ne": true } } } },
+            { "id": "lv-start-cigar", "label": "Ask about his cigars", "next": "lv-cigar",
+              "requires": { "evidenceViewed": ["E009"], "flags": { "lawyered.S04": { "ne": true } } } },
+            { "id": "lv-start-accuse", "label": "Tell him you know he did it", "next": "lv-lawyer",
+              "requires": { "flags": { "lawyered.S04": { "ne": true } } },
+              "consequences": [{ "type": "set_flag", "key": "lawyered.S04", "value": true }] },
+            { "id": "lv-start-e006", "present": "E006", "next": "lv-e006", "requires": { "flags": { "lawyered.S04": { "ne": true } } },
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-A", "evidenceId": "E006" }] },
+            { "id": "lv-start-e007", "present": "E007", "next": "lv-e007", "requires": { "flags": { "lawyered.S04": { "ne": true } } },
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-B", "evidenceId": "E007" }] },
+            { "id": "lv-start-e010", "present": "E010", "next": "lv-e010", "requires": { "flags": { "lawyered.S04": { "ne": true } } },
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-C", "evidenceId": "E010" }] },
+            { "id": "lv-start-e008", "present": "E008", "next": "lv-e008", "requires": { "flags": { "lawyered.S04": { "ne": true } } },
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST04-D", "evidenceId": "E008" }] },
+            { "id": "lv-start-e013", "present": "E013", "next": "lv-e013", "requires": { "flags": { "lawyered.S04": { "ne": true } } } },
+            { "id": "lv-start-e009", "present": "E009", "next": "lv-cigar", "requires": { "flags": { "lawyered.S04": { "ne": true } } } },
+            { "id": "lv-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "lv-night": { "speaker": "S04", "mood": "neutral",
+          "text": "Box B, as always. I watched every minute. His death scene was the finest thing he ever did. I wept. I always weep.",
+          "choices": [{ "id": "lv-night-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-plans": { "speaker": "S04", "mood": "neutral",
+          "text": "Another season here, then we'd talk about London. We were renewing, you know. The papers were on my desk. I'd have done anything for that boy.",
+          "choices": [{ "id": "lv-plans-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-enemies": { "speaker": "S04", "mood": "suspicious", "narration": "He lowers his voice.",
+          "text": "I hate to say it. Cordelia never forgave him, not for one day. And the understudy gets the part now, doesn't he? I only mention it.",
+          "choices": [{ "id": "lv-enemies-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-cigar": { "speaker": "S04", "mood": "defensive",
+          "text": "Montecristos. I never light one inside a theatre, Detective. It's terrible manners. Julian couldn't stand the smell.",
+          "choices": [{ "id": "lv-cigar-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-lawyer": { "speaker": "S04", "mood": "angry", "narration": "The warmth goes out of him like a light switched off.",
+          "text": "I see. Then we're finished, Detective. You can speak to my solicitor.",
+          "choices": [{ "id": "lv-lawyer-leave", "label": "Leave interview", "next": null }] },
+        "lv-e006": { "speaker": "S04", "mood": "defensive",
+          "text": "Did I step out? Nature calls, Detective, even on opening nights. Five minutes at most.",
+          "choices": [{ "id": "lv-e006-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-e007": { "speaker": "S04", "mood": "surprised", "narration": "He looks at the initials for a long moment.",
+          "text": "L.V.? There must be a dozen L.V.s in this building. I wouldn't know one end of that door from the other.",
+          "choices": [{ "id": "lv-e007-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-e010": { "speaker": "S04", "mood": "angry", "narration": "The received stamp is his own office's.",
+          "text": "Eighteen years. Eighteen years, and he sends me a carbon copy. Yes, I knew. I'd known since Thursday. What does it matter now?",
+          "choices": [{ "id": "lv-e010-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-e008": { "speaker": "S04", "mood": "defeated", "narration": "He looks at his own right hand.",
+          "text": "My print? I must have picked it up. In the interval. On the props table. People touch things.",
+          "choices": [{ "id": "lv-e008-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-e013": { "speaker": "S04", "mood": "neutral",
+          "text": "Standard practice. Every agent insures his principal client. It would be negligent not to.",
+          "choices": [{ "id": "lv-e013-back", "label": "Go back to your questions", "next": "lv-start" }] },
+        "lv-unmoved": { "speaker": "S04", "mood": "neutral",
+          "text": "I'm afraid that means nothing to me, Detective. Is there anything else I can help with?",
+          "choices": [{ "id": "lv-unmoved-back", "label": "Go back to your questions", "next": "lv-start" }] }
+      }
+    },
+
+    "S05": {
+      "startNode": "md-start", "presentFallback": "md-unmoved",
+      "nodes": {
+        "md-start": {
+          "speaker": "S05", "mood": "nervous", "presentable": true,
+          "narration": "Mae Donnelly holds the needle very still.",
+          "text": "I've done nothing wrong. I was in here. Are they going to sack me?",
+          "choices": [
+            { "id": "md-start-night", "label": "Ask about last night", "next": "md-night" },
+            { "id": "md-start-crane", "label": "Ask about Crane", "next": "md-crane" },
+            { "id": "md-start-habits", "label": "Ask about Crane's habits in his dressing room", "next": "md-habits" },
+            { "id": "md-start-e015", "present": "E015", "next": "md-e015",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST05-A", "evidenceId": "E015" },
+                { "type": "set_flag", "key": "lead.cigar", "value": true }
+              ] },
+            { "id": "md-start-e011", "present": "E011", "next": "md-e011" },
+            { "id": "md-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "md-night": { "speaker": "S05", "mood": "defensive",
+          "text": "Mending. In here. The whole second act. I didn't go near Mr Crane's room.",
+          "choices": [{ "id": "md-night-back", "label": "Go back to your questions", "next": "md-start" }] },
+        "md-crane": { "speaker": "S05", "mood": "angry",
+          "text": "He said I took two pounds from his coat. I never. He said he'd have me out by Monday. I hope he — no. I don't hope anything.",
+          "choices": [{ "id": "md-crane-back", "label": "Go back to your questions", "next": "md-start" }] },
+        "md-habits": { "speaker": "S05", "mood": "neutral",
+          "text": "Tea at ten, every night, milk no sugar. And he hated smoke. Wouldn't let anyone smoke in his room, not even Mr Voight. He'd open the window and shout the place down.",
+          "choices": [{ "id": "md-habits-back", "label": "Go back to your questions", "next": "md-start" }] },
+        "md-e015": { "speaker": "S05", "mood": "defeated", "narration": "Her voice drops to almost nothing.",
+          "text": "All right. I took him his tea at ten, like always. The door was locked. I knocked and nobody answered, and there was cigar smoke. Coming under the door. I left the tray and ran. I thought he'd have me sacked for bothering him.",
+          "choices": [{ "id": "md-e015-back", "label": "Go back to your questions", "next": "md-start" }] },
+        "md-e011": { "speaker": "S05", "mood": "neutral",
+          "text": "That's my note. They were shouting, him and Miss Vane. But he went back on stage after, I saw him go up the steps. He was fine.",
+          "choices": [{ "id": "md-e011-back", "label": "Go back to your questions", "next": "md-start" }] },
+        "md-unmoved": { "speaker": "S05", "mood": "nervous",
+          "text": "I don't know what that is. I just do the costumes.",
+          "choices": [{ "id": "md-unmoved-back", "label": "Go back to your questions", "next": "md-start" }] }
+      }
+    }
+  }
+}

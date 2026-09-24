@@ -35,3 +35,6 @@
 }
 @media (max-width: 1100px) { .tl__cols { grid-template-columns: 1fr; } .tl__col + .tl__col { margin-top: 0; } }
 @media (max-width: 640px) { .scrubber { justify-content: flex-start; gap: 18px; } .tl__col::before { left: 91px; } }
+
+.tl-detail__claim { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border: 1.5px solid var(--line-subtle); text-decoration: none; color: var(--text-primary); }
+.tl-detail__claim:hover { border-color: var(--white); }

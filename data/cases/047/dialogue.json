@@ -1,0 +1,1183 @@
+{
+  "defaultUnlockedEvidence": [],
+  "interviews": {
+    "S01": {
+      "startNode": "v-start",
+      "presentFallback": "v-unmoved",
+      "nodes": {
+        "v-start": {
+          "speaker": "S01",
+          "mood": "suspicious",
+          "presentable": true,
+          "narration": "Dr. Maren Voss has not taken her coat off. She checks her watch before you sit down.",
+          "text": "Six years of my life were in that case, Detective. Are you going to find it, or are you going to ask me where I was?",
+          "variants": [
+            {
+              "requires": {
+                "flags": {
+                  "hostile.S01": {
+                    "eq": true
+                  }
+                }
+              },
+              "mood": "angry",
+              "narration": "Dr. Voss doesn't look up from her notes.",
+              "text": "I said we were finished. Ask your questions and go."
+            },
+            {
+              "requires": {
+                "flags": {
+                  "file.F1": {
+                    "ne": true
+                  }
+                }
+              },
+              "mood": "angry",
+              "narration": "She looks at your empty hands, then at your face.",
+              "text": "You haven't even read the incident report, have you? Six years of my life, and they send me someone who hasn't opened the file."
+            }
+          ],
+          "choices": [
+            {
+              "id": "v-start-discovery",
+              "label": "Ask how she found the case",
+              "next": "v-discovery",
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E014"
+                }
+              ],
+              "requires": {
+                "flags": {
+                  "file.F1": {
+                    "eq": true
+                  }
+                }
+              }
+            },
+            {
+              "id": "v-start-prototype",
+              "label": "Ask about the prototype",
+              "next": "v-prototype"
+            },
+            {
+              "id": "v-start-kw",
+              "label": "Ask what she knows about Kessler-Ward",
+              "next": "v-kw"
+            },
+            {
+              "id": "v-start-alex",
+              "label": "Ask about Alex Reyes",
+              "next": "v-alex",
+              "requires": {
+                "flags": {
+                  "hostile.S01": {
+                    "ne": true
+                  }
+                }
+              },
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E015"
+                }
+              ]
+            },
+            {
+              "id": "v-start-e017",
+              "present": "E017",
+              "next": "v-notebook",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST01-B",
+                  "evidenceId": "E017"
+                }
+              ]
+            },
+            {
+              "id": "v-start-accuse",
+              "label": "Accuse her of taking it",
+              "next": "v-accused",
+              "requires": {
+                "flags": {
+                  "hostile.S01": {
+                    "ne": true
+                  }
+                }
+              },
+              "consequences": [
+                {
+                  "type": "set_flag",
+                  "key": "hostile.S01",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "v-start-leave",
+              "label": "Leave interview",
+              "next": null
+            }
+          ]
+        },
+        "v-discovery": {
+          "speaker": "S01",
+          "mood": "neutral",
+          "narration": "She has told this before. She tells it exactly the same way.",
+          "text": "Seven-thirty Saturday. The case on the shelf, latches closed, empty. The foam wasn't torn. Whoever lifted it out knew exactly how it seated. I had Facilities pull the card-reader log for that door before your people arrived. It's on your desk. Read it.",
+          "choices": [
+            {
+              "id": "v-discovery-who",
+              "label": "Ask who knows how it seats",
+              "next": "v-who"
+            },
+            {
+              "id": "v-discovery-back",
+              "label": "Go back to your questions",
+              "next": "v-start"
+            }
+          ]
+        },
+        "v-who": {
+          "speaker": "S01",
+          "mood": "suspicious",
+          "text": "Me. Alex, who calibrates it. Victor Lang, who has watched me demonstrate it to three sets of bankers. Take your pick. Isn't that your job?",
+          "choices": [
+            {
+              "id": "v-who-back",
+              "label": "Go back to your questions",
+              "next": "v-start"
+            }
+          ]
+        },
+        "v-prototype": {
+          "speaker": "S01",
+          "mood": "neutral",
+          "narration": "For a moment she forgets to be angry.",
+          "text": "A solid-state memory cartridge the size of a paperback. It holds more than every computer in this building put together, and it survives a fall down a stairwell. I know, because I tested that. Six years. Nobody else here could have built it.",
+          "choices": [
+            {
+              "id": "v-prototype-back",
+              "label": "Go back to your questions",
+              "next": "v-start"
+            }
+          ]
+        },
+        "v-kw": {
+          "speaker": "S01",
+          "mood": "defensive",
+          "narration": "She answers a fraction too quickly.",
+          "text": "Kessler-Ward? Never heard of them. Should I have?",
+          "choices": [
+            {
+              "id": "v-kw-back",
+              "label": "Let it go for now",
+              "next": "v-start"
+            }
+          ]
+        },
+        "v-alex": {
+          "speaker": "S01",
+          "mood": "nervous",
+          "narration": "For the first time, she hesitates.",
+          "text": "Alex is the most reliable technician I've ever had. Lately he's been distracted. Calls in the stairwell. There was a bank envelope in his locker last week, final notice, printed in red. I shouldn't have looked. You'll find it's still there.",
+          "choices": [
+            {
+              "id": "v-alex-back",
+              "label": "Go back to your questions",
+              "next": "v-start"
+            }
+          ]
+        },
+        "v-notebook": {
+          "speaker": "S01",
+          "mood": "angry",
+          "narration": "She reads her own handwriting, and her jaw sets.",
+          "text": "Yes, I knew about Kessler-Ward. Yes, I wrote that I'd smash it first. I say a great many things about Victor Lang. If I wanted the Argus-7 destroyed, Detective, I'd have done it at my own bench, not in a storage room at nine at night.",
+          "choices": [
+            {
+              "id": "v-notebook-why",
+              "label": "Ask why she lied about it",
+              "next": "v-lied"
+            },
+            {
+              "id": "v-notebook-back",
+              "label": "Go back to your questions",
+              "next": "v-start"
+            }
+          ]
+        },
+        "v-lied": {
+          "speaker": "S01",
+          "mood": "defensive",
+          "text": "Because I knew exactly how that page would look. Now you know too. What are you going to do with it?",
+          "choices": [
+            {
+              "id": "v-lied-back",
+              "label": "Go back to your questions",
+              "next": "v-start"
+            }
+          ]
+        },
+        "v-accused": {
+          "speaker": "S01",
+          "mood": "angry",
+          "narration": "The temperature in the room drops.",
+          "text": "Then arrest me. Otherwise, you can speak to my lawyer. I have nothing more to say to you about anyone in my lab.",
+          "choices": [
+            {
+              "id": "v-accused-leave",
+              "label": "Leave interview",
+              "next": null
+            }
+          ]
+        },
+        "v-unmoved": {
+          "speaker": "S01",
+          "mood": "suspicious",
+          "text": "And? I've read every document in this building. That one tells you nothing.",
+          "choices": [
+            {
+              "id": "v-unmoved-back",
+              "label": "Go back to your questions",
+              "next": "v-start"
+            }
+          ]
+        }
+      }
+    },
+    "S02": {
+      "startNode": "a-start",
+      "presentFallback": "a-unmoved",
+      "nodes": {
+        "a-start": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "presentable": true,
+          "narration": "Alex Reyes sits very straight, hands folded, and offers you the good chair.",
+          "text": "Anything I can do, Detective. The Argus-7 was Dr. Voss's life's work. Mine too, in a smaller way. I still can't believe it's gone.",
+          "variants": [
+            {
+              "requires": {
+                "flags": {
+                  "lawyered.S02": {
+                    "eq": true
+                  }
+                }
+              },
+              "mood": "defensive",
+              "narration": "A lawyer's business card sits squarely on the table in front of him.",
+              "text": "My lawyer says I've answered enough about cards and doors. I'll help where I can."
+            }
+          ],
+          "choices": [
+            {
+              "id": "a-start-friday",
+              "label": "Ask about last night",
+              "next": "a-friday"
+            },
+            {
+              "id": "a-start-prototype",
+              "label": "Ask about the prototype",
+              "next": "a-prototype"
+            },
+            {
+              "id": "a-start-parked",
+              "label": "Ask where he parked on Friday",
+              "next": "a-parked",
+              "requires": {
+                "flags": {
+                  "lawyered.S02": {
+                    "ne": true
+                  }
+                }
+              },
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E011"
+                }
+              ]
+            },
+            {
+              "id": "a-start-access",
+              "label": "Ask who else could open Storage Room B",
+              "next": "a-access"
+            },
+            {
+              "id": "a-start-voss",
+              "label": "Ask about Dr. Voss",
+              "next": "a-voss",
+              "requires": {
+                "flags": {
+                  "lawyered.S02": {
+                    "ne": true
+                  }
+                }
+              },
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E017"
+                }
+              ]
+            },
+            {
+              "id": "a-start-latch",
+              "label": "Ask about the fresh print on the inside latch",
+              "next": "a-latch",
+              "requires": {
+                "flags": {
+                  "file.F4": {
+                    "eq": true
+                  }
+                }
+              }
+            },
+            {
+              "id": "a-start-nina",
+              "label": "Ask about Nina Okafor",
+              "next": "a-nina"
+            },
+            {
+              "id": "a-start-e014",
+              "present": "E014",
+              "next": "a-e014",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST02-A",
+                  "evidenceId": "E014"
+                },
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST02-B",
+                  "evidenceId": "E014"
+                }
+              ]
+            },
+            {
+              "id": "a-start-e007",
+              "present": "E007",
+              "next": "a-e007",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST02-A",
+                  "evidenceId": "E007"
+                }
+              ]
+            },
+            {
+              "id": "a-start-e011",
+              "present": "E011",
+              "next": "a-e011",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST02-A",
+                  "evidenceId": "E011"
+                }
+              ]
+            },
+            {
+              "id": "a-start-e006",
+              "present": "E006",
+              "next": "a-e006",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST02-C",
+                  "evidenceId": "E006"
+                }
+              ]
+            },
+            {
+              "id": "a-start-e016",
+              "present": "E016",
+              "next": "a-e016"
+            },
+            {
+              "id": "a-start-e015",
+              "present": "E015",
+              "next": "a-e015"
+            },
+            {
+              "id": "a-start-e013",
+              "present": "E013",
+              "next": "a-e013"
+            },
+            {
+              "id": "a-start-e004",
+              "present": "E004",
+              "next": "a-e004"
+            },
+            {
+              "id": "a-start-leave",
+              "label": "Leave interview",
+              "next": null
+            }
+          ]
+        },
+        "a-friday": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "text": "A calibration run on the gyro package. Dull work. I finished just before nine and went out through the lobby at nine sharp. The turnstile will have me, and the camera. Nina was at the desk. She'll tell you.",
+          "choices": [
+            {
+              "id": "a-friday-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-prototype": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "text": "I calibrated every unit it was ever tested against. It's beautiful work. Dr. Voss's, mostly. Whoever has it now doesn't know what they're holding.",
+          "choices": [
+            {
+              "id": "a-prototype-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-parked": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "narration": "He says it lightly. He doesn't ask why you want to know.",
+          "text": "The staff garage, same as always.",
+          "choices": [
+            {
+              "id": "a-parked-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-access": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "text": "Dr. Voss, obviously. She's Level 4. Mr. Lang's master card opens everything. And the night desk keeps master keys in the safe. I'm not saying anything by that. Nina's lovely.",
+          "choices": [
+            {
+              "id": "a-access-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-voss": {
+          "speaker": "S02",
+          "mood": "nervous",
+          "narration": "He lowers his voice, as if she might hear him through the wall.",
+          "text": "I shouldn't say this. She told me she'd rather smash the Argus-7 than see Lang sell it. She writes everything down in that notebook on her desk. I'm sure it's nothing.",
+          "choices": [
+            {
+              "id": "a-voss-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-nina": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "text": "Nina? She was at the desk when I left. She always is. She's had a rough year, with her boy being ill. Why?",
+          "choices": [
+            {
+              "id": "a-nina-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e014": {
+          "speaker": "S02",
+          "mood": "surprised",
+          "narration": "He looks at the printout for a long time.",
+          "text": "That can't be right. I left at nine. Someone must have copied my card. They're only magnetic stripes, you know. Anyone with a reader could do it.",
+          "choices": [
+            {
+              "id": "a-e014-press",
+              "label": "Press him: no other card touched that door all night",
+              "next": "a-e014-press",
+              "consequences": [
+                {
+                  "type": "set_flag",
+                  "key": "lawyered.S02",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "a-e014-back",
+              "label": "Let it go for now",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e014-press": {
+          "speaker": "S02",
+          "mood": "angry",
+          "narration": "The helpful smile stays exactly where it is. Nothing else about him does.",
+          "text": "Then someone copied mine. I'm not saying another word about cards or doors without a lawyer.",
+          "choices": [
+            {
+              "id": "a-e014-press-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e007": {
+          "speaker": "S02",
+          "mood": "nervous",
+          "text": "The garage door? I must have come back for my thermos. I forgot, that's all. It was nothing.",
+          "choices": [
+            {
+              "id": "a-e007-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e011": {
+          "speaker": "S02",
+          "mood": "defensive",
+          "narration": "He stares at the barrier-camera still of his own car.",
+          "text": "I drove home. Obviously I drove home, my car was in the garage. The time must be wrong. Those barrier clocks drift.",
+          "choices": [
+            {
+              "id": "a-e011-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e006": {
+          "speaker": "S02",
+          "mood": "nervous",
+          "narration": "His hands have come unfolded.",
+          "text": "It's a routine service check. The recorders need it. The time on it was just when Daniel was free.",
+          "choices": [
+            {
+              "id": "a-e006-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e016": {
+          "speaker": "S02",
+          "mood": "defensive",
+          "text": "I was looking for a job. Kessler-Ward pays better than Halden. That isn't a crime, Detective.",
+          "choices": [
+            {
+              "id": "a-e016-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e015": {
+          "speaker": "S02",
+          "mood": "angry",
+          "text": "That's private. Where did you get that? People have debts, Detective. It doesn't make them thieves.",
+          "choices": [
+            {
+              "id": "a-e015-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e013": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "text": "I handle that case every week. Of course my prints are on it. You'll find Dr. Voss's all over it too.",
+          "choices": [
+            {
+              "id": "a-e013-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-e004": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "narration": "He looks almost relieved.",
+          "text": "There, you see? Nine o'clock, walking out the front door. Nina behind me at the desk. That's what I've been telling you.",
+          "choices": [
+            {
+              "id": "a-e004-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-unmoved": {
+          "speaker": "S02",
+          "mood": "neutral",
+          "text": "I'm sorry, I don't see what that has to do with me. Is there something specific you'd like to know?",
+          "choices": [
+            {
+              "id": "a-unmoved-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        },
+        "a-latch": {
+          "speaker": "S02",
+          "mood": "nervous",
+          "narration": "For half a second he looks at his own hands.",
+          "text": "The inside? I must have checked how it seated on Thursday. And a glove? No. I never wear gloves for calibration. You can't feel the adjustments.",
+          "choices": [
+            {
+              "id": "a-latch-back",
+              "label": "Go back to your questions",
+              "next": "a-start"
+            }
+          ]
+        }
+      }
+    },
+    "S03": {
+      "startNode": "l-start",
+      "presentFallback": "l-unmoved",
+      "nodes": {
+        "l-start": {
+          "speaker": "S03",
+          "mood": "neutral",
+          "presentable": true,
+          "narration": "Victor Lang takes the meeting standing at his window, as though the view were the point.",
+          "text": "Detective. A terrible business. Halden has gone thirty years without a theft, and I would like this to remain a single blemish. Ask what you need.",
+          "choices": [
+            {
+              "id": "l-start-friday",
+              "label": "Ask where he was last night",
+              "next": "l-friday"
+            },
+            {
+              "id": "l-start-prototype",
+              "label": "Ask about the prototype",
+              "next": "l-prototype"
+            },
+            {
+              "id": "l-start-voss",
+              "label": "Ask about Dr. Voss",
+              "next": "l-voss"
+            },
+            {
+              "id": "l-start-e008",
+              "present": "E008",
+              "next": "l-e008",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST03-A",
+                  "evidenceId": "E008"
+                },
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E009"
+                }
+              ]
+            },
+            {
+              "id": "l-start-sale",
+              "label": "Ask about Kessler-Ward",
+              "next": "l-sale",
+              "requires": {
+                "evidenceViewed": [
+                  "E009"
+                ]
+              },
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E016"
+                }
+              ]
+            },
+            {
+              "id": "l-start-e009",
+              "present": "E009",
+              "next": "l-e009"
+            },
+            {
+              "id": "l-start-leave",
+              "label": "Leave interview",
+              "next": null
+            }
+          ],
+          "variants": [
+            {
+              "requires": {
+                "flags": {
+                  "file.F1": {
+                    "ne": true
+                  }
+                }
+              },
+              "mood": "suspicious",
+              "narration": "He glances at the clock before he glances at you.",
+              "text": "Detective. I had hoped they would send someone who had read the incident report. Ask what you need, but do try to keep up."
+            }
+          ]
+        },
+        "l-friday": {
+          "speaker": "S03",
+          "mood": "neutral",
+          "text": "In this office until ten at least, going over the quarterly budget. Numbers, Detective. Nobody steals a prototype over numbers.",
+          "choices": [
+            {
+              "id": "l-friday-back",
+              "label": "Go back to your questions",
+              "next": "l-start"
+            }
+          ]
+        },
+        "l-prototype": {
+          "speaker": "S03",
+          "mood": "suspicious",
+          "narration": "He lowers his voice, man to man.",
+          "text": "Between us, Maren has been talking to other firms for months. If the Argus-7 has walked out of this building, I'd ask who was planning to walk out with it.",
+          "choices": [
+            {
+              "id": "l-prototype-back",
+              "label": "Go back to your questions",
+              "next": "l-start"
+            }
+          ]
+        },
+        "l-voss": {
+          "speaker": "S03",
+          "mood": "neutral",
+          "text": "Maren would burn the building down before she let me sell it. Brilliant woman. Impossible woman. If you want someone who hated this sale, you needn't look far.",
+          "choices": [
+            {
+              "id": "l-voss-back",
+              "label": "Go back to your questions",
+              "next": "l-start"
+            }
+          ]
+        },
+        "l-e008": {
+          "speaker": "S03",
+          "mood": "defeated",
+          "narration": "He sits down for the first time.",
+          "text": "Very well. I left at five to nine. I had dinner with Kessler-Ward's counsel at the Ambassador. A confidential matter, and it will remain one. The letter confirming Monday's demonstration is in my outbox. You may read it. You may not repeat it.",
+          "choices": [
+            {
+              "id": "l-e008-back",
+              "label": "Go back to your questions",
+              "next": "l-start"
+            }
+          ]
+        },
+        "l-sale": {
+          "speaker": "S03",
+          "mood": "suspicious",
+          "text": "Kessler-Ward are buying Halden. They wanted the Argus-7 on the table on Monday. I needed it more than anyone alive. And something odd: their man told me someone inside Halden had been ringing them all week, offering 'technical insight'. I assumed it was Maren, trying to sink the deal. Get the telephone records. I'll sign whatever you need.",
+          "choices": [
+            {
+              "id": "l-sale-back",
+              "label": "Go back to your questions",
+              "next": "l-start"
+            }
+          ]
+        },
+        "l-e009": {
+          "speaker": "S03",
+          "mood": "defensive",
+          "text": "You've read my post. Then you know I needed that prototype on the table on Monday, not in the back of somebody's car.",
+          "choices": [
+            {
+              "id": "l-e009-back",
+              "label": "Go back to your questions",
+              "next": "l-start"
+            }
+          ]
+        },
+        "l-unmoved": {
+          "speaker": "S03",
+          "mood": "neutral",
+          "text": "Detective, I run a company. A great deal of paper crosses my desk. That piece means nothing to me.",
+          "choices": [
+            {
+              "id": "l-unmoved-back",
+              "label": "Go back to your questions",
+              "next": "l-start"
+            }
+          ]
+        }
+      }
+    },
+    "S04": {
+      "startNode": "n-start",
+      "presentFallback": "n-unmoved",
+      "nodes": {
+        "n-start": {
+          "speaker": "S04",
+          "mood": "nervous",
+          "presentable": true,
+          "narration": "Nina Okafor hasn't slept. Her coffee has gone cold in the cup.",
+          "text": "I've told your officer everything. I never left the desk. If anyone came through that lobby, I'd have seen them.",
+          "choices": [
+            {
+              "id": "n-start-lastnight",
+              "label": "Ask about last night",
+              "next": "n-lastnight"
+            },
+            {
+              "id": "n-start-others",
+              "label": "Ask about other ways into the building",
+              "next": "n-others",
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E007"
+                }
+              ]
+            },
+            {
+              "id": "n-start-alex",
+              "label": "Ask whether she saw Alex Reyes leave",
+              "next": "n-alex",
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E015"
+                }
+              ]
+            },
+            {
+              "id": "n-start-e012",
+              "present": "E012",
+              "next": "n-e012",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST04-A",
+                  "evidenceId": "E012"
+                },
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E018"
+                }
+              ]
+            },
+            {
+              "id": "n-start-e018",
+              "present": "E018",
+              "next": "n-e018"
+            },
+            {
+              "id": "n-start-leave",
+              "label": "Leave interview",
+              "next": null
+            }
+          ]
+        },
+        "n-lastnight": {
+          "speaker": "S04",
+          "mood": "defensive",
+          "text": "Quiet shift. Dr. Voss out at half seven, Mr. Reyes at nine. I logged nothing unusual. I was at the desk the whole time.",
+          "choices": [
+            {
+              "id": "n-lastnight-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        },
+        "n-others": {
+          "speaker": "S04",
+          "mood": "neutral",
+          "text": "The garage stairwell door. It has its own reader and it isn't on my turnstile. My camera can't see it. I've asked for a camera on that door for three years.",
+          "choices": [
+            {
+              "id": "n-others-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        },
+        "n-alex": {
+          "speaker": "S04",
+          "mood": "neutral",
+          "text": "Nine o'clock, through the turnstile, bag over his shoulder. Polite as always. Said goodnight. He'd been on the lobby payphone to his bank twice that week. Ridgeway Savings. He kept saying 'Monday'.",
+          "choices": [
+            {
+              "id": "n-alex-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        },
+        "n-e012": {
+          "speaker": "S04",
+          "mood": "defeated",
+          "narration": "She looks at the printout, then at the door, then back at you.",
+          "text": "Twenty minutes. The hospital rang. My boy, a fever, they'd admitted him. I called back from the switchboard room. I should have logged it. I didn't, because I'd have lost my job.",
+          "choices": [
+            {
+              "id": "n-e012-missed",
+              "label": "Ask what she might have missed",
+              "next": "n-missed"
+            },
+            {
+              "id": "n-e012-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        },
+        "n-missed": {
+          "speaker": "S04",
+          "mood": "nervous",
+          "text": "Five past nine to twenty-five past. Whatever happened in this building, Detective, it happened while I was on the phone.",
+          "choices": [
+            {
+              "id": "n-missed-garage",
+              "label": "Ask whether anything else records the night",
+              "next": "n-garage",
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E011"
+                }
+              ]
+            },
+            {
+              "id": "n-missed-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        },
+        "n-garage": {
+          "speaker": "S04",
+          "mood": "neutral",
+          "text": "The staff garage barrier prints a ticket for every car that goes out, with a camera still. Facilities keeps the roll. If someone drove out while I was on the phone, it's on there.",
+          "choices": [
+            {
+              "id": "n-garage-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        },
+        "n-e018": {
+          "speaker": "S04",
+          "mood": "defeated",
+          "text": "Then you know. He's home now. He's fine. I'd leave that desk again tomorrow.",
+          "choices": [
+            {
+              "id": "n-e018-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        },
+        "n-unmoved": {
+          "speaker": "S04",
+          "mood": "nervous",
+          "text": "I don't know anything about that. I sit at the desk. That's all I do.",
+          "choices": [
+            {
+              "id": "n-unmoved-back",
+              "label": "Go back to your questions",
+              "next": "n-start"
+            }
+          ]
+        }
+      }
+    },
+    "S05": {
+      "startNode": "c-start",
+      "presentFallback": "c-unmoved",
+      "nodes": {
+        "c-start": {
+          "speaker": "S05",
+          "mood": "nervous",
+          "presentable": true,
+          "narration": "Daniel Cho starts talking before you've finished sitting down.",
+          "text": "I was at home all night, okay? I didn't touch anything. The system was running normally. I mean, as far as I know. I wasn't there. Obviously.",
+          "variants": [
+            {
+              "requires": {
+                "flags": {
+                  "confessed.S05": {
+                    "eq": true
+                  }
+                }
+              },
+              "mood": "defeated",
+              "narration": "Daniel Cho has stopped talking quite so fast.",
+              "text": "Ask me anything. I did the ticket. That's all I did. I've got nothing left to hide."
+            }
+          ],
+          "choices": [
+            {
+              "id": "c-start-camera",
+              "label": "Ask about the Storage Room camera",
+              "next": "c-camera",
+              "consequences": [
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E010"
+                }
+              ]
+            },
+            {
+              "id": "c-start-prototype",
+              "label": "Ask about the prototype",
+              "next": "c-prototype"
+            },
+            {
+              "id": "c-start-management",
+              "label": "Ask how he gets on with management",
+              "next": "c-management",
+              "consequences": [
+                {
+                  "type": "set_flag",
+                  "key": "grudge.S05",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "c-start-e010",
+              "present": "E010",
+              "next": "c-e010",
+              "consequences": [
+                {
+                  "type": "reveal_contradiction",
+                  "assertionId": "ST05-A",
+                  "evidenceId": "E010"
+                },
+                {
+                  "type": "unlock_evidence",
+                  "evidenceId": "E006"
+                },
+                {
+                  "type": "set_flag",
+                  "key": "confessed.S05",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "c-start-e005",
+              "present": "E005",
+              "next": "c-e005"
+            },
+            {
+              "id": "c-start-leave",
+              "label": "Leave interview",
+              "next": null
+            }
+          ]
+        },
+        "c-camera": {
+          "speaker": "S05",
+          "mood": "nervous",
+          "narration": "He's explaining before you finish the question.",
+          "text": "Recorder three? Service mode happens. Maintenance, head cleaning, you know. And it's all logged, every dial-in goes through the modem bank, there's a printout for every call, so you'd see if anyone —",
+          "choices": [
+            {
+              "id": "c-camera-back",
+              "label": "Let him stop there",
+              "next": "c-start"
+            }
+          ]
+        },
+        "c-prototype": {
+          "speaker": "S05",
+          "mood": "neutral",
+          "text": "Never seen it. It's above my clearance. I keep the phones and the tapes running, that's it. Nobody shows the phone guy the crown jewels.",
+          "choices": [
+            {
+              "id": "c-prototype-back",
+              "label": "Go back to your questions",
+              "next": "c-start"
+            }
+          ]
+        },
+        "c-management": {
+          "speaker": "S05",
+          "mood": "angry",
+          "text": "Passed over twice. Twice. They gave Systems Lead to a guy who can't solder. So no, I'm not crying for Halden's board. But I didn't steal anything.",
+          "choices": [
+            {
+              "id": "c-management-back",
+              "label": "Go back to your questions",
+              "next": "c-start"
+            }
+          ]
+        },
+        "c-e010": {
+          "speaker": "S05",
+          "mood": "surprised",
+          "narration": "The colour leaves his face.",
+          "text": "Okay. Okay. I dialled in, at nine-oh-nine. But it was a work order! Number 2291, it's in the facilities file. It said service mode by ten past nine. I was doing my job. Somebody asked for it.",
+          "choices": [
+            {
+              "id": "c-e010-who",
+              "label": "Ask who asked for it",
+              "next": "c-who"
+            },
+            {
+              "id": "c-e010-back",
+              "label": "Go back to your questions",
+              "next": "c-start"
+            }
+          ]
+        },
+        "c-who": {
+          "speaker": "S05",
+          "mood": "defeated",
+          "text": "It came from the Lab 2 desk. I don't read the names, I just do the tickets. It's all in the file. Check who signed it.",
+          "choices": [
+            {
+              "id": "c-who-back",
+              "label": "Go back to your questions",
+              "next": "c-start"
+            }
+          ]
+        },
+        "c-e005": {
+          "speaker": "S05",
+          "mood": "nervous",
+          "text": "Service mode, see? Routine. Recorders get serviced. It says so right there. That's normal. Totally normal.",
+          "choices": [
+            {
+              "id": "c-e005-back",
+              "label": "Go back to your questions",
+              "next": "c-start"
+            }
+          ]
+        },
+        "c-unmoved": {
+          "speaker": "S05",
+          "mood": "nervous",
+          "text": "That's not... I mean, that's not mine. Is it? No. I've never seen that.",
+          "choices": [
+            {
+              "id": "c-unmoved-back",
+              "label": "Go back to your questions",
+              "next": "c-start"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

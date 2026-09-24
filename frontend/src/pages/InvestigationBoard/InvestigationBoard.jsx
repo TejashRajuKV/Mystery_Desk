@@ -29,7 +29,7 @@ function BoardLink({ id, x1, y1, x2, y2 }) {
 }
 
 export default function InvestigationBoard() {
-  const { evidence, suspects, timeline, caseInfo, evidenceById, suspectById, eventById, locationById, connections, addConnection, removeConnection } = useCase();
+  const { evidence, suspects, timeline, caseInfo, statements, evidenceById, suspectById, eventById, locationById, claimById, connections, addConnection, removeConnection } = useCase();
 
   const [layout, setLayout] = useState(() => loadBoard());
   const [selected, setSelected] = useState(null);
@@ -62,8 +62,9 @@ export default function InvestigationBoard() {
     if (kind === 'evidence') return { kind, title: evidenceById[id]?.title ?? id };
     if (kind === 'suspect') return { kind, title: suspectById[id]?.name ?? id };
     if (kind === 'location') return { kind, title: locationById[id]?.name ?? id };
+    if (kind === 'statement') return { kind, title: claimById[id] ? `“${claimById[id].claim}”` : id };
     return { kind, title: eventById[id] ? `${eventById[id].time} ${eventById[id].title}` : id };
-  }, [evidenceById, suspectById, eventById, locationById]);
+  }, [evidenceById, suspectById, eventById, locationById, claimById]);
 
   const ids = Object.keys(layout);
   const connectedIds = useMemo(() => new Set(connections.flatMap((c) => [c.source, c.target])), [connections]);
@@ -170,14 +171,15 @@ export default function InvestigationBoard() {
     suspects: suspects.filter((s) => !layout[s.id]),
     locations: (caseInfo.locations ?? []).filter((l) => !layout[l.id]),
     events: timeline.filter((t) => !layout[t.id]),
-  }), [evidence, suspects, timeline, caseInfo, layout]);
+    claims: statements.flatMap((s) => s.assertions).filter((a) => !layout[a.id]),
+  }), [evidence, suspects, timeline, caseInfo, statements, layout]);
 
   const shownLinks = connections.filter((c) => layout[c.source] && layout[c.target]);
   const canUnpin = selected && !connectedIds.has(selected);
 
   return (
     <div className="page board">
-      <PageTitle title="Investigation Board" meta={`${ids.length} PINNED · ${connections.length} LINKS`} />
+      <PageTitle kicker="Does this clue actually connect to that person?" title="Case Board" meta={`${ids.length} PINNED · ${connections.length} LINKS`} />
 
       <div className="board__layout">
         <div className="board__canvas" aria-label="Investigation board">
@@ -235,6 +237,7 @@ export default function InvestigationBoard() {
               <optgroup label="Suspects">{pinnable.suspects.map((s) => <option key={s.id} value={s.id}>{s.id} · {s.name}</option>)}</optgroup>
               <optgroup label="Locations">{pinnable.locations.map((l) => <option key={l.id} value={l.id}>{l.id} · {l.name}</option>)}</optgroup>
               <optgroup label="Events">{pinnable.events.map((t) => <option key={t.id} value={t.id}>{t.id} · {t.time} {t.title}</option>)}</optgroup>
+              <optgroup label="Statements">{pinnable.claims.map((a) => <option key={a.id} value={a.id}>{a.id} · “{a.claim}”</option>)}</optgroup>
             </select>
             <Button small disabled={!pickId} onClick={pin} block>PIN</Button>
             {selected && (
@@ -245,7 +248,7 @@ export default function InvestigationBoard() {
             <p className="t-small muted">
               {selected
                 ? `${selected} selected. Click another card to link them.`
-                : 'Click a card, then another, to link them. Drag cards to arrange. Arrow keys nudge a focused card.'}
+                : 'Click a card, then another, to link them. The board is your theory: it never tells you whether a link is right. Drag cards to arrange; arrow keys nudge a focused card.'}
             </p>
           </section>
 

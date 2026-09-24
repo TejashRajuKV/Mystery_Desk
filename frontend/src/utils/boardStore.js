@@ -1,6 +1,8 @@
 // Board layout (which entities are pinned, and where) is per-viewer UI state,
 // so it lives in localStorage. Connections themselves are stored by the backend.
-const KEY = 'mysterydesk:board:047';
+// One board per case. The case hook points the store at its case (a module-level singleton, like sound.js).
+let KEY = 'mysterydesk:board:none';
+export const setBoardCase = (caseId) => { KEY = `mysterydesk:board:${caseId}`; };
 
 export function loadBoard() {
   try {
@@ -30,5 +32,21 @@ export function pinToBoard(id) {
   }
   return layout;
 }
+
+/** Pins several at once (a note's related items); returns how many were new. */
+export function pinAll(ids) {
+  const layout = loadBoard();
+  let added = 0;
+  for (const id of ids) {
+    if (layout[id]) continue;
+    layout[id] = autoPosition(Object.keys(layout).length);
+    added += 1;
+  }
+  if (added) saveBoard(layout);
+  return added;
+}
+
+/** A new investigation starts with an empty board. */
+export const clearBoard = () => saveBoard({});
 
 export const isPinned = (id) => Boolean(loadBoard()[id]);

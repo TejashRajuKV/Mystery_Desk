@@ -1,0 +1,37 @@
+[
+  { "id": "perfect_investigation", "title": "Perfect Investigation", "stamp": "CASE CLOSED",
+    "verdict": "Every alibi broken, down to the toll receipt in his ashtray.",
+    "narrative": [
+      "You put it to {accused} in order: the envelopes he held for seven minutes, the service call he booked, the toll booth, the code at the rear keypad. He asks for a moment, and then for his solicitor, and then tells you where the boxes are.",
+      "The bearer bonds are found in a lock-up in Millbrook, still in their Mercantile wrappers. Every piece of jewellery comes home but one.",
+      "Walter Kemp sends you a key on a ring, cut to open nothing. 'For the next locked door,' the tag says."
+    ] },
+  { "id": "true_criminal", "title": "True Criminal", "stamp": "CASE SOLVED",
+    "verdict": "The right name, and enough to hold it.",
+    "narrative": [
+      "{accused} is charged before the evening papers go to bed.",
+      "The case holds. His counsel makes the most of the alibis you never broke, and the jury takes two days.",
+      "Most of the bonds are recovered. Head office changes the dual-control procedure the following week."
+    ] },
+  { "id": "wrong_suspect", "title": "Wrong Suspect", "stamp": "CASE REOPENED",
+    "verdict": "A careful case, built around the wrong person.",
+    "narrative": [
+      "Your case against {accused} has a lie in it, a motive and a place on the timeline. It is still wrong.",
+      "The charges are dropped within the month. By then the bonds have been sold through three countries.",
+      "The file is reopened in the summer and handed to someone else."
+    ] },
+  { "id": "innocent_accused", "title": "Innocent Person Accused", "stamp": "WRONGFUL ARREST",
+    "verdict": "An arrest to satisfy head office.",
+    "narrative": [
+      "{accused} is arrested on Harbour Street in full view of the morning queue.",
+      "The charges are dropped. The name is already in the papers, next to the word 'vault'.",
+      "The Harbour Street thief is never caught. Mercantile quietly settles with the box holders."
+    ] },
+  { "id": "criminal_escapes", "title": "Criminal Escapes", "stamp": "UNSOLVED",
+    "verdict": "A million pounds walked out, and nobody followed it.",
+    "narrative": [
+      "The evening papers run 'THE PERFECT CRIME?' across the front page. It turns out to be exactly that.",
+      "Whoever opened the vault knew its every procedure, and knew how thin a file you'd bring.",
+      "Case #049 is filed under Unsolved. The bonds surface in Zurich two years later."
+    ] }
+]

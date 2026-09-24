@@ -56,4 +56,18 @@ export const EVIDENCE_GROUPS = [
 ];
 
 export const KIND_BY_PREFIX = { E: 'evidence', S: 'suspect', L: 'location', T: 'event' };
-export const kindOf = (id) => KIND_BY_PREFIX[String(id)[0]] ?? 'evidence';
+// ST02-A is a claim inside a statement, not a suspect.
+export const kindOf = (id) => (String(id).startsWith('ST') ? 'statement' : KIND_BY_PREFIX[String(id)[0]] ?? 'evidence');
+
+/** The case clock: "SAT 10 MAR · 14:35". */
+export function formatClock(ts) {
+  const p = parts(ts);
+  return p ? `${p.dow} ${p.day} ${p.month} · ${p.time}`.toUpperCase() : '';
+}
+
+/** Minutes left on the clock, as "9H 40M". */
+export function timeLeft(minutes) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h ? `${h}H ${String(m).padStart(2, '0')}M` : `${m}M`;
+}

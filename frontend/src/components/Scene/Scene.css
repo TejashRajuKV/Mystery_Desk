@@ -1,0 +1,10 @@
+.curtain {
+  position: fixed; inset: 0; z-index: 1300; visibility: hidden; opacity: 0;
+  display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(ellipse at center, var(--bg-raised), var(--bg-base) 70%);
+}
+.curtain__card { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; animation: page-in 0.6s ease 0.15s both; }
+.curtain__kicker { color: var(--brass); letter-spacing: 4px; }
+.curtain__title { font-size: clamp(34px, 6vw, 72px); color: var(--white); }
+.curtain__sub { color: var(--text-muted); }
+.scene-root { min-height: 100%; }

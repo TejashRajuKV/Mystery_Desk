@@ -1,0 +1,58 @@
+{
+  "id": "049",
+  "title": "The Harbour Street Vault",
+  "crime": "Bank heist",
+  "difficulty": "Hard",
+  "teaser": "Over the Easter weekend, forty safe-deposit boxes are emptied without a scratch on the vault door. The bank opens on Tuesday to an empty room.",
+  "status": "active",
+  "classification": "GRAND LARCENY",
+  "company": "Ridgeway Mercantile Bank",
+  "site": "Harbour Street branch",
+  "openedAt": "1984-04-24T10:00:00",
+  "incidentWindow": { "from": "1984-04-19T17:30:00", "to": "1984-04-24T09:05:00" },
+  "leadInvestigator": "You",
+  "accusationQuestion": "Who emptied the vault?",
+  "summary": "The Harbour Street branch closed for Easter on Thursday. When the manager opened the vault on Tuesday morning, forty safe-deposit boxes had been emptied: bearer bonds and jewellery worth over a million pounds. The door was closed, the time lock intact, the alarm armed. Someone knew exactly how.",
+  "briefing": [
+    "Ridgeway Mercantile's Harbour Street branch holds the safe-deposit boxes of half the city's old money. It closed at 17:30 on Thursday 19 April for the Easter holiday.",
+    "At 09:05 on Tuesday the branch manager opened the vault to find forty boxes forced and empty. Bearer bonds, jewellery and cash: the loss is put at £1.2 million.",
+    "There was no break-in. Whoever did this had the combination, knew the time lock and could silence the vault sensor. Head office wants the thief named before the story reaches the evening papers."
+  ],
+  "objectives": [
+    "Read the file.",
+    "Go to the branch, the alarm company and head office.",
+    "Search for records the thief didn't think of.",
+    "Break the alibis that don't hold.",
+    "Name the thief, and prove it."
+  ],
+  "clock": { "start": "1984-04-24T10:00:00", "hours": 14, "deadlineNote": "The evening papers go to bed at midnight." },
+  "city": {"district": "Harbour Street & City Square", "streets": {"v": ["Anchor Street", null, "Customs Lane", "Exchange Street", "Eastfield Road", null], "h": ["Ropewalk", "Mercantile Row", "Bond Street", "Harbour Street"]}, "major": ["Harbour Street", "Exchange Street"], "water": {"name": "Ridgeway Harbour", "edge": "south"}, "parks": [{"name": "City Square", "cells": [4, 2, 4, 2]}], "sites": [{"name": "Harbour Street Branch", "cells": [1, 2, 2, 3], "building": [1.12, 2.1, 2.88, 3.88]}, {"name": "Eastfield Trading Estate", "cells": [5, 0, 6, 1]}]},
+  "file": [
+    { "id": "F1", "title": "Incident report",
+      "body": [
+        "Discovered 09:05 Tuesday 24 April by the branch manager, Graham Pike, on opening the vault. Forty safe-deposit boxes forced with a pry bar; contents gone. Vault door, time lock and alarm all found in normal condition.",
+        "The branch was closed from 17:30 Thursday until Tuesday morning."
+      ],
+      "attachments": [] },
+    { "id": "F2", "title": "Loss schedule and scene notes",
+      "body": [
+        "Loss: bearer bonds (£860,000), jewellery (£290,000 estimated), cash (£50,000). Serial numbers of the bonds have been circulated.",
+        "The alarm panel in the vault lobby keeps a printed log of every arming, test and override. Ask the branch for the printout before anyone tidies it away."
+      ],
+      "attachments": ["E002"] },
+    { "id": "F3", "title": "Persons of interest",
+      "body": [
+        "Graham Pike, branch manager. Holds one half of the vault combination. At the branch, in the Banking Hall.",
+        "Doreen Walsh, cleaner. Has keys to the staff entrance. At the branch, in the Banking Hall.",
+        "Rosa Delgado, engineer, Fortress Alarms. Serviced the alarm on Saturday. At the Fortress Alarms depot.",
+        "Walter Kemp, locksmith, convicted of safe-breaking in 1971. Runs the key shop opposite the bank.",
+        "Edwin Thorne, senior auditor, Head Office. Audited the branch on Thursday. At Mercantile Head Office."
+      ],
+      "attachments": ["E015"] },
+    { "id": "F4", "title": "Dual-control procedure",
+      "body": [
+        "The vault combination is split in two halves, held by the manager and the chief clerk. Neither may know the other's half. Both halves are kept in sealed envelopes in the manager's safe.",
+        "Head Office Audit opens and reseals both envelopes at each quarterly audit to confirm they are intact. The time lock can only be overridden with the manufacturer's service procedure."
+      ] }
+  ]
+}

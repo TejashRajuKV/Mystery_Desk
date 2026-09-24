@@ -21,3 +21,15 @@
   .dossier__divider { display: none; }
   .suspect-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+
+.dossier__lead { display: flex; gap: 18px; align-items: flex-end; }
+.dossier__portrait { width: 132px; flex: none; }
+.dossier__name { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.dossier__find { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; margin-top: 8px; }
+.facts { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.facts li { display: flex; gap: 10px; align-items: baseline; }
+.facts__mark { width: 14px; flex: none; }
+.facts__known { color: var(--text-primary); }
+.facts__open { color: var(--text-muted); }
+@media (max-width: 520px) { .dossier__lead { flex-direction: column; align-items: flex-start; } }

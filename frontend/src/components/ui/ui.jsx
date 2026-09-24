@@ -22,7 +22,7 @@ export function Stamp({ variant = 'default', onClick, className, children, ...re
   return <span className={cls} {...rest}>{children}</span>;
 }
 
-/** A small speaker toggle, styled as a stamp. Placed on CaseEntry and CaseHeader. */
+/** A small speaker toggle, styled as a stamp. Placed on the main menu and the HUD. */
 export function SoundToggle({ className }) {
   const [muted, setMutedState] = useState(isMuted);
   return (
@@ -68,9 +68,11 @@ export function EmptyState({ title, children }) {
   );
 }
 
-export function PageTitle({ title, meta, children }) {
+/** `kicker` is the question the detective is asking on this screen, set above the title. */
+export function PageTitle({ title, meta, kicker, children }) {
   return (
     <div className="page__title-row">
+      {kicker && <p className="t-display page__kicker">{kicker}</p>}
       <h1 className="t-h1">{title}</h1>
       {meta && <span className="t-label muted">{meta}</span>}
       {children}

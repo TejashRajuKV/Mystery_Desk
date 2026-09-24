@@ -1,0 +1,219 @@
+{
+  "defaultUnlockedEvidence": [],
+  "interviews": {
+    "S01": {
+      "startNode": "oh-start", "presentFallback": "oh-unmoved",
+      "nodes": {
+        "oh-start": {
+          "speaker": "S01", "mood": "defensive", "presentable": true,
+          "narration": "Oliver Hale doesn't get up. He waves his glass at the chair opposite.",
+          "text": "Let me guess. The prodigal son, drowning in debt, steals Daddy's favourite toy. It's very neat. It's also rubbish.",
+          "choices": [
+            { "id": "oh-start-night", "label": "Ask where he was last night", "next": "oh-night" },
+            { "id": "oh-start-collection", "label": "Ask about his father's collection", "next": "oh-collection" },
+            { "id": "oh-start-tommy", "label": "Ask about the chauffeur", "next": "oh-tommy" },
+            { "id": "oh-start-e007", "present": "E007", "next": "oh-e007",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST01-A", "evidenceId": "E007" },
+                { "type": "unlock_evidence", "evidenceId": "E008" }
+              ] },
+            { "id": "oh-start-e006", "present": "E006", "next": "oh-e006" },
+            { "id": "oh-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "oh-night": { "speaker": "S01", "mood": "neutral",
+          "text": "The Regency, till three. I lost, since you ask. The doorman will remember me; I tip badly when I lose.",
+          "choices": [{ "id": "oh-night-back", "label": "Go back to your questions", "next": "oh-start" }] },
+        "oh-collection": { "speaker": "S01", "mood": "angry",
+          "text": "Forty years of polishing cars nobody drives, while the roof leaks. I want him to sell. He'd rather sell me. That's the whole family history.",
+          "choices": [{ "id": "oh-collection-back", "label": "Go back to your questions", "next": "oh-start" }] },
+        "oh-tommy": { "speaker": "S01", "mood": "neutral",
+          "text": "Tommy? Devoted. He drove me to school for years. He cried this morning, did you know? Stood in the empty bay and cried. More than my father did.",
+          "choices": [{ "id": "oh-tommy-back", "label": "Go back to your questions", "next": "oh-start" }] },
+        "oh-e007": { "speaker": "S01", "mood": "defeated", "narration": "He puts the glass down.",
+          "text": "All right. I had the spare key for the afternoon. I had the car photographed for a sale brochure. Behind his back, yes. It was back in its bay by ten past seven and the key was back at Marco's by half past. Ring Fenwick's studio.",
+          "choices": [{ "id": "oh-e007-back", "label": "Go back to your questions", "next": "oh-start" }] },
+        "oh-e006": { "speaker": "S01", "mood": "angry",
+          "text": "You've been through my letters. Yes, I owe the Regency. If I'd stolen that car I'd have paid them this morning, wouldn't I?",
+          "choices": [{ "id": "oh-e006-back", "label": "Go back to your questions", "next": "oh-start" }] },
+        "oh-unmoved": { "speaker": "S01", "mood": "neutral",
+          "text": "No idea. Should that mean something to me?",
+          "choices": [{ "id": "oh-unmoved-back", "label": "Go back to your questions", "next": "oh-start" }] }
+      }
+    },
+
+    "S02": {
+      "startNode": "mf-start", "presentFallback": "mf-unmoved",
+      "nodes": {
+        "mf-start": {
+          "speaker": "S02", "mood": "neutral", "presentable": true,
+          "narration": "Marco Ferri talks with his hands, and his hands are black with grease.",
+          "text": "Fifteen years I've kept that car alive. Fifteen years! And he owes me eight months. But I'd sooner steal the Pope's hat than that car.",
+          "choices": [
+            { "id": "mf-start-service", "label": "Ask about Thursday's service", "next": "mf-service" },
+            { "id": "mf-start-quiet", "label": "Ask how you'd move that car without a sound", "next": "mf-quiet" },
+            { "id": "mf-start-key", "label": "Ask about the spare key", "next": "mf-key",
+              "consequences": [{ "type": "unlock_evidence", "evidenceId": "E007" }] },
+            { "id": "mf-start-e004", "present": "E004", "next": "mf-quiet" },
+            { "id": "mf-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "mf-service": { "speaker": "S02", "mood": "neutral",
+          "text": "Oil, plugs, and the handbrake cable. It used to stick. Now it releases clean. I told Tommy, because Tommy's the one who moves her.",
+          "choices": [{ "id": "mf-service-back", "label": "Go back to your questions", "next": "mf-start" }] },
+        "mf-quiet": { "speaker": "S02", "mood": "surprised", "narration": "He stops wiping his hands.",
+          "text": "You don't start her. You take the handbrake off and she rolls. That drive slopes all the way to the lane. But you'd need to know the brake was fixed, and the only man I told was Tommy.",
+          "choices": [{ "id": "mf-quiet-back", "label": "Go back to your questions", "next": "mf-start" }] },
+        "mf-key": { "speaker": "S02", "mood": "neutral",
+          "text": "The spare's on hook twelve. Oliver signed it out Saturday afternoon, said his father wanted photographs. It came back by half seven. Look at the card.",
+          "choices": [{ "id": "mf-key-back", "label": "Go back to your questions", "next": "mf-start" }] },
+        "mf-unmoved": { "speaker": "S02", "mood": "neutral",
+          "text": "That's paperwork. I don't do paperwork. Ask my wife.",
+          "choices": [{ "id": "mf-unmoved-back", "label": "Go back to your questions", "next": "mf-start" }] }
+      }
+    },
+
+    "S03": {
+      "startNode": "tr-start", "presentFallback": "tr-unmoved",
+      "nodes": {
+        "tr-start": {
+          "speaker": "S03", "mood": "defeated", "presentable": true,
+          "narration": "Thomas Reece sets a cup of tea in front of you on a saucer, with a biscuit.",
+          "text": "Six years I've looked after that car, Detective. I found the bay empty at seven and I just stood there. I'll help any way I can.",
+          "variants": [
+            { "requires": { "flags": { "burned.S03": { "eq": true } } }, "mood": "defensive",
+              "narration": "There's a smell of burnt paper in the flat that wasn't there before.",
+              "text": "Kingsway can say what they like, Detective. I've nothing to hide. Ask what you want." }
+          ],
+          "choices": [
+            { "id": "tr-start-night", "label": "Ask about last night", "next": "tr-night" },
+            { "id": "tr-start-codes", "label": "Ask who holds the alarm codes", "next": "tr-codes", "requires": { "flags": { "file.F2": { "eq": true } } } },
+            { "id": "tr-start-oliver", "label": "Ask about Oliver Hale", "next": "tr-oliver" },
+            { "id": "tr-start-lane", "label": "Ask whether he saw anything on the lane", "next": "tr-lane" },
+            { "id": "tr-start-bluff", "label": "Bluff: tell him the transport firm has already talked", "next": "tr-bluff",
+              "requires": { "flags": { "burned.S03": { "ne": true } } },
+              "consequences": [{ "type": "set_flag", "key": "burned.S03", "value": true }] },
+            { "id": "tr-start-e003", "present": "E003", "next": "tr-e003",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST03-A", "evidenceId": "E003" }] },
+            { "id": "tr-start-e013", "present": "E013", "next": "tr-e013",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST03-B", "evidenceId": "E013" }] },
+            { "id": "tr-start-e012", "present": "E012", "next": "tr-e012",
+              "consequences": [{ "type": "reveal_contradiction", "assertionId": "ST03-C", "evidenceId": "E012" }] },
+            { "id": "tr-start-e010", "present": "E010", "next": "tr-e010" },
+            { "id": "tr-start-e011", "present": "E011", "next": "tr-e011" },
+            { "id": "tr-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "tr-night": { "speaker": "S03", "mood": "neutral",
+          "text": "Bed at eleven, up at six. Came down at seven for the Sunday polish, like every Sunday. I never heard a thing. That's what I can't get over.",
+          "choices": [{ "id": "tr-night-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-codes": { "speaker": "S03", "mood": "nervous", "narration": "He answers a little slowly.",
+          "text": "Mr Hale and I. That's all. But anyone could have watched one of us put it in. Anyone at all.",
+          "choices": [{ "id": "tr-codes-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-oliver": { "speaker": "S03", "mood": "suspicious", "narration": "He looks at the floor.",
+          "text": "I shouldn't say. Master Oliver owes money to some unpleasant people. And he had the spare key on Saturday. I'm only telling you what I know.",
+          "choices": [{ "id": "tr-oliver-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-lane": { "speaker": "S03", "mood": "neutral",
+          "text": "Now you mention it, Mr Pryce's Bentley was on the lane last night. Quarter to twelve, engine running. I saw the lights from my window before I turned in.",
+          "choices": [{ "id": "tr-lane-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-bluff": { "speaker": "S03", "mood": "surprised", "narration": "He goes very still. Then he smiles.",
+          "text": "Have they. Well. Then you won't be needing anything from me, will you? Excuse me a moment, I've left something on the stove.",
+          "choices": [{ "id": "tr-bluff-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-e003": { "speaker": "S03", "mood": "surprised", "narration": "The cup rattles in its saucer.",
+          "text": "Code three. That... someone must have seen me put it in. They must have. I was asleep.",
+          "choices": [{ "id": "tr-e003-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-e013": { "speaker": "S03", "mood": "angry",
+          "text": "A lorry driver in the dark? He'd say anything for a fiver. I was asleep, I tell you.",
+          "choices": [{ "id": "tr-e013-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-e012": { "speaker": "S03", "mood": "defeated", "narration": "He reads his own name on the job sheet, and something in his shoulders gives.",
+          "text": "They said nobody would ever know. Nine thousand pounds, Detective, and they said they'd come round and discuss it in person.",
+          "choices": [{ "id": "tr-e012-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-e010": { "speaker": "S03", "mood": "angry",
+          "text": "That's my business. A man's allowed a bet on a Saturday.",
+          "choices": [{ "id": "tr-e010-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-e011": { "speaker": "S03", "mood": "nervous",
+          "text": "Dealers write to chauffeurs all the time. We know the cars. It doesn't mean anything.",
+          "choices": [{ "id": "tr-e011-back", "label": "Go back to your questions", "next": "tr-start" }] },
+        "tr-unmoved": { "speaker": "S03", "mood": "neutral",
+          "text": "I'm sorry, Detective, I don't know anything about that. More tea?",
+          "choices": [{ "id": "tr-unmoved-back", "label": "Go back to your questions", "next": "tr-start" }] }
+      }
+    },
+
+    "S04": {
+      "startNode": "pc-start", "presentFallback": "pc-unmoved",
+      "nodes": {
+        "pc-start": {
+          "speaker": "S04", "mood": "neutral", "presentable": true,
+          "narration": "Philippa Crowe folds the racing pages without hurrying.",
+          "text": "I doubled the valuation on Tuesday and it walked on Saturday. I know exactly how that looks, Detective, so let's skip the part where you tell me.",
+          "variants": [
+            { "requires": { "flags": { "file.F2": { "ne": true } } }, "mood": "suspicious",
+              "text": "You haven't read my report, have you? It's in your file. Read it, then ask me something I haven't already written down." }
+          ],
+          "choices": [
+            { "id": "pc-start-val", "label": "Ask about the revaluation", "next": "pc-val" },
+            { "id": "pc-start-how", "label": "Ask how cars like this disappear", "next": "pc-how",
+              "consequences": [{ "type": "set_flag", "key": "lead.transport", "value": true }] },
+            { "id": "pc-start-family", "label": "Ask about the family", "next": "pc-family" },
+            { "id": "pc-start-e014", "present": "E014", "next": "pc-e014" },
+            { "id": "pc-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "pc-val": { "speaker": "S04", "mood": "neutral",
+          "text": "Two of the other three Castellanes changed hands this spring for over a hundred and fifty. His policy was five years out of date. Any assessor would have done the same.",
+          "choices": [{ "id": "pc-val-back", "label": "Go back to your questions", "next": "pc-start" }] },
+        "pc-how": { "speaker": "S04", "mood": "neutral",
+          "text": "Within a day they're on a ferry. Nobody drives a car like that across the country; it goes on a transporter at night. And there's only one firm in Ridgeway that does night pickups and takes cash: Kingsway, out on the ring road.",
+          "choices": [{ "id": "pc-how-back", "label": "Go back to your questions", "next": "pc-start" }] },
+        "pc-family": { "speaker": "S04", "mood": "suspicious",
+          "text": "The son's in debt to people you don't owe money to. The father's too ill to notice. If you want a motive in that house, you won't have to look far.",
+          "choices": [{ "id": "pc-family-back", "label": "Go back to your questions", "next": "pc-start" }] },
+        "pc-e014": { "speaker": "S04", "mood": "neutral",
+          "text": "Owner and chauffeur, codes one and three. I recommended a second holder and a camera on the lane. Nobody listened. They never do.",
+          "choices": [{ "id": "pc-e014-back", "label": "Go back to your questions", "next": "pc-start" }] },
+        "pc-unmoved": { "speaker": "S04", "mood": "neutral",
+          "text": "Not my department, I'm afraid. I value them. I don't find them.",
+          "choices": [{ "id": "pc-unmoved-back", "label": "Go back to your questions", "next": "pc-start" }] }
+      }
+    },
+
+    "S05": {
+      "startNode": "dp-start", "presentFallback": "dp-unmoved",
+      "nodes": {
+        "dp-start": {
+          "speaker": "S05", "mood": "suspicious", "presentable": true,
+          "narration": "Desmond Pryce doesn't rise, but he does lower his newspaper.",
+          "text": "I suppose you've heard what I said at the club. 'One way or another.' A figure of speech, Detective. I buy cars. I don't steal them.",
+          "choices": [
+            { "id": "dp-start-car", "label": "Ask about the roadster", "next": "dp-car" },
+            { "id": "dp-start-night", "label": "Ask where he was last night", "next": "dp-night" },
+            { "id": "dp-start-buyers", "label": "Ask who'd buy a car like that without papers", "next": "dp-buyers",
+              "consequences": [{ "type": "set_flag", "key": "lead.buyer", "value": true }] },
+            { "id": "dp-start-e005", "present": "E005", "next": "dp-e005",
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST05-A", "evidenceId": "E005" },
+                { "type": "unlock_evidence", "evidenceId": "E009" }
+              ] },
+            { "id": "dp-start-leave", "label": "Leave interview", "next": null }
+          ]
+        },
+        "dp-car": { "speaker": "S05", "mood": "neutral",
+          "text": "Chassis four of four. I own two and three. I offered Augustus a hundred and fifty thousand, five times. He'd rather it rotted than sell it to me.",
+          "choices": [{ "id": "dp-car-back", "label": "Go back to your questions", "next": "dp-start" }] },
+        "dp-night": { "speaker": "S05", "mood": "defensive",
+          "text": "Here, all evening. I slept upstairs. I never went near Ashgrove Road.",
+          "choices": [{ "id": "dp-night-back", "label": "Go back to your questions", "next": "dp-start" }] },
+        "dp-buyers": { "speaker": "S05", "mood": "neutral",
+          "text": "There's a dealer in Rotterdam, Van der Berg, who'll take anything with a famous chassis and no questions. He writes to chauffeurs and mechanics, not owners. They're the ones with the keys.",
+          "choices": [{ "id": "dp-buyers-back", "label": "Go back to your questions", "next": "dp-start" }] },
+        "dp-e005": { "speaker": "S05", "mood": "defeated", "narration": "He folds the newspaper very small.",
+          "text": "I drove out to make one last offer. In person, like a gentleman. I sat at his gate for ten minutes and couldn't bring myself to ring the bell at midnight like a drunk. I was back here by twenty past. Ask the porter.",
+          "choices": [{ "id": "dp-e005-back", "label": "Go back to your questions", "next": "dp-start" }] },
+        "dp-unmoved": { "speaker": "S05", "mood": "suspicious",
+          "text": "I don't see what you want me to say about that.",
+          "choices": [{ "id": "dp-unmoved-back", "label": "Go back to your questions", "next": "dp-start" }] }
+      }
+    }
+  }
+}

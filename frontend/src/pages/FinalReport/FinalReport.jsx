@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { api } from '../../services/api.js';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCase } from '../../hooks/useCase.jsx';
-import { Button, Stamp, PageTitle, Loading, ErrorState, Field } from '../../components/ui/ui.jsx';
+import { Button, Stamp, PageTitle, Loading, ErrorState } from '../../components/ui/ui.jsx';
 import ReportSection from '../../components/ReportSection/ReportSection.jsx';
-import { formatWhen } from '../../utils/format.js';
-import { playDenied, playStampThud } from '../../utils/sound.js';
+import EndingScreen, { CaseClosedIntro, WhatHappened } from '../../components/EndingScreen/EndingScreen.jsx';
+import NewInvestigation from '../../components/NewInvestigation/NewInvestigation.jsx';
+import { formatWhen, typeLabel } from '../../utils/format.js';
+import { playAccusation, playDenied, playPaperRustle, playStampThud } from '../../utils/sound.js';
 import './FinalReport.css';
 
 // Indexed by row, not DOM order — the two report columns cascade down together,
 // like a dossier's pages dropping into place, rather than the right column waiting on the left.
 const SECTION_DELAY = (row) => `${120 + row * 100}ms`;
 
-function ConclusionForm({ onDone, onCancel }) {
-  const { suspects, evidence, investigation, saveTheory, submitConclusion, caseId } = useCase();
-  const previous = investigation?.conclusion;
-  const [suspectId, setSuspectId] = useState(previous?.suspectId ?? '');
-  const [picked, setPicked] = useState(() => new Set(previous?.evidenceIds ?? []));
-  const [theory, setTheory] = useState(investigation?.theory ?? '');
+/** The final question, then the evidence, then the filing. Nothing here can be taken back. */
+function Accusation({ onFiling }) {
+  const { caseInfo, suspects, suspectById, evidence, submitConclusion, caseId } = useCase();
+  const [step, setStep] = useState('who');
+  const [accused, setAccused] = useState(null);
+  const [picked, setPicked] = useState(() => new Set());
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
@@ -26,124 +27,138 @@ function ConclusionForm({ onDone, onCancel }) {
     next.has(id) ? next.delete(id) : next.add(id);
     return next;
   });
+  const choose = (id) => { setAccused(id); setStep(id ? 'evidence' : 'none'); setError(null); playPaperRustle(); };
+  const back = () => { setStep('who'); setError(null); };
 
-  async function submit(e) {
-    e.preventDefault();
+  async function file() {
     setBusy(true); setError(null);
+    onFiling(true);
+    playAccusation();
     try {
-      await saveTheory(theory);
-      await submitConclusion({ suspectId, evidenceIds: [...picked] });
-      onDone();
+      await submitConclusion(accused ? { suspectId: accused, evidenceIds: [...picked] } : { suspectId: null, evidenceIds: [] });
     } catch (err) {
-      setError(err);
-      playDenied();
-    } finally {
-      setBusy(false);
+      onFiling(false); setError(err); playDenied(); setBusy(false);
     }
   }
 
-  return (
-    <form className="conclude" onSubmit={submit}>
-      <div className="conclude__intro panel--paper">
-        <span className="t-label">FORM {caseId}-C · CONCLUSION OF INVESTIGATION</span>
-        <h2 className="t-h1">Name the culprit</h2>
-        <hr className="rule" />
-        <p className="t-small">Choose one suspect, cite the exhibits that prove it, and set out your theory. Your conclusion is checked against the case files.</p>
-      </div>
-
-      <fieldset className="conclude__block panel">
-        <legend className="t-label muted">PRIMARY SUSPECT</legend>
-        <div className="conclude__suspects">
+  if (step === 'who') {
+    return (
+      <section className="accuse" aria-labelledby="final-q">
+        <span className="t-label muted">THE FINAL QUESTION · CASE {caseId}</span>
+        <h2 id="final-q" className="t-display accuse__question">{caseInfo.accusationQuestion}</h2>
+        <p className="t-body secondary">Name one person, or admit you can’t. Whatever you file, the case closes with it.</p>
+        <ol className="accuse__names">
           {suspects.map((s) => (
-            <label key={s.id} className={suspectId === s.id ? 'pick pick--on' : 'pick'}>
-              <input type="radio" name="suspect" value={s.id} checked={suspectId === s.id} onChange={() => setSuspectId(s.id)} />
-              <span className="t-h3">{s.name}</span>
-              <span className="t-mono muted">{s.role}</span>
-            </label>
+            <li key={s.id}>
+              <button type="button" className="accuse__name" onClick={() => choose(s.id)}>
+                <span className="t-h1">[ {s.name} ]</span>
+                <span className="t-mono muted">{s.role}</span>
+              </button>
+            </li>
           ))}
+          <li>
+            <button type="button" className="accuse__name accuse__name--none" onClick={() => choose(null)}>
+              <span className="t-h2">[ I cannot determine ]</span>
+            </button>
+          </li>
+        </ol>
+      </section>
+    );
+  }
+
+  if (step === 'none') {
+    return (
+      <section className="accuse" role="alertdialog" aria-label="Close the file without naming anyone">
+        <span className="t-label muted">THE FINAL QUESTION · CASE {caseId}</span>
+        <h2 className="t-h1">Close the file without naming anyone?</h2>
+        <p className="t-body secondary">The case is filed as undetermined. There is no taking it back.</p>
+        {error && <p className="t-small accuse__error" role="alert">{error.message}</p>}
+        <div className="accuse__row">
+          <Button onClick={file} disabled={busy}>{busy ? 'FILING…' : '[ FILE AS UNDETERMINED ]'}</Button>
+          <Button variant="secondary" onClick={back} disabled={busy}>BACK</Button>
         </div>
-      </fieldset>
+      </section>
+    );
+  }
 
-      <fieldset className="conclude__block panel">
-        <legend className="t-label muted">SUPPORTING EVIDENCE · {picked.size} CITED</legend>
-        <div className="conclude__evidence">
-          {evidence.map((e) => (
-            <label key={e.id} className={picked.has(e.id) ? 'pick pick--on pick--row' : 'pick pick--row'}>
-              <input type="checkbox" checked={picked.has(e.id)} onChange={() => toggle(e.id)} />
-              <span className="t-label">{e.id}</span>
-              <span className="t-small">{e.title}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <div className="conclude__block panel">
-        <Field label="YOUR THEORY">
-          <textarea className="textarea" value={theory} onChange={(e) => setTheory(e.target.value)} placeholder="How did it happen? Who, when, how, and why?" />
-        </Field>
+  return (
+    <section className="accuse" aria-labelledby="present-q">
+      <span className="t-label muted">THE ACCUSED</span>
+      <p className="t-h1 accuse__who">{suspectById[accused].name}</p>
+      <h2 id="present-q" className="t-h2">Present the evidence that proves your accusation</h2>
+      <div className="accuse__evidence" role="group" aria-label="Evidence to present">
+        {evidence.map((e) => (
+          <button key={e.id} type="button" className={picked.has(e.id) ? 'accuse__card accuse__card--on' : 'accuse__card'} aria-pressed={picked.has(e.id)} onClick={() => toggle(e.id)}>
+            <span className="t-label">{e.id} · {typeLabel(e.type)}</span>
+            <span className="t-h3">{e.title}</span>
+          </button>
+        ))}
       </div>
-
-      {error && <p className="t-small conclude__error" role="alert">{error.message}</p>}
-      <div className="conclude__actions">
-        <Button type="submit" disabled={busy || !suspectId || picked.size === 0}>{busy ? 'FILING…' : 'SUBMIT CONCLUSION'}</Button>
-        {onCancel && <Button variant="secondary" onClick={onCancel}>CANCEL</Button>}
-        <span className="t-small muted">Case #{caseId}</span>
+      <p className="t-small muted">{picked.size} exhibit{picked.size === 1 ? '' : 's'} presented. Once filed, the case is closed.</p>
+      {error && <p className="t-small accuse__error" role="alert">{error.message}</p>}
+      <div className="accuse__row">
+        <Button onClick={file} disabled={busy || picked.size === 0}>{busy ? 'FILING…' : '[ FILE ACCUSATION ]'}</Button>
+        <Button variant="secondary" onClick={back} disabled={busy}>CHOOSE SOMEONE ELSE</Button>
       </div>
-    </form>
+    </section>
   );
 }
 
-function Report({ onRevise }) {
-  const { investigation } = useCase();
+function Report({ fresh, onIntroDone }) {
+  const { api, base, investigation } = useCase();
+  const navigate = useNavigate();
   const [report, setReport] = useState(null);
   const [error, setError] = useState(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     setReport(null); setError(null);
     api.getReport().then((r) => !cancelled && setReport(r)).catch((e) => !cancelled && setError(e));
     return () => { cancelled = true; };
-  }, [investigation?.conclusion]);
+  }, [investigation?.conclusion, attempt]);
 
   useEffect(() => {
-    if (!report) return;
+    if (!report || fresh) return undefined;
     // Timed to land as the stamp's own CSS animation (0.4s delay, overshoot easing) hits impact.
     const t = setTimeout(playStampThud, 480);
     return () => clearTimeout(t);
-  }, [report]);
+  }, [report, fresh]);
 
-  if (error) return <ErrorState error={error} onRetry={onRevise} />;
+  if (error) return <ErrorState error={error} onRetry={() => setAttempt((n) => n + 1)} />;
   if (!report) return <Loading label="COMPILING REPORT" />;
+  if (fresh) return <CaseClosedIntro ending={report.ending} onDone={onIntroDone} />;
+
+  const viewWhatHappened = () => document.getElementById(report.ending.whatHappened ? 'what-happened' : 'case-record')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <div className="report">
-      <header className="report__hero">
-        <div>
-          <span className="t-label muted">FINAL REPORT · CASE #{report.case}</span>
-          <h2 className="t-display report__title">{report.title}</h2>
-          <p className="t-label secondary">PRIMARY SUSPECT</p>
-          <p className="t-h1 report__suspect">{report.primarySuspect?.name}</p>
-        </div>
-        <div className="report__stamp" role="img" aria-label="Case solved">CASE SOLVED</div>
-      </header>
+      <EndingScreen caseId={report.case} title={report.title} ending={report.ending} accused={report.primarySuspect?.name}>
+        <Button onClick={viewWhatHappened}>[ VIEW WHAT HAPPENED ]</Button>
+        <NewInvestigation label="[ PLAY AGAIN ]" small={false} onDone={() => navigate(base)} />
+        <Button to={`${base}/map`} variant="secondary">[ RETURN TO CASE ]</Button>
+        <Button to="/cases" variant="secondary">[ CASE FILES ]</Button>
+      </EndingScreen>
 
-      <div className="report__grid">
+      {report.ending.whatHappened && <WhatHappened events={report.ending.whatHappened} />}
+
+      <div className="report__grid" id="case-record">
         <div className="report__col">
           <ReportSection label="SECTION 01" heading="Theory" style={{ animationDelay: SECTION_DELAY(0) }}>
             <p>{report.theory || 'No theory was recorded.'}</p>
           </ReportSection>
 
-          <ReportSection label="SECTION 02" heading="Supporting Evidence" style={{ animationDelay: SECTION_DELAY(1) }} /* row 1 */>
+          <ReportSection label="SECTION 02" heading="Evidence Presented" style={{ animationDelay: SECTION_DELAY(1) }} /* row 1 */>
             {report.supportingEvidence?.length ? (
               <ul className="report__list">
                 {report.supportingEvidence.map((e) => (
                   <li key={e.id}>
-                    <Link to={`/evidence?select=${e.id}`}><strong>{e.id}</strong> · {e.title}</Link>
+                    <Link to={`${base}/evidence?select=${e.id}`}><strong>{e.id}</strong> · {e.title}</Link>
                     <span className="t-small"> {e.time}{e.location ? `, ${e.location}` : ''}. {e.summary}</span>
                   </li>
                 ))}
               </ul>
-            ) : <p>No evidence cited.</p>}
+            ) : <p>No evidence was presented.</p>}
           </ReportSection>
 
           <ReportSection label="SECTION 03" heading="Contradictions" style={{ animationDelay: SECTION_DELAY(2) }}>
@@ -161,7 +176,7 @@ function Report({ onRevise }) {
         </div>
 
         <div className="report__col">
-          <ReportSection label="SECTION 04" heading="Reconstructed Timeline" style={{ animationDelay: SECTION_DELAY(0) }} /* row 0, right column */>
+          <ReportSection label="SECTION 04" heading="Your Timeline" style={{ animationDelay: SECTION_DELAY(0) }} /* row 0, right column */>
             {report.timeline?.length ? (
               <ol className="report__timeline">
                 {report.timeline.map((t) => (
@@ -184,8 +199,7 @@ function Report({ onRevise }) {
       </div>
 
       <div className="report__actions">
-        <Button variant="secondary" onClick={onRevise}>REVISE CONCLUSION</Button>
-        <Button to="/board" variant="secondary">BACK TO THE BOARD</Button>
+        <Button to={`${base}/board`} variant="secondary">BACK TO THE BOARD</Button>
         <Stamp variant="viewed">FILED FOR THE RECORD</Stamp>
       </div>
     </div>
@@ -194,15 +208,13 @@ function Report({ onRevise }) {
 
 export default function FinalReport() {
   const { investigation } = useCase();
-  const [revising, setRevising] = useState(false);
+  const [fresh, setFresh] = useState(false);
   const concluded = Boolean(investigation?.conclusion);
 
   return (
     <div className="page">
-      <PageTitle title="Final Report" meta={concluded ? 'CONCLUSION FILED' : 'NO CONCLUSION YET'} />
-      {concluded && !revising
-        ? <Report onRevise={() => setRevising(true)} />
-        : <ConclusionForm onDone={() => setRevising(false)} onCancel={concluded ? () => setRevising(false) : undefined} />}
+      <PageTitle kicker="I have to decide who did it." title="Accusation" meta={concluded ? 'CASE CLOSED' : 'NO ACCUSATION YET'} />
+      {concluded ? <Report fresh={fresh} onIntroDone={() => setFresh(false)} /> : <Accusation onFiling={setFresh} />}
     </div>
   );
 }

@@ -165,3 +165,28 @@ export function playStampThud() {
 
 /** A single soft key-clack — used sparingly (one-shot reveals, an "analysing" loop). */
 export const playTypewriterKey = () => playNoiseBurst({ duration: 0.03, gain: 0.045, filterFreq: 3500, filterType: 'bandpass', q: 3 });
+
+/** An exhibit slapped down on the interview table. */
+export function playPresent() {
+  playNoiseBurst({ duration: 0.12, gain: 0.12, filterFreq: 1200, filterType: 'lowpass' });
+  playTone({ freq: 110, type: 'sine', duration: 0.18, gain: 0.12, freqEnd: 70 });
+}
+
+/** A low, uneasy sting — a statement caught out. */
+export function playContradiction() {
+  playTone({ freq: 233, type: 'triangle', duration: 0.5, gain: 0.07 });
+  playTone({ freq: 247, type: 'triangle', duration: 0.5, gain: 0.07 });
+  setTimeout(() => playTone({ freq: 175, type: 'sine', duration: 0.6, gain: 0.08, freqEnd: 150 }), 160);
+}
+
+/** A slow breath of air — cutting to a new scene. */
+export const playTransition = () => playNoiseBurst({ duration: 0.9, gain: 0.06, filterFreq: 500, filterType: 'lowpass' });
+
+/** The door shutting on the case — filing the accusation. */
+export function playAccusation() {
+  playTone({ freq: 65, type: 'sine', duration: 0.9, gain: 0.2, freqEnd: 40 });
+  setTimeout(() => playNoiseBurst({ duration: 0.25, gain: 0.12, filterFreq: 700, filterType: 'lowpass' }), 120);
+}
+
+/** A soft typewriter bell — a new notice in the case file. */
+export const playNotice = () => playTone({ freq: 1320, type: 'sine', duration: 0.25, gain: 0.04 });

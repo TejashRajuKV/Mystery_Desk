@@ -1,0 +1,13 @@
+[
+  { "id": "T01", "timestamp": "1984-07-02T00:00:00", "title": "The bank writes to the trustee", "description": "The family trust is found to be £41,212 overdrawn.", "locationId": "L04", "personIds": ["S04"], "evidenceIds": ["E011"] },
+  { "id": "T02", "timestamp": "1984-07-10T10:00:00", "title": "The Colonel's medicines change hands", "description": "The nurse hands everything in the medicine cabinet over for the probate inventory.", "locationId": "L03", "personIds": ["S02", "S04"], "evidenceIds": ["E008", "E013"] },
+  { "id": "T03", "timestamp": "1984-07-14T08:00:00", "title": "Foxgloves for the house", "description": "The gardener cuts foxgloves for the drawing-room vases.", "locationId": "L05", "personIds": ["S03"], "evidenceIds": ["E010"] },
+  { "id": "T04", "timestamp": "1984-07-14T15:35:00", "title": "The nephew arrives", "description": "The estranged nephew gets off the bus in the village.", "locationId": "L06", "personIds": ["S05"], "evidenceIds": ["E015", "E014"] },
+  { "id": "T05", "timestamp": "1984-07-14T15:50:00", "title": "Her ladyship in the pantry", "description": "The widow is seen in the housekeeper's pantry.", "locationId": "L02", "personIds": ["S01"], "evidenceIds": ["E004", "E009"] },
+  { "id": "T06", "timestamp": "1984-07-14T16:00:00", "title": "The reading begins", "description": "The solicitor begins to read the will in the drawing room.", "locationId": "L01", "personIds": ["S01", "S04"], "evidenceIds": ["E012"] },
+  { "id": "T07", "timestamp": "1984-07-14T16:05:00", "title": "A car is moved off the drive", "description": "The gardener moves a visitor's car to let a delivery through.", "locationId": "L05", "personIds": ["S03"], "evidenceIds": ["E005"] },
+  { "id": "T08", "timestamp": "1984-07-14T16:10:00", "title": "Someone goes out to a car", "description": "A man leaves the drawing room and searches the glovebox of the black Humber.", "locationId": "L05", "personIds": ["S04"], "evidenceIds": ["E006", "E007"] },
+  { "id": "T09", "timestamp": "1984-07-14T16:15:00", "title": "Tea is served", "description": "The housekeeper brings the tea tray.", "locationId": "L01", "personIds": [], "evidenceIds": ["E004"] },
+  { "id": "T10", "timestamp": "1984-07-14T16:18:00", "title": "A cup is poured", "description": "Gerald's cup is poured at the sideboard and carried to him.", "locationId": "L01", "personIds": ["S04"], "evidenceIds": ["E004", "E003"] },
+  { "id": "T11", "timestamp": "1984-07-14T16:40:00", "title": "Gerald collapses", "description": "Before the reading is finished, Gerald Ashcombe falls at the tea table.", "locationId": "L01", "personIds": [], "evidenceIds": ["E001", "E002"] }
+]

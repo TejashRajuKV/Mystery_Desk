@@ -1,0 +1,56 @@
+.menu {
+  position: relative; min-height: 100vh; overflow: hidden; display: flex; align-items: center;
+  padding: 48px clamp(20px, 8vw, 120px);
+  background: radial-gradient(ellipse 80% 70% at 75% 20%, var(--wood-dark), var(--bg-base) 70%);
+}
+.menu__lamp {
+  position: absolute; top: -20vh; right: -10vw; width: 90vw; height: 110vh; pointer-events: none;
+  background: radial-gradient(ellipse at 60% 10%, var(--lamp) 0%, color-mix(in srgb, var(--lamp) 40%, transparent) 35%, transparent 65%);
+  animation: menu-flicker 7s steps(1) infinite;
+}
+
+.menu__content { position: relative; z-index: 2; max-width: 760px; display: flex; flex-direction: column; gap: 18px; }
+.menu__kicker { display: flex; align-items: center; gap: 12px; color: var(--brass); }
+.menu__kicker .t-label { letter-spacing: 5px; }
+.menu__badge { width: 30px; height: 35px; flex: none; filter: drop-shadow(0 2px 6px var(--vignette)); }
+.menu__badge path { fill: var(--brass); stroke: var(--brass-dim); stroke-width: 1.5; }
+.menu__badge .menu__badge-star { fill: var(--noir-frame); stroke: none; }
+.menu__tagline { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+.menu__stamp {
+  padding: 6px 14px; border: 3px double var(--red-bright); color: var(--red-bright); font-family: var(--font-heading); font-size: 24px; letter-spacing: 4px;
+  transform: rotate(-8deg); opacity: 0.85; mix-blend-mode: screen; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red-bright) 40%, transparent);
+}
+
+.menu__scene { position: absolute; right: 0; bottom: 0; height: 100%; width: min(62vw, 1060px); pointer-events: none;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
+.menu__blinds {
+  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0.5;
+  background: repeating-linear-gradient(-14deg, transparent 0 46px, color-mix(in srgb, var(--noir-lit) 9%, transparent) 46px 70px);
+  mask-image: radial-gradient(ellipse 60% 70% at 30% 55%, #000 10%, transparent 75%);
+}
+.menu__grain {
+  position: absolute; inset: -50%; pointer-events: none; opacity: 0.07; animation: menu-grain 0.8s steps(4) infinite;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.menu__title { font-size: clamp(44px, 8.6vw, 140px); white-space: nowrap; line-height: 0.95; color: var(--white); perspective: 600px; text-shadow: 0 8px 40px var(--vignette); }
+.menu__title span { display: inline-block; }
+.menu__tag { color: var(--text-secondary); max-width: 46ch; font-size: 18px; line-height: 30px; }
+
+.menu__list { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; }
+.menu__item {
+  display: grid; grid-template-columns: 22px auto; grid-template-rows: auto auto; column-gap: 8px; align-items: baseline;
+  width: fit-content; min-width: min(420px, 100%); padding: 10px 14px 10px 6px; text-align: left;
+  background: none; border: 0; border-left: 3px solid transparent; color: var(--text-secondary);
+  transition: color 0.15s, border-color 0.15s, background 0.15s, padding-left 0.2s var(--ease-out);
+}
+.menu__arrow { grid-row: 1; color: var(--red-bright); opacity: 0; transition: opacity 0.15s; }
+.menu__label { grid-row: 1; font-family: var(--font-heading); font-size: 34px; letter-spacing: 3px; text-transform: uppercase; }
+.menu__sub { grid-column: 2; color: var(--text-muted); }
+.menu__item--on, .menu__item:focus-visible { color: var(--white); border-left-color: var(--red); background: linear-gradient(90deg, color-mix(in srgb, var(--red) 18%, transparent), transparent 70%); padding-left: 14px; outline: none; }
+.menu__item--on .menu__arrow { opacity: 1; }
+.menu__foot { display: flex; align-items: center; gap: 18px; margin-top: 18px; color: var(--text-muted); flex-wrap: wrap; }
+
+
+@keyframes menu-grain { 0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); } 50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } 100% { transform: translate(0, 0); } }
+@keyframes menu-flicker { 0%, 41%, 44%, 78%, 100% { opacity: 1; } 42% { opacity: 0.55; } 43% { opacity: 0.9; } 79% { opacity: 0.75; } }
+@media (max-width: 1000px) { .menu__scene { opacity: 0.3; width: 100vw; } }

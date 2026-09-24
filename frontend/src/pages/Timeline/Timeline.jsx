@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useCase } from '../../hooks/useCase.jsx';
-import { PageTitle, Button, Stamp } from '../../components/ui/ui.jsx';
+import { PageTitle, Button, Stamp, EmptyState } from '../../components/ui/ui.jsx';
 import TimelineEvent from '../../components/TimelineEvent/TimelineEvent.jsx';
 import { dateRange, formatDateTime } from '../../utils/format.js';
 import './Timeline.css';
@@ -24,7 +24,9 @@ function Scrubber({ timeline, selectedId, viewed, onSelect }) {
 }
 
 function EventDetail({ event, onClose }) {
-  const { evidenceById, suspectById, locationById } = useCase();
+  const { base, evidenceById, suspectById, locationById, statementBySuspect, contradictionsFound } = useCase();
+  const caught = new Set(contradictionsFound.map((c) => c.assertionId));
+  const said = event.personIds.map((id) => ({ id, statement: statementBySuspect[id] })).filter((x) => x.statement);
   return (
     <aside className="tl-detail" aria-label={`Event ${event.id}`}>
       <div className="tl-detail__head t-label">
@@ -41,14 +43,26 @@ function EventDetail({ event, onClose }) {
         <div className="tl-detail__ev">
           <span className="t-label muted">SUPPORTING EVIDENCE</span>
           {event.evidenceIds.map((id) => (
-            <Link key={id} to={`/evidence?select=${id}`} className="tl-detail__link">
+            <Link key={id} to={`${base}/evidence?select=${id}`} className="tl-detail__link">
               <Stamp variant="alert">{id}</Stamp>
               <span className="t-small">{evidenceById[id]?.title ?? id}</span>
             </Link>
           ))}
         </div>
       )}
-      <Button to="/board" variant="secondary" block>OPEN THE BOARD</Button>
+      {said.length > 0 && (
+        <div className="tl-detail__ev">
+          <span className="t-label muted">WHAT THEY TOLD YOU</span>
+          {said.map(({ id, statement }) => statement.assertions.map((a) => (
+            <Link key={a.id} to={`${base}/people?select=${id}`} className="tl-detail__claim">
+              <span className="t-label">{suspectById[id]?.name ?? id}{caught.has(a.id) ? ' · CONTRADICTED' : ''}</span>
+              <span className="t-small">“{a.claim}”</span>
+            </Link>
+          )))}
+          <span className="t-small muted">Does the record agree with them? Open their file to test it.</span>
+        </div>
+      )}
+      <Button to={`${base}/board`} variant="secondary" block>OPEN THE CASE BOARD</Button>
     </aside>
   );
 }
@@ -65,9 +79,18 @@ export default function Timeline() {
   const half = Math.ceil(timeline.length / 2);
   const columns = [timeline.slice(0, half), timeline.slice(half)];
 
+  if (timeline.length === 0) {
+    return (
+      <div className="page tl">
+        <PageTitle kicker="Something happened here. What am I missing?" title="Timeline" meta="NOTHING PINNED DOWN YET" />
+        <EmptyState title="No times to go on yet">Events appear here as you collect the evidence behind them: a log, a receipt, a witness. Go and find some.</EmptyState>
+      </div>
+    );
+  }
+
   return (
     <div className={selected ? 'page tl tl--open' : 'page tl'}>
-      <PageTitle title="Timeline" meta={`${dateRange(timeline[0]?.timestamp, timeline[timeline.length - 1]?.timestamp)} · ${progress.eventsViewed} OF ${progress.eventsTotal} EVENTS REVIEWED`} />
+      <PageTitle kicker="Something happened here. What am I missing?" title="Timeline" meta={`${dateRange(timeline[0]?.timestamp, timeline[timeline.length - 1]?.timestamp)} · ${timeline.length} KNOWN · ${progress.eventsViewed} REVIEWED`} />
       <Scrubber timeline={timeline} selectedId={selectedId} viewed={viewed.timeline} onSelect={select} />
 
       <div className="tl__cols">

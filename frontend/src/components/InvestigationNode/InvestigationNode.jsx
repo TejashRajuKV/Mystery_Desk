@@ -1,6 +1,6 @@
 import './InvestigationNode.css';
 
-const KIND_LABEL = { evidence: 'EVIDENCE', suspect: 'SUSPECT', location: 'LOCATION', event: 'EVENT' };
+const KIND_LABEL = { evidence: 'EVIDENCE', suspect: 'SUSPECT', location: 'LOCATION', event: 'EVENT', statement: 'STATEMENT' };
 
 /** Pinned card. Evidence is paper; suspects are outlined in white. Used on the board and inline in assistant answers. */
 export default function InvestigationNode({ kind, id, title, selected, dragging, className = '', style, as: Tag = 'div', ...rest }) {

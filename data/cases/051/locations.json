@@ -1,0 +1,79 @@
+[
+  {
+    "id": "L01", "map": { "x": 1.5, "y": 1.45, "kind": "chair" }, "name": "The Drawing Room", "floor": "Ground", "district": "Ashcombe Hall",
+    "description": "Tall windows onto the lawn, a tea table still laid for four, and vases of delphiniums and foxgloves.",
+    "people": ["S01"],
+    "arrival": "Lady Constance sits exactly where she sat yesterday, very straight, as if the reading has only been adjourned.",
+    "spots": [
+      {"id": "L01-e001", "label": "Read the doctor’s death report", "text": "Gerald Ashcombe collapsed at the tea table at 16:40 and died.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E001"}]},
+      { "id": "L01-cup", "label": "Examine the tea table", "text": "Four cups. Only one has been bagged by the police: Gerald's, with a fine gritty residue in the dregs.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E003" }] },
+      { "id": "L01-will", "label": "Read the will on the table", "text": "A copy of the Colonel's will. Gerald executor. 'I direct my brother to examine the trust accounts forthwith, and to take such advice as he sees fit.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E012" }] },
+      { "id": "L01-vases", "label": "Look at the flowers", "text": "Foxgloves among the delphiniums, cut yesterday morning. Every schoolchild knows what foxgloves are." }
+    ]
+  },
+  {
+    "id": "L02", "map": { "x": 1.5, "y": 2.5, "kind": "pot" }, "name": "The Kitchen & Pantry", "floor": "Below stairs", "district": "Ashcombe Hall",
+    "description": "A range, a scrubbed table, and the housekeeper, Mrs Hobbs, who has seen three generations of Ashcombes and approves of none of them.",
+    "people": [],
+    "arrival": "Mrs Hobbs puts down her rolling pin. 'I wondered when somebody sensible would come down here.'",
+    "spots": [
+      { "id": "L02-hobbs", "label": "Talk to Mrs Hobbs, the housekeeper", "text": "'I took the tray up at quarter past. When I came back with the hot water, Mr Fairlie was pouring Mr Gerald's cup himself, at the sideboard. Very attentive. And her ladyship was in my pantry at ten to four, if you want to know.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E004" }] },
+      { "id": "L02-pantry", "label": "Search the pantry shelves", "text": "Among the jams, a small tin of saccharin with a chemist's label, and a doctor's diet card in Lady Constance's name.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E009" }] }
+    ]
+  },
+  {
+    "id": "L03", "map": { "x": 3.5, "y": 1.45, "kind": "cross" }, "name": "The Nurse's Room", "floor": "First", "district": "Ashcombe Hall",
+    "description": "A narrow room with a locked medicine cabinet, a nurse's log, and a photograph of the Colonel in uniform.",
+    "people": ["S02"],
+    "arrival": "Agnes Mora is folding laundry that is already folded. The medicine cabinet behind her is empty.",
+    "spots": [
+      { "id": "L03-log", "label": "Read the nurse's medicine log", "text": "Carbon copy at the back: '10 July. All remaining medicines of the late Col. Ashcombe handed to Mr A. Fairlie for the probate inventory, incl. digoxin 0.25mg x 60.' Two signatures.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E008" }] }
+    ]
+  },
+  {
+    "id": "L04", "map": { "x": 2.5, "y": 1.45, "kind": "book" }, "name": "The Library", "floor": "Ground", "district": "Ashcombe Hall",
+    "description": "Leather, dust and the Colonel's regimental histories. Ambrose Fairlie has taken over the long table with his papers.",
+    "people": ["S04"],
+    "arrival": "Ambrose Fairlie rises and removes his reading glasses. 'Detective. A wretched business. How can I help?'",
+    "spots": [
+      { "id": "L04-tray", "label": "Look through the letter tray", "requires": { "flags": { "briefcase.S04": { "ne": true } } },
+        "text": "A letter from Ridgeway Savings Bank to A. Fairlie, trustee, dated 2 July: 'the Ashcombe trust account stands overdrawn by £41,212 ... we must ask for your proposals within the month'.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E011" }] },
+      { "id": "L04-briefcase", "label": "Look inside Fairlie's briefcase", "requires": { "flags": { "briefcase.S04": { "ne": true } } },
+        "text": "The probate inventory, in his own hand: 'Medicines received from nurse 10 July: digoxin 0.25mg, 60 tablets.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E013" }] },
+      { "id": "L04-maid", "label": "Ask the housemaid who tidies the library", "text": "'Mr Rory was in here all yesterday afternoon, from twenty to four. Hiding, I'd say, listening at the drawing-room door. He never went in.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E014" }] }
+    ]
+  },
+  {
+    "id": "L05", "map": { "x": 3.0, "y": 2.55, "kind": "tree" }, "name": "The Grounds & Front Drive", "floor": "Outside", "district": "Ashcombe Hall",
+    "description": "A walled garden, a long herbaceous border, and a gravel drive where the visitors' cars are parked.",
+    "people": ["S03"],
+    "arrival": "Silas Brook is deadheading roses and doesn't stop. Behind him, the long border, and a gap where the foxgloves were cut.",
+    "spots": [
+      { "id": "L05-border", "label": "Examine the foxglove border", "text": "A dozen stems cut cleanly yesterday morning, for the house. Deadly, every part of them.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E010" }] },
+      { "id": "L05-docket", "label": "Read the delivery docket at the kitchen door", "text": "Harlow's Wine Merchants: 'Delivered 16:05. Gardener moved a visitor's car off the drive to let the van through.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E005" }] },
+      { "id": "L05-car", "label": "Search Fairlie's car", "requires": { "flags": { "lead.car": { "eq": true } } },
+        "text": "A black Humber. In the glovebox, under the road maps, a chemist's bottle with the Colonel's name on it: digoxin 0.25mg. Forty-two tablets left of sixty.",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E007" }] }
+    ]
+  },
+  {
+    "id": "L06", "map": { "x": 5.5, "y": 3.5, "kind": "pub" }, "name": "The Ashcombe Arms", "floor": "Ground", "district": "Ashcombe village",
+    "description": "A low-beamed village inn with two rooms to let and a landlady who knows everyone's business.",
+    "people": ["S05"],
+    "arrival": "Rory Ashcombe is in the snug with a pint he isn't drinking. He raises it an inch when you come in.",
+    "spots": [
+      { "id": "L06-landlady", "label": "Ask the landlady about Rory", "text": "'Came in on the half-three bus, left his bag and went straight up to the Hall. There's his ticket on the bar, he left it.'",
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E015" }] }
+    ]
+  }
+]
