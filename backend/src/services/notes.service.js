@@ -41,7 +41,7 @@ function describe(id) {
     case 'E': return cases.getEvidence(id)?.title ?? null;
     case 'S': return cases.getSuspect(id)?.name ?? null;
     case 'L': return cases.listLocations().find((l) => l.id === id)?.name ?? null;
-    case 'T': return cases.listTimeline().find((t) => t.id === id)?.title ?? null;
+    case 'T': return investigation.knownTimeline().find((t) => t.id === id)?.title ?? null;
     default: return null;
   }
 }
@@ -139,7 +139,7 @@ function answerTheory(state) {
     'Below is only what you have established. Whether it adds up is your call.',
   ].join(' ');
   return {
-    result: { answer, confidence: 'medium', contradiction: false, evidence: links.flatMap((c) => [c.source, c.target]).filter((id) => id[0] === 'E'), suspectIds: people, pairs: [] },
+    result: { answer, confidence: links.length || theory ? 'medium' : 'low', contradiction: false, evidence: links.flatMap((c) => [c.source, c.target]).filter((id) => id[0] === 'E'), suspectIds: people, pairs: [] },
     facts: people.map(discoveredFacts),
   };
 }
@@ -159,11 +159,11 @@ export function consult(body) {
   let facts;
   if (promptId === 'contradictions') {
     result = answerContradictions([], pairs);
-    if (!result.contradiction) result.answer = 'Nothing you have examined so far conflicts with anyone’s statement. Examine more of the case file.';
+    if (!result.contradiction) Object.assign(result, { answer: 'Nothing you have examined so far conflicts with anyone’s statement. Examine more of the case file.', confidence: 'low' });
   } else if (promptId.startsWith('statement:')) {
     const suspect = cases.getSuspect(promptId.slice('statement:'.length));
     result = answerContradictions([suspect], pairs);
-    if (!result.contradiction) result.answer = `Nothing you have examined so far conflicts with ${suspect.name}’s statement.`;
+    if (!result.contradiction) Object.assign(result, { answer: `Nothing you have examined so far conflicts with ${suspect.name}’s statement.`, confidence: 'low' });
     facts = [discoveredFacts(suspect.id)];
   } else if (promptId.startsWith('window:')) {
     const [from, to] = promptId.slice('window:'.length).split('-');

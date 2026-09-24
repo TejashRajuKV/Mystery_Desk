@@ -146,10 +146,15 @@ export function clockState() {
 }
 
 /** Legwork costs time on the clock. Once it has run out, or the case is closed, only the accusation is left. */
-export function spendTime(action) {
+export function assertOpen() {
   if (inv.getRow().conclusion) throw new HttpError(422, 'This case is closed.');
-  if (clockState().timeUp) throw new HttpError(422, 'Time is up. The District Attorney wants a name.');
-  inv.addMinutes(TIME_COST[action]);
+}
+
+export function spendTime(action) {
+  assertOpen();
+  const { timeUp, minutesLeft } = clockState();
+  if (timeUp) throw new HttpError(422, 'Time is up. The District Attorney wants a name.');
+  inv.addMinutes(Math.min(TIME_COST[action], minutesLeft));
 }
 
 export function getInvestigation() {
@@ -201,6 +206,7 @@ export function resetInvestigation() {
 export function saveTheory(body) {
   const text = body?.text;
   if (typeof text !== 'string' || text.length > 5000) throw new HttpError(400, 'Expected { text } of at most 5000 characters');
+  assertOpen();
   inv.setTheory(text);
   return getInvestigation();
 }
@@ -243,8 +249,8 @@ export function flagContradiction(body) {
   const hit = findContradictions().find((d) => d.assertionId === assertionId && d.evidenceId === evidenceId);
   if (!hit) throw new HttpError(422, 'That exhibit doesn\'t contradict that statement.');
   inv.addFound(assertionId, evidenceId);
-  const { severity, ...recorded } = hit;
-  return recorded;
+  const { severity, mitigatedBy, ...recorded } = hit;
+  return { ...recorded, mitigatedBy: mitigatedBy.filter(inCaseFile) };
 }
 
 // ---------------------------------------------------------------- conclusion

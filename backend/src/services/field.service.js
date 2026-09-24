@@ -31,6 +31,7 @@ export function getFile() {
 export function readPage(pageId) {
   const page = cases.getCase().file.find((p) => p.id === pageId);
   if (!page) throw new HttpError(404, 'There is no such page in the file');
+  investigation.assertOpen();
   const found = [];
   if (!inv.listViewed('page').includes(pageId)) {
     transaction(() => {
@@ -86,6 +87,7 @@ export function travel(body) {
   const locationId = body?.locationId;
   if (typeof locationId !== 'string') throw new HttpError(400, 'Expected { locationId }');
   placeOr404(locationId);
+  investigation.assertOpen();
   if (inv.getRow().locationId !== locationId) {
     transaction(() => {
       investigation.spendTime('travel');
@@ -101,6 +103,7 @@ export function search(locationId, body) {
   const spotId = body?.spotId;
   if (typeof spotId !== 'string') throw new HttpError(400, 'Expected { spotId }');
   const place = placeOr404(locationId);
+  investigation.assertOpen();
   if (inv.getRow().locationId !== locationId) throw new HttpError(422, 'You aren\'t there. Go there first.');
   const spot = (place.spots ?? []).find((s) => s.id === spotId);
   if (!spot || !meets(spot.requires, playerContext())) throw new HttpError(404, 'There is nothing like that to search here');

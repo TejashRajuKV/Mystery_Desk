@@ -54,7 +54,7 @@ export function getCase() {
     evidenceCount: cases.listEvidence().length,
     locationCount: cases.listLocations().length,
     eventCount: cases.listTimeline().length,
-    locations: cases.listLocations(),
+    locations: cases.listLocations().map(({ id, name, floor, district, description, map }) => ({ id, name, floor, district, description, map })),
   };
 }
 

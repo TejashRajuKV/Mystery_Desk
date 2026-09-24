@@ -52,7 +52,8 @@ export function ErrorState({ error, onRetry }) {
     <div className="state" role="alert">
       <Stamp variant="alert">FILE UNAVAILABLE</Stamp>
       <p className="t-body secondary state__msg">
-        {error?.message ?? 'Something went wrong.'} Make sure the MysteryDesk API is running.
+        {error?.message ?? 'Something went wrong.'}
+        {(!error?.status || error.status >= 500) && ' Make sure the MysteryDesk API is running.'}
       </p>
       {onRetry && <Button variant="secondary" onClick={onRetry}>TRY AGAIN</Button>}
     </div>
