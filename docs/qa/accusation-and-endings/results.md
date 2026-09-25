@@ -221,7 +221,8 @@ Backend reachable: yes (this run used http://localhost:4001, not :4000; `GET /ap
 - Observed: F2 -> 422 `{"error":"This case is closed."}`; `pagesRead` stayed `["F1"]`; F99 -> 404 `{"error":"There is no such page in the file"}`.
 - Verdict reason: Matches.
 
-## TC-43 — Repeating a free, already-done action after closing: FAIL
+## TC-43 — Repeating a free, already-done action after closing: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): after the case is closed, re-travel, re-search and re-read all return 422 and minutesUsed is unchanged (65 to 65).
 - Command / action run: after closing: `POST /travel {"locationId":"L01"}` (current place), `POST /places/L01/search {"spotId":"L01-locker"}` (already searched), `POST /file/F1/read` (already read).
 - Observed: all three returned 200 (travel returned the place, search the spot text, read the page body); `minutesUsed` stayed 65.
 - Verdict reason: Spec says travel/search are 422s after closing; observed 200 for all three (the test file's predicted source behaviour). No state changes, so it is a low-severity spec deviation, reported as a finding.
@@ -352,8 +353,8 @@ Backend reachable: yes (this run used http://localhost:4001, not :4000; `GET /ap
 - Verdict reason: Matches.
 
 ## Summary
-Total: 68 | Pass: 67 | Fail: 1
-Failures needing attention: TC-43 — after closing, travel to the current place, re-searching a searched spot and re-reading a read page all return 200, not the 422 the spec states (no state changes, `minutesUsed` unchanged).
+Total: 68 | Pass: 68 | Fail: 0
+Failures needing attention: none (1 earlier failure fixed and re-verified 2026-09-24)
 Other findings (not test-case failures):
 - `PUT /theory` still returns 200 on a closed case and changes the theory (observed on closed 048), so the report's `theory` can change after the accusation is filed. The spec says only the accusation and legwork close, so this is recorded as an observation.
 - Every named accusation of S01 in this run gave `innocent_accused` (five cases). The ending id was recorded but not used to choose any later accusation.

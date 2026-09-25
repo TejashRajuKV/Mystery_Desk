@@ -24,8 +24,9 @@ export function getReport() {
       const e = evidence[id];
       return { id, title: e.title, time: e.time, location: e.location, summary: e.summary };
     }),
-    timeline: caseService.listTimeline()
-      .filter((t) => state.eventsViewed.includes(t.id))
+    timeline: state.eventsViewed
+      .map((id) => caseService.listTimeline().find((t) => t.id === id))
+      .filter(Boolean)
       .map((t) => ({ id: t.id, timestamp: t.timestamp, time: t.time, title: t.title, description: t.description })),
     contradictions: state.contradictionsFound.map((c) => ({
       assertionId: c.assertionId,

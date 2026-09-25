@@ -87,7 +87,8 @@ above was never needed or applied.
 - Reason: requires stopping the backend, deleting `backend/storage/mysterydesk.sqlite*`, and restarting the server to obtain a fresh `conclusion IS NULL` row. Stopping the live backend process was denied by the session's permission system ("Interfere With Workloads"). Per standing instructions, this was not worked around (no attempt was made to edit/delete the live DB file under the running server, or to kill the process by another route). No `GET /report` was called against a genuinely fresh DB, so no real "before acceptance" result was observed — marking this `PASS` would be fabrication.
 - Action needed to actually run this case: a human/operator needs to stop the backend, delete the sqlite file (+ `-wal`/`-shm`), restart it, and re-run `GET /api/cases/047/report` before any `POST /conclusion` call reaches the fresh instance.
 
-## TC-13 — Report after acceptance reflects real player actions: FAIL
+## TC-13 — Report after acceptance reflects real player actions: PASS (re-verified after fix)
+- Re-verified after fix (2026-09-24): report.service.js now builds the timeline in view order. On case 049, viewing T12 then T03 gives a report timeline of [T12, T03].
 - Command: `GET /api/cases/047/report`, cross-checked against `GET /api/cases/047/investigation` and `GET /api/cases/047/timeline`.
 - Observed:
   - `case`: `"047"` ✓, `title`: `"The Missing Prototype"` ✓ present.
@@ -134,10 +135,9 @@ connection is in place (now under connection id `C08` rather than the
 original `C03`).
 
 ## Summary
-Total: 16 | Pass: 13 | Fail: 1 | Blocked: 2
+Total: 16 | Pass: 14 | Fail: 0 | Blocked: 2
+Failures needing attention: none (1 earlier failure fixed and re-verified 2026-09-24)
 
-Failures needing attention:
-- TC-13: report's `timeline[]` is sorted chronologically, not in the order events were actually viewed (`eventsViewed` order), contradicting both the test case's expected result and the spec's "in view order" wording (`docs/specs/conclusion-and-report.md` line 44). Root cause identified in `report.service.js: getReport()`'s `timeline` field (filters `listTimeline()` by membership instead of mapping/sorting by `eventsViewed`'s own order).
 
 Blocked (need operator action, not fabricated):
 - TC-12: needs a backend stop → delete `mysterydesk.sqlite`(+wal/shm) → restart cycle; stopping the backend was denied by this session's permission system.
