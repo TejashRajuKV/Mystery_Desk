@@ -379,3 +379,240 @@ Spec: `docs/specs/interviews.md`. Sources cross-checked: `docs/specs/interviews.
 ## UI cases (need the browser)
 
 Start each UI case from a fresh state and with both servers running (`backend/` on :4000, `frontend/` on :5173). "The API" means the values returned by the corresponding GET in the same session.
+
+---
+
+## Additional cases (added 2026-09-24)
+
+Gaps closed below: the spec's UI points (13, 14, 15) had no cases at all in the section above (only the header existed); the closed-case rule (point 12) was only checked against the interview-choice endpoint, not against the other endpoints an interview depends on (`GET dialogue`, `POST viewed`, `POST travel`) after commit b45dd98 tightened closed-case handling; and the clock's clamp-at-budget behaviour (also from b45dd98) was never exercised near the case's time limit. Sources rechecked for this addition: `backend/src/services/dialogue.service.js`, `backend/src/services/investigation.service.js` (`assertOpen`, `spendTime`, `recordViewed`), `backend/src/services/field.service.js` (`travel`), `backend/src/config/index.js` (`TIME_COST`), `data/cases/047/locations.json` (L04's spot id), `data/cases/047/dialogue.json` (S03's `l-start`/`l-friday`/`l-prototype`/`l-voss` node and choice ids), `frontend/src/components/InterviewScene/InterviewScene.jsx`, `frontend/src/components/ChoiceList/ChoiceList.jsx`, `frontend/src/components/EvidencePresentation/EvidencePresentation.jsx`, `frontend/src/pages/Suspects/Suspects.jsx`, `frontend/src/hooks/useCase.jsx`. `solution.json` was not read or referenced.
+
+## TC-37 — Presenting an exhibit is refused by the "not here" check before the exhibit check
+
+- **Covers spec point:** 8, 13
+- **Preconditions:** Fresh state (`POST /reset`); player location is null (no travel yet); E010 not yet unlocked.
+- **Steps / Input:** `POST /api/cases/047/dialogue/S05/choice` body `{"presentEvidenceId":"E010"}`
+- **Expected result:** 422 with body exactly `{"error":"They aren't here. Go and find them."}` — the same "not here" rejection used for a spoken choice (TC-13), not the "isn't in your case file" message from TC-27, showing the location check runs before the exhibit-unlocked check on the `presentEvidenceId` branch too. `GET /api/cases/047/investigation` afterward shows `clock.minutesUsed` 0 and `evidenceViewed` `[]`.
+- **Priority:** medium
+
+## TC-38 — `GET /dialogue` stays readable after the case is closed; only `POST choice` is blocked
+
+- **Covers spec point:** 3, 12
+- **Preconditions:** Fresh state; `travel` to L02 (`minutesUsed` 30).
+- **Steps / Input:**
+  1. `POST /api/cases/047/conclusion` body `{"suspectId":null,"evidenceIds":[]}`
+  2. `GET /api/cases/047/dialogue/S05`
+  3. `GET /api/cases/047/investigation`
+- **Expected result:** (1) 200. (2) 200, not 422 — body has `nodeId: "c-start"`, `speaker: "S05"`, `speakerName: "Daniel Cho"`, `mood: "nervous"`, same shape and values as reading S05's opening node before the case closed. This shows the closed-case rule from spec point 12 ("any interview choice is a 422") applies only to `POST /choice`, not to the read-only `GET`. (3) `conclusion` is non-null; `clock.minutesUsed` is still 30.
+- **Priority:** medium
+
+## TC-39 — `POST /viewed {"type":"suspect"}` still records after the case is closed (current behaviour; spec ambiguity)
+
+- **Covers spec point:** 11, 12
+- **Preconditions:** Fresh state; `suspectsViewed` is `[]`.
+- **Steps / Input:**
+  1. `POST /api/cases/047/conclusion` body `{"suspectId":null,"evidenceIds":[]}`
+  2. `POST /api/cases/047/viewed` body `{"type":"suspect","id":"S01"}`
+  3. `GET /api/cases/047/investigation`
+- **Expected result:** (1) 200. (2) AMBIGUITY: spec point 12 only names "any interview choice"; `recordViewed` in the current source has no closed-case guard (unlike `spendTime`/`assertOpen`, which every legwork action uses), so this call is expected to return 200 (the whole investigation object) and add `"S01"` to `suspectsViewed`, not 422. Runner: record the observed status; if it comes back 422 instead, that is a stricter reading of point 12 than the source implements and should be raised with the spec owner rather than treated as a silent pass/fail. (3) `suspectsViewed` contains `"S01"`.
+- **Priority:** low
+
+## TC-40 — Closed case also blocks travel, so a suspect never yet met becomes unreachable
+
+- **Covers spec point:** 12 (real-world consequence for interviews via `assertOpen`, tightened in commit b45dd98)
+- **Preconditions:** Fresh state; player has not traveled anywhere (`locationId` null); S03 (at L04) never interviewed.
+- **Steps / Input:**
+  1. `POST /api/cases/047/conclusion` body `{"suspectId":null,"evidenceIds":[]}`
+  2. `POST /api/cases/047/travel` body `{"locationId":"L04"}`
+- **Expected result:** (1) 200. (2) 422 with body exactly `{"error":"This case is closed."}` — note this string is distinct from the interview-specific closed message (`"This case is closed. The interviews are over."`, used by `POST .../choice`, TC-29) and from the conclusion-resubmit message (`"This case is closed. The accusation on file is final."`); all three must be checked verbatim, not treated as interchangeable. Since travel is required before any interview can start (spec point 13), this confirms a suspect not yet visited becomes permanently unreachable once the case closes.
+- **Priority:** high
+
+## TC-41 — The clock clamps a question's cost to the minutes left, then refuses any further question once time is up
+
+- **Covers spec point:** 5, and the clock-budget clamp introduced in commit b45dd98
+- **Preconditions:** Fresh state.
+- **Steps / Input:**
+  1. `POST /api/cases/047/reset`, then `POST /api/cases/047/travel {"locationId":"L04"}` (this is travel call 1 of 31).
+  2. Alternate `POST /api/cases/047/travel` between `{"locationId":"L01"}` and `{"locationId":"L04"}` for the remaining 30 calls, so every one of the 31 calls targets a different location than the one before it and is charged the full 30 minutes; make the 31st (and therefore odd-numbered, same-parity-as-call-1) call target `L04`. After all 31 calls, `investigation.clock.minutesUsed` is 930 and the player is at L04 with S03.
+  3. `POST /api/cases/047/places/L04/search {"spotId":"L04-outbox"}` — `minutesUsed` becomes 945.
+  4. `POST /api/cases/047/dialogue/S03/choice {"choiceId":"l-start-friday"}` — `minutesUsed` becomes 955 (`minutesLeft` 5).
+  5. `POST /api/cases/047/dialogue/S03/choice {"choiceId":"l-friday-back"}` — free; back on `l-start`, `minutesUsed` still 955.
+  6. `POST /api/cases/047/dialogue/S03/choice {"choiceId":"l-start-prototype"}` (the clamp test: this question normally costs 10, but only 5 minutes remain).
+  7. `POST /api/cases/047/dialogue/S03/choice {"choiceId":"l-prototype-back"}` — free; back on `l-start`.
+  8. `POST /api/cases/047/dialogue/S03/choice {"choiceId":"l-start-voss"}` (the time's-up test).
+- **Expected result:** Step 6 is 200 with `dialogue.nodeId: "l-prototype"`, `investigation.clock.minutesUsed` exactly 960 (not 965), `investigation.clock.minutesLeft` 0 and `investigation.clock.timeUp` `true` — the cost was clamped to the 5 minutes actually remaining and never pushed the clock past the 960-minute budget. Step 7 is 200, `minutesUsed` still 960. Step 8 is 422 with body exactly `{"error":"Time is up. The District Attorney wants a name."}`, and a follow-up `GET /api/cases/047/dialogue/S03` shows the interview is still on `l-start` (the rejected choice made no state change) and `minutesUsed` is still 960.
+- **Priority:** high
+
+## TC-42 — Interview scene content matches the dialogue API — **[UI]**
+
+- **Covers spec point:** 13
+- **Preconditions:** Fresh state; both servers running; browser at `http://localhost:5173`.
+- **Steps / Input:** Start Case 047, travel to L01 via the map, then open the interview with Alex Reyes (`/case/047/place/L01?talk=S02`). Note the speaker name, narration, main line and choice list shown once the typed line finishes. In a second tab or via devtools, call `GET /api/cases/047/dialogue/S02` in the same session and compare.
+- **Expected result:** The speaker name shown in the scene equals the API's `speakerName` (`"Alex Reyes"`); the narration line shown equals `narration`; the main line, once fully typed, equals `text` character-for-character; the numbered choice list shown has the same labels, in the same order, as `choices[].label` from the API for that node (the "Present evidence" tray option and the leave choice are additional UI affordances layered on top of the spoken choices, per `InterviewScene.jsx`'s `choices` composition, not substitutes for them).
+- **Priority:** high
+
+## TC-43 — Number keys 1–9 pick a choice, same as clicking it — **[UI]**
+
+- **Covers spec point:** 13
+- **Preconditions:** In an active interview (TC-42's state) on a node with at least 2 choices.
+- **Steps / Input:** Press the number key matching the position of a non-first choice (e.g. press "3" for the third listed choice) without clicking anything.
+- **Expected result:** The scene advances exactly as if that choice's button had been clicked: the dialogue line changes to the node that choice leads to (matches what `POST .../choice` with that `choiceId` would return). Pressing a digit with no matching choice at that position (e.g. "9" when only 4 choices are listed) does nothing — no advance, no error.
+- **Priority:** medium
+
+## TC-44 — The UI never lets the player interview someone who isn't at their current place — **[UI]**
+
+- **Covers spec point:** 13
+- **Preconditions:** Fresh state; player has not traveled to L02 (Communications Room, where S05 is).
+- **Steps / Input:** From the Case Hub, without visiting L02, attempt to reach a live interview with Daniel Cho (S05) — check the People page for a "talk" control for S05, and separately navigate the browser directly to `/case/047/place/L02?talk=S05`.
+- **Expected result:** The People page offers no control that opens a live `InterviewScene` with S05 while the player is elsewhere. Navigating directly to `/case/047/place/L02?talk=S05` without a prior `travel` does not send a `POST .../choice` that succeeds as a live conversation — the game either treats the place as not yet visited (no arrival description, spots or the ability to interview) or requires the player to travel there first, consistent with the API's `422 "They aren't here. Go and find them."` (TC-13) never actually needing to fire because the UI doesn't offer the action before travel.
+- **Priority:** high
+
+## TC-45 — The evidence tray lists only unlocked exhibits — **[UI]**
+
+- **Covers spec point:** 13
+- **Preconditions:** Browser equivalent of TC-24's state: at L02, E010 unlocked via search, E005 still locked, talking to S05 on a `canPresent: true` node (`c-start`).
+- **Steps / Input:** Open the evidence tray ("Present evidence").
+- **Expected result:** The tray (`aria-label="Present evidence"`) shows a card for every exhibit currently in `GET /api/cases/047/evidence` (which, per the locked-evidence rule, already excludes anything not yet unlocked) and no others: E010's card is present; there is no card for E005 or for any other not-yet-unlocked exhibit.
+- **Priority:** high
+
+## TC-46 — Presenting an exhibit shows the presentation moment before the reaction — **[UI]**
+
+- **Covers spec point:** 13
+- **Preconditions:** Same as TC-45, tray open.
+- **Steps / Input:** Click E010's card in the tray.
+- **Expected result:** The tray closes immediately, and a full-screen presentation overlay (`role="status"`, `aria-live="assertive"`) appears showing `"EXHIBIT E010 · <type label>"` and the title `"Modem Dial-In Log"` for roughly 1.4 seconds before the interview resumes on the new node showing the suspect's reaction text.
+- **Priority:** medium
+
+## TC-47 — People page lists exactly the 5 suspects from the API — **[UI]**
+
+- **Covers spec point:** 1, 14
+- **Preconditions:** Fresh state.
+- **Steps / Input:** Open `/case/047/people`. Compare the cards shown to `GET /api/cases/047/suspects`. Then open `/case/048/people` and compare to `GET /api/cases/048/suspects`.
+- **Expected result:** Exactly 5 suspect cards are shown for Case 047, in the same order as the API response, each displaying that suspect's `name`, `alias` and `role` matching the API values. Case 048's People page shows 5 different names/aliases matching its own API response (confirming the page reads from the API per case, not from hardcoded Case 047 text).
+- **Priority:** high
+
+## TC-48 — Statement claim-test control checks a claim and shows the real result — **[UI]**
+
+- **Covers spec point:** 2, 10, 14
+- **Preconditions:** Fresh state; `travel` to L02; `search` `L02-modem` (E010) and `search` `L02-recorder` (E005) both done. Statement `ST05-A` visible on the People page under S05.
+- **Steps / Input:**
+  1. Under `ST05-A`, use the `<select aria-label="Evidence to test this claim against">` to pick `E005`, then click `CHECK`.
+  2. Repeat, picking `E010` instead, click `CHECK`.
+- **Expected result:** (1) The result text (`role="status"`, class `claim__result` without the `--yes` modifier) is exactly the backend's rejection reason, `That exhibit doesn't contradict that statement.` (matches TC-32's exact wording); no `CONTRADICTED` stamp appears. (2) The result text (class `claim__result claim__result--yes`) is exactly `Contradiction confirmed against E010. Daniel Cho said "I didn't touch the camera system on Friday night.", but Modem Dial-In Log (E010) records connecting remotely at 21:09.`, and a `CONTRADICTED · E010` stamp appears under the claim with the same explanation text beneath it.
+- **Priority:** high
+
+## TC-49 — A contradiction confirmed via the People page survives a refresh — **[UI]**
+
+- **Covers spec point:** 10, 14
+- **Preconditions:** State from TC-48 (E010 confirmed against ST05-A).
+- **Steps / Input:** Reload the browser tab (full page refresh), reopen `/case/047/people`, then S05's statement.
+- **Expected result:** The `CONTRADICTED · E010` stamp and its explanation are shown under `ST05-A` again without re-running the check, matching `GET /api/cases/047/investigation`'s `contradictionsFound` still containing the `ST05-A`/`E010` pair.
+- **Priority:** medium
+
+## TC-50 — An interview choice sent with the backend down shows an error, not a frozen scene — **[UI]**
+
+- **Covers spec point:** 15
+- **Preconditions:** Interview open with S05 at a node with at least one choice listed (e.g. `c-start`).
+- **Steps / Input:** Stop the backend process. Click one of the listed choices. Then restart the backend and click a choice again.
+- **Expected result:** After stopping the backend and clicking, the scene does not hang or spin indefinitely: within a few seconds a `role="alert"` message appears in the scene with an error, and the choice list stays visible and clickable rather than being permanently disabled. After the backend is restarted, clicking a choice succeeds and the dialogue advances normally, confirming the player can retry without reloading the page.
+- **Priority:** high
+
+---
+
+**Summary:** 50 test cases total — 36 original (unchanged) + 14 added in this pass. 30 are high priority (22 original + 8 added).
+
+## Additional cases (added 2026-09-25)
+
+Change source: `docs/plans/2026-09-25-qa-bug-fixes.md` (approved plan, decisions D1/D2/D5), CLAUDE.md's updated "Investigation state" and interview sections, and the resulting diffs in `backend/src/services/investigation.service.js` (`assertOpen`, `recordViewed`), `backend/src/services/dialogue.service.js` (`applyChoice`'s `presentId` check), `data/cases/051/dialogue.json` (the `sb-start-e005-hostile` choice, the `sb-e005-hostile` node, and the hostile variant's new sentence) and `frontend/src/pages/Suspects/Suspects.jsx` (the `closed` guard around the claim-test control at l.52). Case 051's suspects are Lady Constance Ashcombe (S01), Agnes Mora (S02), Silas Brook (S03, "The Gardener"), Ambrose Fairlie (S04) and Rory Ashcombe (S05). `solution.json` was not read or referenced (including 051's, whose key the 2026-09-23 hook no longer blocks — this suite still never touches it).
+
+Gaps closed below: (a) `POST /choice` with `{ choiceId, presentEvidenceId: null }`, previously untested, now must be accepted as a plain spoken choice rather than falling into the `presentEvidenceId` branch; (b) Case 051's new hostile-gardener reaction (`sb-start-e005-hostile`) and the reworded hostile variant text had no cases in any suite; (c) `POST /viewed { type: "suspect" }` on a closed case, previously observed as a 200 in TC-39 under the "no closed-case guard" reading, is now a 422 because `recordViewed` calls `assertOpen()`; (d) the People page's claim-test control (spec point 14), previously only exercised on an open case, must now be confirmed hidden once the case is closed.
+
+## TC-51 — `{ choiceId, presentEvidenceId: null }` is a plain spoken choice, not a present attempt
+
+- **Covers spec point:** 5, 6, 7 (2026-09-25 fix D2: `presentEvidenceId: null` means "absent")
+- **Preconditions:** Fresh state (047); `travel` to L02 done (`minutesUsed` 30); `GET /api/cases/047/evidence` returns `[]`.
+- **Steps / Input:** `POST /api/cases/047/dialogue/S05/choice` body `{"choiceId":"c-start-camera","presentEvidenceId":null}`
+- **Expected result:** 200 (not 400, and not the 422 `"That exhibit isn't in your case file."` that a literal, non-string `presentEvidenceId` would draw). The response matches TC-19 step (1) exactly: `effects.unlockedEvidence` equals `[{"id":"E010","title":"Modem Dial-In Log"}]`; `investigation.unlockedEvidence` contains `"E010"`; `dialogue.nodeId` is `c-camera`; `presented` is `null`; `investigation.clock.minutesUsed` is 40. This confirms `applyChoice` treats a `null` `presentEvidenceId` as not present (`typeof presentId === 'string'` is false for `null`), so the request is routed down the `choiceId` branch.
+- **Priority:** high
+
+## TC-52 — `{ presentEvidenceId: null }` alone (no `choiceId`) is still the malformed-body 400
+
+- **Covers spec point:** 7
+- **Preconditions:** Fresh state (047).
+- **Steps / Input:** `POST /api/cases/047/dialogue/S05/choice` body `{"presentEvidenceId":null}`
+- **Expected result:** 400 with body exactly `{"error":"Expected { choiceId } or { presentEvidenceId }"}`. Both sides of the XOR check are false (`typeof undefined === 'string'` and `typeof null === 'string'` are both false), so the body is rejected before the closed-case or location checks run. `GET /api/cases/047/investigation` afterward shows `clock.minutesUsed` 0.
+- **Priority:** medium
+
+## TC-53 — Case 051: the hostile gardener's opening line carries the new "harder than words" sentence
+
+- **Covers spec point:** 3, 4 (051 data change, 2026-09-25)
+- **Preconditions:** Fresh state in case 051 (`POST /api/cases/051/reset`).
+- **Steps / Input:**
+  1. `POST /api/cases/051/travel` body `{"locationId":"L05"}`.
+  2. `POST /api/cases/051/dialogue/S03/choice` body `{"choiceId":"sb-start-accuse"}`.
+  3. `POST /api/cases/051/dialogue/S03/choice` body `{"choiceId":"sb-accused-leave"}`.
+  4. `GET /api/cases/051/dialogue/S03`.
+- **Expected result:** (1) 200, `minutesUsed` 30. (2) 200; `dialogue.nodeId` `sb-accused`; `dialogue.mood` `angry`; `investigation.storyFlags["hostile.S03"]` is `true`; `minutesUsed` 40; the only choice is `sb-accused-leave` (`leaves: true`). (3) 200; `ended` `true`; `dialogue.nodeId` back to `sb-start`; `minutesUsed` still 40. (4) 200; `nodeId` `sb-start`; `mood` `angry` (the hostile variant, not the base `suspicious`); `narration` is unchanged, exactly `Silas Brook snips a rose and drops it in the trug before he looks at you.` (the variant only overrides `mood`/`text`, not `narration`); `text` is exactly `I've nothing more to say to you. Forty years I've kept this garden. Unless you've found something harder than words, get off my border.` (the sentence added 2026-09-25); `choices` ids in order are exactly `sb-start-afternoon`, `sb-start-foxgloves`, `sb-start-gerald`, `sb-start-leave` — `sb-start-accuse` is gone now that `hostile.S03` is `true` (its `requires` is `ne: true`), and the evidence-reaction ids `sb-start-e005`, `sb-start-e005-hostile` and `sb-start-e010` were never listed (they carry `present`, not `label`).
+- **Priority:** high
+
+## TC-54 — Case 051: presenting E005 to a hostile, E007-viewed S03 reaches `sb-e005-hostile` (reveals ST03-A/E005, unlocks E006)
+
+- **Covers spec point:** 4, 6, 8, 10 (051 data change, 2026-09-25: `sb-start-e005-hostile`)
+- **Preconditions:** Fresh state in case 051. Build up to a hostile S03 with a viewed E007 and an unlocked E005:
+  1. `POST /travel {"locationId":"L05"}` (30)
+  2. `POST /dialogue/S03/choice {"choiceId":"sb-start-accuse"}` (+10=40) — sets `hostile.S03` true
+  3. `POST /dialogue/S03/choice {"choiceId":"sb-accused-leave"}` (free, 40)
+  4. `POST /travel {"locationId":"L06"}` (+30=70)
+  5. `POST /places/L06/search {"spotId":"L06-landlady"}` (+15=85) — unlocks E015
+  6. `POST /dialogue/S05/choice {"presentEvidenceId":"E015"}` (+10=95) — sets `confessed.S05` true, unlocks E014, reveals `ST05-A`/`E015`
+  7. `POST /dialogue/S05/choice {"choiceId":"ra-e015-back"}` (free, 95)
+  8. `POST /dialogue/S05/choice {"choiceId":"ra-start-saw"}` (+10=105) — sets `lead.car` true
+  9. `POST /travel {"locationId":"L05"}` (+30=135)
+  10. `POST /places/L05/search {"spotId":"L05-docket"}` (+15=150) — unlocks E005
+  11. `POST /places/L05/search {"spotId":"L05-car"}` (+15=165) — unlocks E007, now that `lead.car` is true
+  12. `POST /viewed {"type":"evidence","id":"E007"}` (free) — `evidenceViewed` now contains `E007`
+- **Steps / Input:** `POST /api/cases/051/dialogue/S03/choice` body `{"presentEvidenceId":"E005"}`
+- **Expected result:** 200. `presented` equals `{"id":"E005","title":"Wine Merchant's Delivery Docket","reaction":"reaction"}`. `dialogue.nodeId` is `sb-e005-hostile`, `dialogue.mood` `defeated`, `dialogue.narration` exactly `He looks at the bottle from the Humber for a long time.`, `dialogue.text` exactly `Found it yourself, then. All right. Ten past four, Mr Fairlie, head in that glovebox. Jumped like a cat when he saw me. That's all you get.` `effects.contradictions` has exactly one item: `assertionId: "ST03-A"`, `evidenceId: "E005"`, `suspectId: "S03"`, `claim: "I was in the garden from three until five."`, `explanation: "Silas Brook said \"I was in the garden from three until five.\", but Wine Merchant's Delivery Docket (E005) records leaving their post at 16:05."` `effects.unlockedEvidence` contains exactly one item, `id: "E006"`. `investigation.contradictionsFound` contains both the `ST05-A`/`E015` pair (from precondition step 6) and the new `ST03-A`/`E005` pair. `investigation.unlockedEvidence` contains `E006`. `investigation.clock.minutesUsed` is 175.
+- **Priority:** high
+
+## TC-55 — Case 051: presenting E005 to a hostile S03 who has NOT viewed E007 gets the "unmoved" fallback
+
+- **Covers spec point:** 4, 8 (051 data change, 2026-09-25: the hostile route is gated on `evidenceViewed: ["E007"]`)
+- **Preconditions:** Fresh state in case 051. Same as TC-54's preconditions steps 1–10 only (stop before searching `L05-car`, so E007 is never unlocked or viewed): `hostile.S03` is `true`, `lead.car` is `true`, E005 is unlocked, `minutesUsed` is 150, and `investigation.contradictionsFound` already contains the `ST05-A`/`E015` pair from presenting E015 to S05.
+- **Steps / Input:** `POST /api/cases/051/dialogue/S03/choice` body `{"presentEvidenceId":"E005"}`
+- **Expected result:** 200. `presented` equals `{"id":"E005","title":"Wine Merchant's Delivery Docket","reaction":"unmoved"}` — neither `sb-start-e005` (requires `hostile.S03 ne true`, unmet) nor `sb-start-e005-hostile` (requires `evidenceViewed: ["E007"]`, unmet since E007 was never viewed) matches, so the interview falls to `tree.presentFallback`. `dialogue.nodeId` is `sb-unmoved`, `dialogue.mood` `suspicious`, `dialogue.text` exactly `That's house business. I'm garden.` `effects` equals `{"unlockedEvidence":[],"contradictions":[]}`. `investigation.contradictionsFound` still has the same length as before this call (1, only the earlier `ST05-A`/`E015` pair — `ST03-A`/`E005` is NOT added). `investigation.evidenceViewed` contains `E005` (presenting always marks the exhibit viewed) but not `E006` (never unlocked on this path). `investigation.clock.minutesUsed` is 160.
+- **Priority:** high
+
+## TC-56 — `POST /viewed { type: "suspect" }` is now a 422 once the case is closed
+
+- **Covers spec point:** 11, 12 (2026-09-25 fix D1: `recordViewed` now calls `assertOpen()`; supersedes TC-39)
+- **Preconditions:** Fresh state (047); `suspectsViewed` is `[]`.
+- **Steps / Input:**
+  1. `POST /api/cases/047/conclusion` body `{"suspectId":null,"evidenceIds":[]}`
+  2. `POST /api/cases/047/viewed` body `{"type":"suspect","id":"S01"}`
+  3. `GET /api/cases/047/investigation`
+- **Expected result:** (1) 200. (2) 422 with body exactly `{"error":"This case is closed."}` — the same generic closed-case message `assertOpen()` throws for travel (TC-40), not the interview-specific `"This case is closed. The interviews are over."` message. (3) `suspectsViewed` is still `[]` — `"S01"` was not added. Clean up with `POST /api/cases/047/reset`.
+- **Priority:** high
+
+## TC-57 — `POST /viewed` on a closed case: the unknown-id 404 and the malformed-body 400 still run before the closed-case 422
+
+- **Covers spec point:** 11, 12 (2026-09-25 fix D1's stated check order: 400 malformed, then 404 unknown, then 422 closed)
+- **Preconditions:** Fresh state (047); case closed via `POST /api/cases/047/conclusion` body `{"suspectId":null,"evidenceIds":[]}` (expect 200).
+- **Steps / Input:**
+  1. `POST /api/cases/047/viewed` body `{"type":"suspect","id":"S99"}` (unknown id)
+  2. `POST /api/cases/047/viewed` body `{"type":"suspect"}` (missing id)
+- **Expected result:** (1) 404 with body exactly `{"error":"Nothing with that id in this case"}` — not the closed-case 422, confirming the unknown-id lookup still runs before `assertOpen()` even though the case is closed. (2) 400 with body exactly `{"error":"Expected { type: \"evidence\" | \"suspect\" | \"event\", id }"}` — the malformed-body check runs before both the id lookup and the closed check. `GET /api/cases/047/investigation` afterward shows `suspectsViewed` still `[]`. Clean up with `POST /api/cases/047/reset`.
+- **Priority:** medium
+
+## TC-58 — People page hides the claim-test control on a closed case, but keeps confirmed contradictions visible — **[UI]**
+
+- **Covers spec point:** 14 (2026-09-25 fix D1/step 19: `Suspects.jsx`'s claim-test control hides when `investigation.conclusion` is set)
+- **Preconditions:** Browser at `http://localhost:5173`, state equivalent to TC-48 after its step 2 (E010 confirmed as a contradiction against `ST05-A` under S05's statement on `/case/047/people`). Then close the case directly against the API in the same session: `POST /api/cases/047/conclusion` body `{"suspectId":null,"evidenceIds":[]}` (expect 200).
+- **Steps / Input:** Reload `/case/047/people`, then open S05's statement.
+- **Expected result:** The `CONTRADICTED · E010` stamp and its explanation are still shown under `ST05-A` (contradictions already on record stay visible on a closed case). The `<select aria-label="Evidence to test this claim against">` and the `CHECK` button are no longer rendered anywhere on the page — the `claim__check` block in `Suspects.jsx` is conditionally omitted once `investigation.conclusion` is non-null, so no claim (tested or untested) offers a way to run a new check.
+- **Priority:** medium
+
+## Superseded by the 2026-09-25 fixes
+
+- TC-39 — old expectation: `POST /viewed {"type":"suspect","id":"S01"}` on a closed case returns 200 and adds `"S01"` to `suspectsViewed`, recorded as a spec ambiguity because `recordViewed` had no closed-case guard. — new expected behaviour: 422 with body exactly `{"error":"This case is closed."}`, and `suspectsViewed` does not gain the id (see TC-56, TC-57). — which change: 2026-09-25 fix D1 (`docs/plans/2026-09-25-qa-bug-fixes.md` §2 D1, option A — "freeze all four" — adds `assertOpen()` to `recordViewed`).
+
+> 2026-09-25: added TC-51..TC-58; superseded expectations are listed above and in docs/qa/SUPERSEDED-2026-09-25.md.

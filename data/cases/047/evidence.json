@@ -59,7 +59,7 @@
     "type": "cctv_log",
     "title": "Storage Room Recorder Timer Log",
     "timestamp": "1984-03-09T21:10:00",
-    "locationId": "L03",
+    "locationId": "L02",
     "personIds": [],
     "summary": "The Storage Room camera recorded nothing for thirty minutes.",
     "details": "Timer log from the CCTV recorder for Storage Room B.\n\n21:10  Recorder switched to SERVICE MODE (remote)\n21:40  Recorder returned to RECORD\n\nThe tape for the intervening thirty minutes is blank. Service mode is normally used only for scheduled maintenance.",
@@ -74,11 +74,11 @@
     "type": "work_order",
     "title": "Maintenance Work Order #2291",
     "timestamp": "1984-03-09T17:30:00",
-    "locationId": "L01",
+    "locationId": "L02",
     "personIds": ["S02", "S05"],
     "summary": "A request to service the Storage Room camera recorder at 21:10.",
     "details": "Facilities work order #2291, submitted 17:30 Friday from the Lab 2 desk.\n\nRequested by: REYES, A.\nWork: Service check of CCTV recorder, Storage Room B.\nRequested time: 21:10 tonight.\nNote: \"Timing is important. Recorder must be in service mode by 21:10.\"\n\nRouted to Communications for remote action.",
-    "source": "Facilities work-order file",
+    "source": "Communications Room copy of the Facilities work order",
     "facts": [
       { "personId": "S02", "action": "filed_request", "target": "camera_system", "timestamp": "1984-03-09T17:30:00" }
     ],

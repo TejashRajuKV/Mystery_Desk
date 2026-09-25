@@ -86,14 +86,15 @@ export function CaseProvider({ caseId, children }) {
   }, [api]);
 
   const markViewed = useCallback(async (type, id) => {
-    if (investigation[VIEWED_KEY[type]]?.includes(id)) return;
+    if (investigation.conclusion || investigation[VIEWED_KEY[type]]?.includes(id)) return;
     try {
       setInvestigation(await api.markViewed({ type, id }));
     } catch { /* viewing is best-effort; never block the UI on it */ }
   }, [api, investigation]);
 
-  /** A 422 means the pair isn't a real contradiction: that's an answer, not an error. */
+  /** A 422 means the pair isn't a real contradiction: that's an answer, not an error. A closed case takes no more. */
   const flagContradiction = useCallback(async (assertionId, evidenceId) => {
+    if (investigation.conclusion) return { contradiction: false, closed: true, reason: 'The case is closed.' };
     try {
       const recorded = await api.flagContradiction({ assertionId, evidenceId });
       await refreshInvestigation();
@@ -102,7 +103,7 @@ export function CaseProvider({ caseId, children }) {
       if (err.status === 422) return { contradiction: false, reason: err.message };
       throw err;
     }
-  }, [api, refreshInvestigation]);
+  }, [api, refreshInvestigation, investigation.conclusion]);
 
   const addConnection = useCallback(async (body) => {
     const conn = await api.createConnection(body);

@@ -311,4 +311,74 @@ Reference values (from public `case.json`; the API is the source of truth for an
 
 ---
 
-Summary: 36 test cases, 22 high priority.
+## Additional cases (added 2026-09-24)
+
+Added after re-reading current source (`backend/src/services/case.service.js`, `backend/src/services/field.service.js`, `backend/src/services/investigation.service.js`, `backend/src/config/index.js`, `backend/src/middleware/errorHandler.js`, `frontend/src/pages/MainMenu/MainMenu.jsx`, `frontend/src/pages/CityMap/CityMap.jsx`, `frontend/src/services/api.js`) against commit `b45dd98`. These cover: the `getCase` location shape now being explicitly whitelisted (resolves the ambiguity TC-16 flagged), closed cases rejecting legwork write endpoints, the clock clamping at budget instead of overrunning it, and the favicon fix's effect on the "zero failed network requests" checks in TC-20/TC-23. None of these duplicate an existing TC.
+
+## TC-37 — [API] Case detail's `locations` field exposes no search-spot or unlock data
+
+- **Covers spec point:** 4
+- **Preconditions:** Fresh seed.
+- **Steps / Input:** `GET /api/cases/048`; inspect every entry of `locations[]`.
+- **Expected result:** Each location object has exactly these keys: `id`, `name`, `floor`, `district`, `description`, `map` (and `map`, when present, has only `x`, `y`, `kind`). None of `spots`, `consequences`, `unlock_evidence`, `evidenceId`, `arrival`, `people` appears anywhere in the response, and no string matching `^E\d{3}$` appears anywhere in the response. (`case.service.js#getCase` now builds each location with an explicit `{ id, name, floor, district, description, map }` pick, which closes the leak TC-16 flagged as an ambiguity to verify — this test asserts the fixed behavior directly. If any forbidden key reappears, treat it as a regression, not an ambiguity.)
+- **Priority:** high
+
+## TC-38 — [API] A closed case rejects every legwork write endpoint with the same message
+
+- **Covers spec point:** 3, 8
+- **Preconditions:** Fresh seed, then close case `048`: `POST /api/cases/048/conclusion` body `{ "suspectId": null, "evidenceIds": [] }` (200).
+- **Steps / Input:** Against the now-closed case `048`: 1) `POST /api/cases/048/travel` body `{ "locationId": "L01" }`. 2) `POST /api/cases/048/places/L01/search` body `{ "spotId": "L01-book" }`. 3) `POST /api/cases/048/file/F1/read`. 4) `PUT /api/cases/048/theory` body `{ "text": "closed-case check" }`.
+- **Expected result:** All four requests return status 422 with body exactly `{ "error": "This case is closed." }`. A follow-up `GET /api/cases/048/investigation` shows `locationId` unchanged from before this test, `pagesRead` does not include `"F1"`, `spotsSearched` does not include `"L01-book"`, and `theory` is unchanged — none of the four calls had any effect. Cleanup: `POST /api/cases/048/reset`.
+- **Priority:** high
+
+## TC-39 — [UI] Closed case blocks further travel in the map with an inline message, not a crash
+
+- **Covers spec point:** 3, 8
+- **Preconditions:** Case `048` closed (as in TC-38, or via the brief's `[ READ HOW IT ENDED ]` per TC-27).
+- **Steps / Input:** Navigate to `/case/048/map` directly. Click a location marker other than the one the detective is currently at.
+- **Expected result:** The URL stays `/case/048/map`; there is no navigation away, no blank page, and no unhandled exception in the console. An element with `role="alert"` is visible showing the message text `This case is closed.` exactly (the API's error string surfaced verbatim, per `frontend/src/services/api.js`'s `err.message = data.error`). Cleanup: reset `048`.
+- **Priority:** medium
+
+## TC-40 — [API] The clock clamps at the case's budget; running it out does not close the case by itself
+
+- **Covers spec point:** 3
+- **Preconditions:** Fresh seed, case `050` (`clockHours` 12, i.e. 720 minutes; travel costs 30 minutes per `config.TIME_COST`).
+- **Steps / Input:** 1) `GET /api/cases/050/places`; pick two distinct location ids, A and B. 2) Alternate `POST /api/cases/050/travel` `{ "locationId": A }` / `{ "locationId": B }` at least 24 times (enough to exceed 720 travel-minutes), reading `investigation.clock` from each response. 3) After time is up, issue one more `POST /api/cases/050/travel` to the other of A/B. 4) `GET /api/cases`.
+- **Expected result:** Once `minutesUsed` reaches 720, `clock.timeUp` is `true` and `clock.minutesLeft` is exactly `0` (never negative); `clock.minutesUsed` never exceeds 720 across all calls. The extra travel call in step 3 returns 422 with body exactly `{ "error": "Time is up. The District Attorney wants a name." }` and does not move the detective. In step 4, `050`'s `status` is still `"in_progress"` with `ending: null` — the clock running out never sets `status` to `"closed"` on its own; only an accepted conclusion does. Cleanup: `POST /api/cases/050/reset`.
+- **Priority:** medium
+
+## TC-41 — [UI] Main menu never offers "Continue" for a closed case
+
+- **Covers spec point:** 3, 6
+- **Preconditions:** Case `048` closed via `POST /api/cases/048/conclusion` `{ "suspectId": null, "evidenceIds": [] }`; no other case in progress.
+- **Steps / Input:** Open `/`.
+- **Expected result:** The menu has exactly two items, "Select a case" and "How to play"; there is no "Continue" item anywhere (`MainMenu.jsx` only offers Continue for a case with `status === 'in_progress'`, which a closed case never has). Cleanup: reset `048`.
+- **Priority:** medium
+
+## TC-42 — [UI] With more than one case in progress, "Continue" resumes only one of them
+
+- **Covers spec point:** 6, 8
+- **Preconditions:** Both `047` and `049` in progress (`POST /api/cases/047/travel` and `POST /api/cases/049/travel`, each to any valid `locationId` for that case); no case closed.
+- **Steps / Input:** Open `/`.
+- **Expected result:** Exactly one "Continue" item is shown, with sub-text `Case #047 · The Missing Prototype` (the first `in_progress` case in the `GET /api/cases` list order, since `MainMenu.jsx` uses `.find`); there is no second "Continue" item for `049`. Clicking it ends at URL `/case/047/map`. Cleanup: reset `047` and `049`.
+- **Priority:** low
+
+## TC-43 — [UI] The favicon request never shows as a failed network request on the menu or case select
+
+- **Covers spec point:** 6
+- **Preconditions:** Fresh seed; browser network tab open and cleared.
+- **Steps / Input:** Open `/`, then `/cases`. Inspect the network panel for the request to `/favicon.svg` (referenced from `frontend/index.html`'s `<link rel="icon">`, served from `frontend/public/favicon.svg`).
+- **Expected result:** The favicon request returns status 200 (not 404), so it never counts against the "zero failed network requests" checks in TC-20 and TC-23.
+- **Priority:** low
+
+## TC-44 — [UI] A caseId that looks plausible but isn't one of the five folders is a 404, not silently rendered
+
+- **Covers spec point:** 5, 10 (the CLAUDE.md rule that `:caseId` must be one of the five folders; anything else is a 404)
+- **Preconditions:** Backend running.
+- **Steps / Input:** Open `/case/052` (one past the real range) and, separately, `/case/0470` (near-miss of a real id). Wait 5 seconds on each.
+- **Expected result:** For each: within 5 seconds the loading label is gone; an element with `role="alert"` is visible showing the stamp text `FILE UNAVAILABLE` and the message `Case not found` (matching the `GET /api/cases/<id>` 404 body), with a `TRY AGAIN` button — the same error state as TC-33, never a blank page and never a rendered case shell.
+- **Priority:** medium
+
+---
+
+Summary: 44 test cases (36 original + 8 added 2026-09-24), 24 high priority.

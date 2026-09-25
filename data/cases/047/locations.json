@@ -165,6 +165,23 @@
             "evidenceId": "E007"
           }
         ]
+      },
+      {
+        "id": "L05-permit",
+        "label": "Look for Reyes's car on the staff barrier roll",
+        "requires": {
+          "evidenceViewed": [
+            "E004",
+            "E007"
+          ]
+        },
+        "text": "He went out through the lobby at 21:00 and back in by the stairwell at 21:07, so his car never left. With a name to look for, the staff roll gives it up: permit A-117, out at 21:44, and a barrier-camera still.",
+        "consequences": [
+          {
+            "type": "unlock_evidence",
+            "evidenceId": "E011"
+          }
+        ]
       }
     ]
   },

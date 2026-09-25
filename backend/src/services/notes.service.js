@@ -1,8 +1,8 @@
 import * as cases from '../models/case.model.js';
 import * as investigation from './investigation.service.js';
-import { answerContradictions, answerWindow, shapeAnswer } from './assistant.service.js';
+import { answerContradictions, answerWindow, examinedContradictions, shapeAnswer } from './assistant.service.js';
 import { unlockedEvidenceIds } from './case.service.js';
-import { datePart, hhmm } from '../utils/time.js';
+import { addMinutes, datePart, dayLabel, hhmm } from '../utils/time.js';
 import { HttpError } from '../middleware/errorHandler.js';
 
 // Detective's Notes: the rule-based analyst, driven by predefined prompts instead of typed questions.
@@ -14,16 +14,13 @@ const FACT_TEXT = {
   filed_request: 'Filed a request concerning', remote_login: 'Connected remotely to', knows_of: 'Knew of', took_key: 'Signed out the', handled: 'Handled the',
 };
 const WINDOW_MINUTES = 30;
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const incidentDate = () => datePart(cases.getCase().incidentWindow.from);
 const titleCase = (s) => s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 function when(ts) {
   if (datePart(ts) === incidentDate()) return `at ${hhmm(ts)}`;
-  const d = new Date(`${datePart(ts)}T00:00:00Z`);
-  return `on ${DAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+  return `on ${dayLabel(ts)}`;
 }
 
 function examined() {
@@ -76,17 +73,31 @@ export function discoveredFacts(suspectId) {
   return { suspectId, name: suspect.name, lines };
 }
 
-/** Half-hour windows of the incident night that have something on the timeline. */
+/**
+ * Half-hour windows with something known on the timeline: events on the incident date, and any
+ * inside the incident window (which can run past midnight or over several days). Each window keeps
+ * its real start and end, so one that crosses midnight still covers both sides of it.
+ */
 function timeWindows() {
   const date = incidentDate();
+  const { from: windowFrom, to: windowTo } = cases.getCase().incidentWindow;
   const starts = new Set();
   for (const t of investigation.knownTimeline()) {
-    if (datePart(t.timestamp) !== date) continue;
-    const [h, m] = hhmm(t.timestamp).split(':').map(Number);
-    starts.add(h * 60 + Math.floor(m / WINDOW_MINUTES) * WINDOW_MINUTES);
+    if (datePart(t.timestamp) !== date && (t.timestamp < windowFrom || t.timestamp > windowTo)) continue;
+    const m = Number(t.timestamp.slice(14, 16));
+    starts.add(`${t.timestamp.slice(0, 14)}${String(m - (m % WINDOW_MINUTES)).padStart(2, '0')}:00`);
   }
-  const clock = (mins) => `${String(Math.floor(mins / 60) % 24).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`;
-  return [...starts].sort((a, b) => a - b).map((s) => ({ from: clock(s), to: clock(s + WINDOW_MINUTES) }));
+  const taken = new Set();
+  return [...starts].sort().map((from) => {
+    const to = addMinutes(from, WINDOW_MINUTES);
+    const span = `${hhmm(from)}-${hhmm(to)}`;
+    const id = taken.has(span) ? `window:${from.slice(0, 16)}-${hhmm(to)}` : `window:${span}`;
+    taken.add(span);
+    const label = datePart(from) === date
+      ? `Review the ${hhmm(from)}–${hhmm(to)} timeline`
+      : `Review ${dayLabel(from)}, ${hhmm(from)}–${hhmm(to)}`;
+    return { id, label, from, to };
+  });
 }
 
 /** The prompts the detective can consult, built from the case. */
@@ -94,7 +105,7 @@ export function listPrompts() {
   return [
     { id: 'contradictions', label: 'What doesn’t add up?' },
     ...cases.listSuspects().map((s) => ({ id: `statement:${s.id}`, label: `Review ${s.name}’s statement` })),
-    ...timeWindows().map((w) => ({ id: `window:${w.from}-${w.to}`, label: `Review the ${w.from}–${w.to} timeline` })),
+    ...timeWindows().map(({ id, label }) => ({ id, label })),
     { id: 'connect', label: 'What connects these two clues?', picks: 2 },
     { id: 'theory', label: 'Review my current theory' },
   ];
@@ -148,10 +159,8 @@ function answerTheory(state) {
 export function consult(body) {
   const { promptId, items } = body ?? {};
   if (typeof promptId !== 'string') throw new HttpError(400, 'Expected { promptId, items? }');
-  const { state, unlocked, viewed } = examined();
-  const pairs = investigation.findContradictions()
-    .filter((p) => viewed.has(p.evidenceId))
-    .map((p) => ({ ...p, mitigatedBy: p.mitigatedBy.filter((id) => unlocked.has(id)) }));
+  const { state, unlocked } = examined();
+  const pairs = examinedContradictions();
   const prompt = listPrompts().find((p) => p.id === promptId);
   if (!prompt) throw new HttpError(404, 'There is no such note');
 
@@ -166,8 +175,8 @@ export function consult(body) {
     if (!result.contradiction) Object.assign(result, { answer: `Nothing you have examined so far conflicts with ${suspect.name}’s statement.`, confidence: 'low' });
     facts = [discoveredFacts(suspect.id)];
   } else if (promptId.startsWith('window:')) {
-    const [from, to] = promptId.slice('window:'.length).split('-');
-    result = answerWindow([from, to]);
+    const { from, to } = timeWindows().find((w) => w.id === promptId);
+    result = answerWindow([{ from, to }]);
   } else if (promptId === 'connect') {
     const ok = Array.isArray(items) && items.length === 2 && items[0] !== items[1]
       && items.every((id) => typeof id === 'string' && describe(id) && (id[0] !== 'E' || unlocked.has(id)));

@@ -93,7 +93,7 @@
           "text": "You'll have seen the foxgloves. Everybody's seen the foxgloves. Go on, then.",
           "variants": [
             { "requires": { "flags": { "hostile.S03": { "eq": true } } }, "mood": "angry",
-              "text": "I've nothing more to say to you. Forty years I've kept this garden. Get off my border." }
+              "text": "I've nothing more to say to you. Forty years I've kept this garden. Unless you've found something harder than words, get off my border." }
           ],
           "choices": [
             { "id": "sb-start-afternoon", "label": "Ask about his afternoon", "next": "sb-afternoon" },
@@ -108,6 +108,12 @@
                 { "type": "reveal_contradiction", "assertionId": "ST03-A", "evidenceId": "E005" },
                 { "type": "unlock_evidence", "evidenceId": "E006" },
                 { "type": "set_flag", "key": "lead.car", "value": true }
+              ] },
+            { "id": "sb-start-e005-hostile", "present": "E005", "next": "sb-e005-hostile",
+              "requires": { "evidenceViewed": ["E007"], "flags": { "hostile.S03": { "eq": true } } },
+              "consequences": [
+                { "type": "reveal_contradiction", "assertionId": "ST03-A", "evidenceId": "E005" },
+                { "type": "unlock_evidence", "evidenceId": "E006" }
               ] },
             { "id": "sb-start-e010", "present": "E010", "next": "sb-foxgloves" },
             { "id": "sb-start-leave", "label": "Leave interview", "next": null }
@@ -128,6 +134,9 @@
         "sb-e005": { "speaker": "S03", "mood": "nervous", "narration": "He takes his cap off.",
           "text": "All right, I went round to the drive. The wine van couldn't get past Mr Fairlie's car. And there he was, ten past four, come out of the house like a man in a hurry, head in the glovebox of that Humber. Jumped like a cat when he saw me. Said he'd come for his spectacles. He was wearing them.",
           "choices": [{ "id": "sb-e005-back", "label": "Go back to your questions", "next": "sb-start" }] },
+        "sb-e005-hostile": { "speaker": "S03", "mood": "defeated", "narration": "He looks at the bottle from the Humber for a long time.",
+          "text": "Found it yourself, then. All right. Ten past four, Mr Fairlie, head in that glovebox. Jumped like a cat when he saw me. That's all you get.",
+          "choices": [{ "id": "sb-e005-hostile-back", "label": "Go back to your questions", "next": "sb-start" }] },
         "sb-unmoved": { "speaker": "S03", "mood": "suspicious",
           "text": "That's house business. I'm garden.",
           "choices": [{ "id": "sb-unmoved-back", "label": "Go back to your questions", "next": "sb-start" }] }

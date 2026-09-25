@@ -25,7 +25,7 @@
       { "personId": "S02", "action": "exit", "target": "L02", "timestamp": "1984-05-18T21:50:00" },
       { "personId": "S02", "action": "enter", "target": "L02", "timestamp": "1984-05-18T22:10:00" }
     ] },
-  { "id": "E005", "type": "phone_records", "title": "Payphone Call to a Casting Agent", "timestamp": "1984-05-18T21:52:00", "locationId": "L02", "personIds": ["S02"],
+  { "id": "E005", "type": "phone_records", "title": "Payphone Call to a Casting Agent", "timestamp": "1984-05-18T21:52:00", "locationId": null, "personIds": ["S02"],
     "summary": "A 16-minute call from the stage-door payphone to a London casting office.",
     "details": "Telephone company record for the stage-door payphone: 21:52 to 22:08, a trunk call to Hale & Partners, casting. The office confirms Felix Marsh was on the line the whole time, reading for a part.",
     "source": "Telephone company; Hale & Partners", "relatedEvidenceIds": ["E004"], "facts": [] },

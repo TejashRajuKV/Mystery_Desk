@@ -193,6 +193,7 @@ export function recordViewed(body) {
   }
   const known = { evidence: () => inCaseFile(id), suspect: () => cases.getSuspect(id), event: () => knownTimeline().some((t) => t.id === id) };
   if (!known[type]()) throw new HttpError(404, 'Nothing with that id in this case');
+  assertOpen();
   inv.addViewed(type, id);
   return getInvestigation();
 }
@@ -227,6 +228,7 @@ export function createConnection(body) {
   if (typeof source !== 'string' || typeof target !== 'string' || typeof relationship !== 'string') {
     throw new HttpError(400, 'Expected { source, target, relationship }');
   }
+  assertOpen();
   validateConnection({ source, target, relationship });
   return inv.insertConnection({ source, target, relationship });
 }
@@ -234,7 +236,9 @@ export function createConnection(body) {
 export const listConnections = () => inv.listConnections();
 
 export function deleteConnection(id) {
-  if (!inv.deleteConnection(id)) throw new HttpError(404, 'Connection not found');
+  if (!inv.listConnections().some((c) => c.id === id)) throw new HttpError(404, 'Connection not found');
+  assertOpen();
+  inv.deleteConnection(id);
 }
 
 // ---------------------------------------------------------------- contradictions
@@ -245,6 +249,7 @@ export function flagContradiction(body) {
     throw new HttpError(400, 'Expected { assertionId, evidenceId }');
   }
   if (!claimExists(assertionId) || !inCaseFile(evidenceId)) throw new HttpError(404, 'Unknown statement or exhibit');
+  assertOpen();
 
   const hit = findContradictions().find((d) => d.assertionId === assertionId && d.evidenceId === evidenceId);
   if (!hit) throw new HttpError(422, 'That exhibit doesn\'t contradict that statement.');

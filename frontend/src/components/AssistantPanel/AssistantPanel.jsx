@@ -57,7 +57,7 @@ export default function AssistantMessage({ message, lookups, onLogContradiction,
         </div>
       )}
 
-      {(r?.contradictions ?? []).length > 0 && (
+      {onLogContradiction && (r?.contradictions ?? []).length > 0 && (
         <div className="msg__actions">
           {r.contradictions.map((c) => {
             const key = `${c.assertionId}:${c.evidenceId}`;

@@ -365,3 +365,246 @@ Spec: `docs/specs/board-and-connections.md`. All paths are relative to the API b
 ## UI cases (browser required)
 
 Base URL `http://localhost:5173/case/047/board` unless noted. "Layout key" means the `localStorage` key `mysterydesk:board:<caseId>`. Titles on cards come from the API (read them from `GET /evidence|suspects|...`, never assume text).
+
+## Additional cases (added 2026-09-24)
+
+These cases close two gaps: (a) the API-level behaviour of connections once a case is
+closed or its clock has run out, which `createConnection`/`deleteConnection` in
+`backend/src/services/investigation.service.js` never gate behind `assertOpen()` or
+`spendTime()` (unlike travel, search, page reads and the theory field, per commit
+b45dd98's closed-case rules) — confirmed by reading the current source, not assumed;
+and (b) the entire "UI cases (browser required)" section above, which the teammate's
+draft left as a header with no actual cases (it references a `TC-58` that does not
+exist in this file). All source-of-truth claims below were checked against
+`backend/src/services/investigation.service.js`, `backend/src/services/field.service.js`,
+`frontend/src/pages/InvestigationBoard/InvestigationBoard.jsx` and
+`frontend/src/utils/boardStore.js`.
+
+## TC-43 — Connections can still be created after the case is closed
+
+- **Covers spec point:** 2, 3 (interaction with the conclusion/closed-case rule in `CLAUDE.md`, not itself numbered in the spec)
+- **Preconditions:** Fresh case 047. File a conclusion to close the case: `POST /api/cases/047/conclusion {"suspectId": null}` (the documented "Cannot determine" option, which needs no evidence and does not require knowledge of the answer key). Confirm `GET /api/cases/047/investigation` now has a non-null `conclusion`.
+- **Steps / Input:** `POST /api/cases/047/connections {"source":"S01","target":"S02"}`
+- **Expected result:** 201 with the usual `{id, source, target, relationship}` shape (same as TC-03). Per current source, `createConnection` never calls `assertOpen()`, so the closed-case check that blocks `PUT /theory`, `POST /file/:pageId/read`, `POST /travel` and `POST /places/:id/search` does not apply here. If this ever returns 422 `"This case is closed."`, treat it as a behaviour change worth flagging to the spec owner, since it would newly restrict board editing after the verdict.
+- **Priority:** high
+
+## TC-44 — Connections can still be deleted after the case is closed
+
+- **Covers spec point:** 6 (interaction with the closed-case rule)
+- **Preconditions:** Same as TC-43, with the connection from TC-43 created (id noted as `X`).
+- **Steps / Input:** `DELETE /api/cases/047/connections/<X>`
+- **Expected result:** 204, empty body, exactly as TC-30. `GET /connections` no longer contains `X`. `deleteConnection` also never calls `assertOpen()`.
+- **Priority:** high
+
+## TC-45 — Creating or deleting a connection does not spend time on the case clock
+
+- **Covers spec point:** 2, 6 (the clock is documented under "Investigation state" in `CLAUDE.md`; `connections` carries no `TIME_COST` entry in `backend/src/config/index.js`)
+- **Preconditions:** Fresh case 047.
+- **Steps / Input:** (1) `GET /api/cases/047/investigation`, note `clock.minutesUsed`. (2) `POST /connections {"source":"S01","target":"S02"}`. (3) `GET /investigation` again, note `clock.minutesUsed`. (4) `DELETE /connections/<id from step 2>`. (5) `GET /investigation` again.
+- **Expected result:** `clock.minutesUsed` (and `clock.now`) are identical across all three `GET /investigation` calls — creating and deleting a link costs no time, unlike `travel` (30), `search` (15), `readPage` (20) or `question`/`present` (10).
+- **Priority:** medium
+
+## TC-46 — Connections remain postable once the clock has run out but no accusation has been filed yet
+
+- **Covers spec point:** 2, 3 (edge case implied by the clock rules in `CLAUDE.md`, "time up forces the accusation")
+- **Preconditions:** Fresh case 047. Exhaust the clock without an accusation: alternate `POST /travel` between two different locations (e.g. `L01`, then `L02`, then `L01`, ...) until `GET /investigation` reports `clock.timeUp: true`. Do not call `POST /conclusion`.
+- **Steps / Input:** `POST /api/cases/047/connections {"source":"S03","target":"S04"}`
+- **Expected result:** 201 with the usual shape. `createConnection` checks neither `assertOpen()` nor `spendTime()`, so it is not gated by `clock.timeUp` the way `travel`/`search`/`readPage` are (those would now return 422 `"Time is up. The District Attorney wants a name."`). If this ever rejects the connection, flag it as a behaviour change.
+- **Priority:** low
+
+## TC-47 — [UI] Pinning a card from the panel adds it to the board and to localStorage
+
+- **Covers spec point:** 9
+- **Preconditions:** Fresh case 047, browser at `http://localhost:5173/case/047/board`. Setup A done via the app (travel to and search the relevant spot) so at least one evidence card, e.g. `E002`, is available to pin. Board is empty (`localStorage` key `mysterydesk:board:047` absent or `{}`).
+- **Steps / Input:** In the "PIN TO BOARD" panel, choose `E002` from the select and click `PIN`.
+- **Expected result:** A card for `E002` appears on the canvas with its title read from the API (not hardcoded). `localStorage.getItem("mysterydesk:board:047")` now parses to an object with a key `"E002"` whose value is `{x, y}` numbers. The page title's `N PINNED` count increments by 1. `E002` no longer appears in the "PIN TO BOARD" select's Evidence group (already pinned).
+- **Priority:** high
+
+## TC-48 — [UI] Selecting two pinned cards and confirming creates a real connection and draws a line
+
+- **Covers spec point:** 9
+- **Preconditions:** Fresh case 047, browser. Two cards already pinned (e.g. `S01` and `S02`, via the PIN control).
+- **Steps / Input:** Click the `S01` card (it becomes selected), then click the `S02` card. In the "NEW LINK" panel that appears (`S01 → S02`), click `CREATE LINK`.
+- **Expected result:** While pending, no network call has been made yet (`GET /api/cases/047/connections` from another tab still shows it absent). After clicking `CREATE LINK`, a `POST /api/cases/047/connections {"source":"S01","target":"S02","relationship":"linked_to"}` fires; on success a red-string `<line>` is drawn between the two cards, the "LINKS" list shows one entry `<id> · S01 → S02`, and `GET /api/cases/047/connections` (checked independently) now contains that same connection.
+- **Priority:** high
+
+## TC-49 — [UI] Cancelling a pending link makes no API call
+
+- **Covers spec point:** 9 (implied: only a confirmed action reaches the backend)
+- **Preconditions:** Fresh case 047, browser, two cards pinned (e.g. `S03`, `S04`).
+- **Steps / Input:** Click `S03` then `S04` to open the "NEW LINK" panel, then click `CANCEL` instead of `CREATE LINK`.
+- **Expected result:** The "NEW LINK" panel closes, no line is drawn, the "LINKS" list is unchanged. `GET /api/cases/047/connections` (checked independently) is still `[]` — cancelling never called `POST /connections`.
+- **Priority:** medium
+
+## TC-50 — [UI] Refreshing the page keeps both the server connections and the pinned layout
+
+- **Covers spec point:** 9
+- **Preconditions:** Fresh case 047, browser. Two cards pinned and linked (per TC-48), at custom dragged positions.
+- **Steps / Input:** Reload the browser tab (`F5`) at `http://localhost:5173/case/047/board`.
+- **Expected result:** Both cards reappear at the same `{x, y}` positions they were left at (read back from `localStorage`, not re-auto-positioned), and the line between them is redrawn. `GET /api/cases/047/connections` still returns the same connection — it was never dependent on the browser reload since it's server state.
+- **Priority:** high
+
+## TC-51 — [UI] Deleting a link via the panel removes the line and the server record, but leaves both cards pinned
+
+- **Covers spec point:** 6, 9
+- **Preconditions:** Fresh case 047, browser, one link created per TC-48 (id noted as `X`).
+- **Steps / Input:** In the "LINKS" list, click the `✕` button next to the `X · S01 → S02` entry.
+- **Expected result:** The red-string line disappears from the canvas immediately. The "LINKS" list becomes empty (or loses that entry). `GET /api/cases/047/connections` (checked independently) no longer contains `X` — the same as `DELETE /connections/X` in TC-30. Both `S01` and `S02` cards remain visible and pinned on the canvas (only the link is gone, not the cards).
+- **Priority:** high
+
+## TC-52 — [UI] A card that is part of a live connection cannot be unpinned until the connection is removed
+
+- **Covers spec point:** 9 (UI constraint on top of the backend's per-viewer layout state)
+- **Preconditions:** Fresh case 047, browser, `S01`/`S02` linked per TC-48.
+- **Steps / Input:** Click the `S01` card to select it. Observe the `REMOVE S01 FROM BOARD` button. Then delete the `S01`–`S02` link (per TC-51) and re-select `S01`.
+- **Expected result:** While the link exists, the `REMOVE S01 FROM BOARD` button is disabled with title text "Remove its links first" (or equivalent visible affordance) and clicking it has no effect (card stays pinned). After the link is deleted, re-selecting `S01` shows the button enabled; clicking it removes `S01` from the canvas and from the `mysterydesk:board:047` localStorage entry.
+- **Priority:** medium
+
+## TC-53 — [UI] Board layout does not leak between cases
+
+- **Covers spec point:** 9
+- **Preconditions:** Fresh cases 047 and 048, browser. `mysterydesk:board:047` and `mysterydesk:board:048` both absent.
+- **Steps / Input:** (1) Go to `http://localhost:5173/case/047/board`, pin `S01`. (2) Navigate to `http://localhost:5173/case/048/board`.
+- **Expected result:** Case 048's board is empty (`EmptyState` "The board is empty" shown; `0 PINNED`). `localStorage.getItem("mysterydesk:board:048")` is absent or `{}` — the `S01` pin written under the `mysterydesk:board:047` key does not appear under the `048` key. Navigating back to 047's board still shows `S01` pinned.
+- **Priority:** high
+
+## TC-54 — [UI] Locked evidence never appears in the PIN TO BOARD dropdown
+
+- **Covers spec point:** 3 (exhibit must be unlocked), applied to the UI layer; also the general "locked evidence doesn't exist as far as the player is concerned" rule in `CLAUDE.md`
+- **Preconditions:** Fresh case 047, browser, no evidence found yet (`GET /api/cases/047/evidence` returns none of the locked ids, e.g. `E002` absent).
+- **Steps / Input:** Open the "PIN TO BOARD" select and expand the "Evidence" optgroup.
+- **Expected result:** The Evidence optgroup is empty (or absent) — no locked evidence id/title is listed, since the board's pinnable list is built from the same `evidence` array the Evidence Room uses (`useCase()`), which the backend already filters to unlocked-only. After performing Setup A in the browser (travel + search), reopening the select shows `E002 · <title>` in the Evidence optgroup.
+- **Priority:** medium
+
+## TC-55 — [UI] New Investigation / Play Again clears both the server connections and the localStorage layout
+
+- **Covers spec point:** 10
+- **Preconditions:** Case 047, browser, at least one card pinned and one connection created.
+- **Steps / Input:** Trigger the UI's reset flow (`NEW INVESTIGATION` control, or `[ PLAY AGAIN ]` from the final report after an accusation) and confirm.
+- **Expected result:** `POST /api/cases/047/reset` fires (connections wiped server-side, per TC-39). In the same flow, `localStorage.getItem("mysterydesk:board:047")` becomes `{}` (the app's `resetInvestigation` calls `clearBoard()` right after the API reset). Navigating to the board shows the empty-board state with `0 PINNED · 0 LINKS`.
+- **Priority:** high
+
+## TC-56 — [UI] A raw API reset (outside the UI) does not clear the browser's board layout
+
+- **Covers spec point:** 10 (the ambiguity flagged in this file's conventions note 5, whose referenced `TC-58` does not exist in this document — this case fills that gap)
+- **Preconditions:** Case 047, browser, at least one card pinned (e.g. `S01` at a dragged position) and one connection created (e.g. `S01`–`S02`).
+- **Steps / Input:** Outside the browser, call `POST /api/cases/047/reset` directly (curl/fetch, not through the app's Play Again button). Then reload the board page in the browser.
+- **Expected result:** `GET /connections` is `[]` (server state wiped, per TC-39). After the reload, the `mysterydesk:board:047` localStorage entry is untouched by the raw API call, so `S01`'s pinned position (and `S02`'s, if it was pinned) is still shown on the canvas at its old coordinates — but the line between them is gone (the connection no longer exists server-side) and the "LINKS" list is empty. This is the stale-layout state the spec's per-viewer/backend split implies: only the UI's own reset path (TC-55) clears `localStorage`.
+- **Priority:** medium
+
+---
+
+**Summary:** 42 original test cases (unchanged) + 14 added 2026-09-24 = 56 total. High priority: 22 original + 8 added = 30.
+
+## Additional cases (added 2026-09-25)
+
+These cases cover the 2026-09-25 closed-case fix (decision D1-A in
+`docs/plans/2026-09-25-qa-bug-fixes.md`): `createConnection` and `deleteConnection` in
+`backend/src/services/investigation.service.js` now call `assertOpen()`, so a case with
+an accepted conclusion on file rejects new links and deletions with 422
+`{"error":"This case is closed."}` — the exact behaviour TC-43 and TC-44 said would be a
+"behaviour change worth flagging" if it ever happened. Checked against the current
+source: `createConnection` checks the body shape (400 `R-400`) first, then `assertOpen()`
+(422 closed), then `validateConnection` (422 unknown id / self-link / duplicate /
+unsupported relationship). `deleteConnection` checks the id exists (404 `R-404`) first,
+then `assertOpen()` (422 closed). `GET /connections`, `GET /investigation` and
+`POST /reset` are unaffected — `listConnections` and `resetInvestigation` never call
+`assertOpen()`. On the frontend, `frontend/src/pages/InvestigationBoard/InvestigationBoard.jsx`
+shows a `CASE CLOSED` `Stamp` panel when `investigation.conclusion` is set (`const closed =
+Boolean(investigation.conclusion)`); `onNodeClick` no longer opens the "NEW LINK" panel
+when closed — it returns early and only toggles `selected` (`if (closed) return
+setSelected(...)`, `pending` is never set); and the `✕` delete button is omitted per link
+(`{!closed && <button ... aria-label="Delete link ...">✕</button>}`). Pinning (`pin()`)
+and dragging (`onPointerDown`/`onPointerMove`/`onKeyDown`) are not gated by `closed`, and
+`REMOVE <id> FROM BOARD` stays available once its links are gone (`canUnpin`) — cards
+remain pinnable and movable on a closed board, since layout is `localStorage` UI state,
+never backend state.
+
+## TC-57 — POST /connections on a closed case is rejected as closed
+
+- **Covers spec point:** 2, 3 (closed-case rule, D1-A; supersedes TC-43)
+- **Preconditions:** Fresh case 047. Close it: `POST /api/cases/047/conclusion {"suspectId": null}`. Confirm `GET /api/cases/047/investigation` now has a non-null `conclusion`.
+- **Steps / Input:** `POST /api/cases/047/connections {"source":"S01","target":"S02"}`
+- **Expected result:** 422 with body exactly `{"error":"This case is closed."}`. `GET /api/cases/047/connections` is still `[]` — nothing created.
+- **Priority:** high
+
+## TC-58 — A malformed body still wins over the closed-case check
+
+- **Covers spec point:** 4 (order of checks, D1-A: 400 before 422 closed)
+- **Preconditions:** Case 047 closed per TC-57.
+- **Steps / Input:** (a) `POST /api/cases/047/connections {"target":"S02"}` (missing `source`); (b) `POST /api/cases/047/connections {}`.
+- **Expected result:** Both return 400 with body exactly `{"error":"Expected { source, target, relationship }"}` (`R-400`), not 422 `"This case is closed."` — the body-shape check in `createConnection` runs before `assertOpen()`.
+- **Priority:** high
+
+## TC-59 — The closed-case rejection wins over every other game-rule 422
+
+- **Covers spec point:** 4, 5 (order of checks, D1-A: 422 closed before other 422s)
+- **Preconditions:** Case 047 closed per TC-57.
+- **Steps / Input:** (a) self-link `{"source":"S01","target":"S01"}`; (b) unsupported relationship `{"source":"S01","target":"S02","relationship":"caused_by"}`; (c) unknown id `{"source":"S99","target":"S02"}`.
+- **Expected result:** All three return 422 with body exactly `{"error":"This case is closed."}` — not `R-SELF`, `R-REL` or `R-UNKNOWN`. `assertOpen()` runs before `validateConnection()` in `createConnection`, so the closed check pre-empts every other 422 reason. (Per TC-27's rule, none of these strings hint at right/wrong either.)
+- **Priority:** medium
+
+## TC-60 — DELETE of an existing connection on a closed case is rejected as closed
+
+- **Covers spec point:** 6 (closed-case rule, D1-A; supersedes TC-44)
+- **Preconditions:** Fresh case 047. While still open, create a connection `POST {"source":"S01","target":"S02"}` (id noted as `X`). Then close the case: `POST /api/cases/047/conclusion {"suspectId": null}`.
+- **Steps / Input:** `DELETE /api/cases/047/connections/<X>`
+- **Expected result:** 422 with body exactly `{"error":"This case is closed."}`. `GET /api/cases/047/connections` still contains `X` — nothing deleted.
+- **Priority:** high
+
+## TC-61 — DELETE of an unknown id on a closed case is still 404, not the closed-case 422
+
+- **Covers spec point:** 6 (order of checks, D1-A: 404 unknown id before 422 closed)
+- **Preconditions:** Case 047 closed (per TC-57's method; no connections need exist).
+- **Steps / Input:** `DELETE /api/cases/047/connections/C99`
+- **Expected result:** 404 with body exactly `{"error":"Connection not found"}` (`R-404`) — `deleteConnection`'s existence check runs before `assertOpen()`, so an unknown id on a closed case is still 404, not 422.
+- **Priority:** high
+
+## TC-62 — GET /connections and GET /investigation still work on a closed case
+
+- **Covers spec point:** 1, 8 (closed-case rule does not gate GETs, D1-A)
+- **Preconditions:** Fresh case 047 with one connection created (id `X`) while open, then closed via `POST /conclusion {"suspectId": null}`.
+- **Steps / Input:** `GET /api/cases/047/connections`; `GET /api/cases/047/investigation`.
+- **Expected result:** Both return 200. `GET /connections` still contains `X` (closing the case does not delete existing links). `investigation.connections` is deep-equal to the `GET /connections` array.
+- **Priority:** high
+
+## TC-63 — POST /reset still works on a closed case and clears its connections
+
+- **Covers spec point:** 10 (closed-case rule does not gate reset, D1-A)
+- **Preconditions:** Case 047 closed with at least one connection on file (per TC-62).
+- **Steps / Input:** `POST /api/cases/047/reset`, then `GET /api/cases/047/connections`.
+- **Expected result:** Reset returns 200 with `connections: []` in the returned investigation body (the case is also reopened — `investigation.conclusion` is `null` again). `GET /connections` is `[]`.
+- **Priority:** medium
+
+## TC-64 — [UI] A closed board shows a CASE CLOSED panel and hides the ✕ delete buttons
+
+- **Covers spec point:** 9 (closed-case UI rule, D1-A)
+- **Preconditions:** Fresh case 047, browser. At least one connection created via the board (per the TC-48 flow) while the case is open. Then close the case (file an accusation through the app's accusation flow, or `POST /conclusion {"suspectId": null}` directly, and reload the board page).
+- **Steps / Input:** Navigate to `http://localhost:5173/case/047/board`.
+- **Expected result:** A panel with a `Stamp` reading "CASE CLOSED" is shown above the "PIN TO BOARD" section, with copy to the effect that the links are part of the record now. In the "LINKS" list, each entry shows only `<id> · <source> → <target>` text — no `✕` button is rendered next to any entry (no element with `aria-label="Delete link ..."` is present in the DOM).
+- **Priority:** high
+
+## TC-65 — [UI] A closed board does not open a NEW LINK panel or call the API
+
+- **Covers spec point:** 9 (closed-case UI rule, D1-A)
+- **Preconditions:** Same as TC-64 (case closed), with at least two cards already pinned on the board (e.g. `S01`, `S02`, pinned before closing).
+- **Steps / Input:** Click the `S01` card, then click the `S02` card.
+- **Expected result:** Clicking `S01` toggles it `selected` (visibly highlighted); clicking `S02` while `S01` is selected does not open a "NEW LINK" panel (no `CREATE LINK`/`CANCEL` buttons appear anywhere) and fires no `POST /connections` call — `onNodeClick` returns early on `closed` and only toggles `selected`, it never sets `pending`. `GET /api/cases/047/connections` (checked independently in another tab/terminal) is unchanged after both clicks.
+- **Priority:** high
+
+## TC-66 — [UI] Cards on a closed board can still be pinned and dragged
+
+- **Covers spec point:** 9, 10 (closed-case UI rule leaves the localStorage layout editable, D1-A)
+- **Preconditions:** Case 047 closed, browser, at least one exhibit or suspect not yet pinned.
+- **Steps / Input:** (1) Choose an unpinned item in the "PIN TO BOARD" select and click `PIN`. (2) Drag an already-pinned card to a new position.
+- **Expected result:** (1) The new card appears on the canvas and the `N PINNED` count in the page title increments, exactly as on an open case (per TC-47) — the `PIN` button is not disabled by `closed`. (2) The dragged card moves and settles at the new position, and `localStorage.getItem("mysterydesk:board:047")` reflects the new `{x, y}` — dragging is not gated by `closed` either.
+- **Priority:** medium
+
+---
+
+## Superseded by the 2026-09-25 fixes
+
+- TC-43 — old expectation: `POST /connections` after the case is closed still returns 201, because `createConnection` never called `assertOpen()` — new expected behaviour: 422 `{"error":"This case is closed."}` (see TC-57) — change: `docs/plans/2026-09-25-qa-bug-fixes.md` decision D1-A (`assertOpen()` added to `createConnection`, checked after the body-shape 400 and before `validateConnection`'s other 422s).
+- TC-44 — old expectation: `DELETE /connections/:id` after the case is closed still returns 204, because `deleteConnection` never called `assertOpen()` — new expected behaviour: 422 `{"error":"This case is closed."}` for an existing connection id (see TC-60); an unknown connection id on a closed case is unaffected and still 404 (see TC-61) — change: `docs/plans/2026-09-25-qa-bug-fixes.md` decision D1-A (`assertOpen()` added to `deleteConnection`, checked after the existence-based 404).
+
+> 2026-09-25: added TC-57..TC-66; superseded expectations are listed above and in docs/qa/SUPERSEDED-2026-09-25.md.

@@ -391,4 +391,154 @@ hours from 08:15" gives a deadline of `1984-03-11T00:15:00` (15 minutes past mid
 
 ---
 
-Summary: 44 test cases, 28 high priority.
+## Additional cases (added 2026-09-24)
+
+Added after reading the current backend source (`field.service.js`, `investigation.service.js`,
+`case.service.js`, `config/index.js`) post commit `b45dd98`. Two of these expose real behaviour of
+the running code that the existing suite (TC-01..TC-44) does not exercise:
+
+- `investigation.service.spendTime` now **clamps** the minutes it adds to whatever is left
+  (`Math.min(TIME_COST[action], minutesLeft)`), so an action whose nominal cost would overrun the
+  deadline still succeeds — it just lands exactly on the deadline instead of being rejected. Only
+  the *next* action after that is turned away. TC-45/TC-46 cover this.
+- `field.service.readPage` calls `investigation.assertOpen()` **unconditionally**, before the
+  "already read" check. That means on a **closed** case, re-reading a page that was already read
+  before the case closed is *also* a 422, not a free 200. This contradicts the second half of
+  existing **TC-27**, which asserts 200 for that exact scenario (re-reading F1, already read,
+  after the case was closed via `POST /conclusion`). TC-27 was left untouched per instructions;
+  TC-47 below documents the behaviour actually produced by the current source and should be used
+  to resolve the discrepancy.
+
+## TC-45 — Clock clamps to the remaining minutes instead of rejecting the action (Case 047, plain page)
+
+- **Covers spec point:** 3, 7 (clock clamped at budget — `spendTime`'s `Math.min(cost, minutesLeft)`)
+- **Preconditions:** Fresh 047. `GET BASE/cases/047/places`, take two different location ids `LA`, `LB`.
+- **Steps / Input:** `POST BASE/cases/047/file/F1/read` (cost 20, `minutesUsed` -> 20). Then `POST BASE/cases/047/travel` 31 times alternating `{ "locationId": "LA" }`, `{ "locationId": "LB" }`, starting with `LA` (31 x 30 = 930; cumulative `minutesUsed` -> 950). Each travel must return 200. `GET BASE/cases/047/investigation` to confirm the checkpoint. Then `POST BASE/cases/047/file/F2/read`. Then `GET BASE/cases/047/investigation`. Then `POST BASE/cases/047/file/F3/read`.
+- **Expected result:** Checkpoint investigation: `clock.minutesUsed === 950`, `clock.minutesLeft === 10`, `clock.timeUp === false`, `clock.now === "1984-03-11T00:05:00"`. The F2 read: status **200** (not rejected) — `page.read === true`, `page.body` non-null, `effects.unlockedEvidence === []`, `investigation.storyFlags["file.F2"] === true`, `investigation.pagesRead` contains `F2`. Its `investigation.clock`: `minutesUsed === 960` (only 10 of the nominal 20 were charged), `minutesLeft === 0`, `timeUp === true`, `now === "1984-03-11T00:15:00"` (equal to `deadline`). The subsequent F3 read: status 422, body `{ "error": "Time is up. The District Attorney wants a name." }`, and `pagesRead` afterwards still excludes `F3`.
+- **Priority:** high
+
+## TC-46 — Clock clamp still triggers the attachment unlock (Case 048, F2 -> E002)
+
+- **Covers spec point:** 2, 3, 4, 7
+- **Preconditions:** Fresh 048. `GET BASE/cases/048/places`, take two different location ids `LA`, `LB`.
+- **Steps / Input:** `POST BASE/cases/048/file/F1/read` (cost 20, `minutesUsed` -> 20). Then `POST BASE/cases/048/travel` 27 times alternating `{ "locationId": "LA" }`, `{ "locationId": "LB" }`, starting with `LA` (27 x 30 = 810; cumulative `minutesUsed` -> 830). Each travel must return 200. `GET BASE/cases/048/investigation` to confirm the checkpoint. Then `POST BASE/cases/048/file/F2/read`. Then `GET BASE/cases/048/evidence/E002`.
+- **Expected result:** Checkpoint investigation: `clock.minutesUsed === 830`, `clock.minutesLeft === 10`, `clock.timeUp === false`. The F2 read: status 200; `effects.unlockedEvidence === [{ "id": "E002", "title": "Medical Examiner's Note" }]` (the attachment still unlocks even though only part of the nominal cost was charged); `investigation.unlockedEvidence` contains `E002`; `investigation.storyFlags["file.F2"] === true`; `investigation.clock.minutesUsed === 840`, `minutesLeft === 0`, `timeUp === true`, `now === "1984-05-19T23:00:00"` (equal to `deadline`). `GET .../evidence/E002` afterwards: 200.
+- **Priority:** high
+
+## TC-47 — Closed case rejects re-reading an already-read page too (corrects the "already read" branch of TC-27)
+
+- **Covers spec point:** 3 (case-closed gating; `readPage` calls `assertOpen()` before checking whether the page was already read)
+- **Preconditions:** Fresh 047; read F1 only (`minutesUsed === 20`, `pagesRead === ["F1"]`). Close the case: `POST BASE/cases/047/conclusion { "suspectId": null, "evidenceIds": [] }` returns 200.
+- **Steps / Input:** `POST BASE/cases/047/file/F1/read` (F1 was already read before the case closed). Then `GET BASE/cases/047/investigation` and `GET BASE/cases/047/file`.
+- **Expected result:** The read call: status **422**, body exactly `{ "error": "This case is closed." }` — not the 200 that re-reading an already-read page returns while the case is still open (contrast TC-09, TC-14, TC-26). Afterwards: `investigation.clock.minutesUsed` unchanged at 20, `investigation.pagesRead` unchanged at `["F1"]`, and the F1 entry in `GET /file` is unchanged (`read === true`, its original `body`).
+- **Priority:** high
+
+## TC-48 — Unknown page id is still a 404 on a closed case (existence check runs before the closed-case gate)
+
+- **Covers spec point:** 6, 3 (order of checks inside `readPage`)
+- **Preconditions:** Fresh 047. Close the case: `POST BASE/cases/047/conclusion { "suspectId": null, "evidenceIds": [] }` returns 200.
+- **Steps / Input:** `POST BASE/cases/047/file/F9/read`.
+- **Expected result:** Status **404**, body `{ "error": "There is no such page in the file" }` — not 422 `"This case is closed."` — confirming the page's existence is checked before the case-closed gate. `investigation.clock.minutesUsed` unaffected (still 0), `pagesRead` still `[]`.
+- **Priority:** medium
+
+## TC-49 — GET /cases/:caseId `locations` entries never expose search spots, people or arrival text
+
+- **Covers spec point:** 1 (case-detail shape; post-`b45dd98` fix — case detail `locations` no longer exposes spots)
+- **Preconditions:** Fresh case, one for each of 047, 048, 049, 050, 051.
+- **Steps / Input:** For each `<id>`: `GET BASE/cases/<id>` and inspect every element of its `locations` array.
+- **Expected result:** For every case, every element of `locations` has exactly the keys `id`, `name`, `floor`, `district`, `description`, `map` — no `spots`, `people` or `arrival` key at any depth of that element. `locations.length` equals the same response's `locationCount`. The raw response text of `GET /cases/<id>` contains no JSON key literally named `spots`, `people` or `arrival` anywhere (not just within `locations`).
+- **Priority:** medium
+
+---
+
+Summary: 44 original test cases + 5 added (TC-45–TC-49) = 49 total, 31 high priority (28 original + 3 added).
+
+## Additional cases (added 2026-09-25)
+
+Source: `changes-brief.md` (approved plan `docs/plans/2026-09-25-qa-bug-fixes.md`), cross-checked
+against `backend/src/services/investigation.service.js` (`assertOpen`, `spendTime`, `recordViewed`,
+`saveTheory`), `backend/src/middleware/errorHandler.js` (the `entity.too.large` → 413 branch) and the
+seed data (`data/cases/*/case.json` file-page `attachments`, `data/cases/*/evidence.json`
+`locationId`). None of the five endpoints in this suite's own "Endpoints involved" list changed
+behaviour today: `GET /file`, `POST /file/:pageId/read`, `GET /cases/:caseId`, `GET /investigation`
+and `POST /reset` are all unaffected by the 2026-09-25 fixes. TC-50/TC-51 are regression checks that
+the unrelated 2026-09-25 evidence-locationId changes (047 E005, E006; 048 E005; 049 E014; 050 E008 —
+none of them a file-page attachment in any case) did not disturb file-attachment unlocking or the
+"attachments carry no locationId" invariant. TC-52–TC-56 exercise `PUT /theory`, `POST /viewed` and
+the request-size limit, which are **not** in this suite's own endpoint list; they are included because
+the change brief calls out "the closed-case matrix as it touches this suite" explicitly. Ambiguity
+noted for the record: a reader who only wants this suite's own five endpoints should treat
+TC-52/TC-53/TC-54/TC-55/TC-56/TC-57 as cross-cutting coverage borrowed from the shared closed-case
+and body-size rules, not spec points unique to case-start-and-file.
+
+## TC-50 — File attachments still unlock correctly after the 2026-09-25 evidence-data changes (regression)
+
+- **Covers spec point:** 2, 4 (regression: confirms the 2026-09-25 changes to E005/E006 (047), E005 (048), E014 (049) and E008 (050) `locationId` — none of them file-page attachments — did not disturb file-attachment unlocking)
+- **Preconditions:** Fresh 048, fresh 049, fresh 050, fresh 051.
+- **Steps / Input:** `POST BASE/cases/048/file/F2/read`; `POST BASE/cases/049/file/F2/read` then `.../F3/read`; `POST BASE/cases/050/file/F2/read`; `POST BASE/cases/051/file/F2/read`.
+- **Expected result:** Identical to TC-11/TC-12/TC-13 on the current source: 048 F2 → `effects.unlockedEvidence === [{ "id": "E002", "title": "Medical Examiner's Note" }]`; 049 F2 → `E002`/"Loss Schedule", F3 → `E015`/"Kemp's 1971 Conviction" (`investigation.unlockedEvidence` ends with exactly `E002` and `E015`); 050 F2 → `E002`/"Insurance Schedule"; 051 F2 → `E002`/"Toxicology Report". None of E005, E006, E008 or E014 appears in any `effects.unlockedEvidence` or `investigation.unlockedEvidence` in this test (they are not reachable through a file page in any case).
+- **Priority:** medium
+
+## TC-51 — Every file-page attachment exhibit has `locationId: null` in the seed (place-rule invariant)
+
+- **Covers spec point:** 4 (and the seed-time rule, new in the 2026-09-25 change brief item 7, that only paperwork with no place of its own may ride on a file page's `attachments`)
+- **Preconditions:** Fresh 048, 049, 050, 051 (047 has no attachment exhibits, so is not exercised here).
+- **Steps / Input:** Unlock each attachment exhibit via its file page (`POST .../file/F2/read` on 048, 050, 051; `.../F2/read` then `.../F3/read` on 049), then `GET .../evidence/E002` on each of 048/049/050/051 and `GET .../evidence/E015` on 049.
+- **Expected result:** Every one of those five `GET /evidence/:id` responses (048 E002, 049 E002, 049 E015, 050 E002, 051 E002) has `"locationId": null`. This is the invariant `validateDialogue`'s seed-time check (change brief item 7: "every exhibit with a locationId needs a route at its place") depends on for file-page paperwork — a violation would mean the exhibit could also be found at a place, contradicting "only paperwork with no place of its own rides on a file page's attachments."
+- **Priority:** medium
+
+## TC-52 — Closed case: file read on an unread page is still 422 "This case is closed.", unchanged by today's fix
+
+- **Covers spec point:** 3, 6 (closed-case gating and check order — change brief item 1 notes file read "were already 422" before today's fix, i.e. unaffected by it; restated here against the current source to lock down the order rule for this suite)
+- **Preconditions:** Fresh 047; read F1 only. Close the case: `POST BASE/cases/047/conclusion { "suspectId": null, "evidenceIds": [] }` returns 200.
+- **Steps / Input:** `POST BASE/cases/047/file/F2/read` (unread page); `POST BASE/cases/047/file/F9/read` (unknown page id).
+- **Expected result:** F2: 422, body `{ "error": "This case is closed." }`. F9: 404, body `{ "error": "There is no such page in the file" }` — the existence check still runs before the closed-case gate (order: 400 malformed body, then 404 unknown id, then 422 closed, per the change brief), exactly as in TC-48, and unaffected by the 2026-09-25 fix since file read was already gated pre-change.
+- **Priority:** low
+
+## TC-53 — Closed case: `PUT /theory` returns 422 "This case is closed."
+
+- **Covers spec point:** none of this suite's own numbered points — `PUT /theory` is not in this spec's "Endpoints involved" list. Included per the 2026-09-25 change brief's closed-case matrix, which names theory explicitly as touching this suite.
+- **Preconditions:** Fresh 047. Close the case: `POST BASE/cases/047/conclusion { "suspectId": null, "evidenceIds": [] }` returns 200.
+- **Steps / Input:** `PUT BASE/cases/047/theory { "text": "Reyes did it." }`
+- **Expected result:** 422, body `{ "error": "This case is closed." }`. A following `GET /investigation` shows `theory` unchanged (still whatever it was immediately before this call — `null` on this fresh-then-closed case, since none was ever filed).
+- **Priority:** low
+
+## TC-54 — Closed case: `POST /viewed` on a file-unlocked exhibit now returns 422 "This case is closed." (new behaviour in the 2026-09-25 fix)
+
+- **Covers spec point:** none of this suite's own numbered points — `POST /viewed` is not in this spec's "Endpoints involved" list, but it is the natural place to exercise the newly-closed-case-aware `/viewed` against a file-unlocked exhibit, since this suite is what unlocks E002 via the file.
+- **Preconditions:** Fresh 048; `POST .../file/F2/read` (unlocks E002, `minutesUsed === 20`). Close the case: `POST BASE/cases/048/conclusion { "suspectId": null, "evidenceIds": [] }` returns 200.
+- **Steps / Input:** `POST BASE/cases/048/viewed { "type": "evidence", "id": "E002" }`
+- **Expected result:** 422, body `{ "error": "This case is closed." }`. Before the 2026-09-25 fix this same call on a closed case with an already-unlocked exhibit returned 200 and recorded the view (no closed-case check existed in `recordViewed`); that is no longer true. A following `GET /investigation` shows `E002` absent from `evidenceViewed` (the rejected call recorded nothing).
+- **Priority:** high
+
+## TC-55 — `POST /viewed` on a closed case: malformed body and unknown/locked id still win over the closed-case check
+
+- **Covers spec point:** none of this suite's own numbered points — order-of-checks coverage for the change brief's rule "400 malformed body, then 404 unknown id, ..., then 422 closed", exercised here against a file-unlocked exhibit.
+- **Preconditions:** Fresh 048; `POST .../file/F2/read` (unlocks E002 only; E003 remains locked — nothing has unlocked it). Close the case: `POST BASE/cases/048/conclusion { "suspectId": null, "evidenceIds": [] }` returns 200.
+- **Steps / Input:** (a) `POST BASE/cases/048/viewed { "type": "evidence" }` (missing `id`). (b) `POST BASE/cases/048/viewed { "type": "evidence", "id": "E999" }` (an id that does not exist in this case). (c) `POST BASE/cases/048/viewed { "type": "evidence", "id": "E003" }` (a real 048 exhibit, but never unlocked, so treated as not existing).
+- **Expected result:** (a) 400, body `{ "error": "Expected { type: \"evidence\" | \"suspect\" | \"event\", id }" }`. (b) 404, body `{ "error": "Nothing with that id in this case" }`. (c) 404, body `{ "error": "Nothing with that id in this case" }` — locked/unknown evidence is rejected as not-found ahead of the closed-case check, same ordering as on an open case. None of the three adds anything to `evidenceViewed`.
+- **Priority:** medium
+
+## TC-56 — `PUT /theory`: a body over 100 kb is 413; a 5001-character `text` is still the existing 400
+
+- **Covers spec point:** none of this suite's own numbered points — request-size limit, change brief item 3, included per the change brief for completeness on the shared `/theory` endpoint. Note: 5001 ASCII characters (~5001 bytes) is far under the 100 kb / 102400-byte body-parser ceiling, so that request reaches the route and is rejected by the route's own 5000-character field cap, not by the size limit — the two checks are independent and this case distinguishes them.
+- **Preconditions:** Fresh 047 (the case does not need to be closed — `express.json`'s size check runs before any route or service code, ahead of `assertOpen`).
+- **Steps / Input:** (a) `PUT BASE/cases/047/theory` with a JSON body whose `text` field is a string of at least 150,000 characters (so the raw request body exceeds 100 kb / 102400 bytes). (b) `PUT BASE/cases/047/theory` with `{ "text": "<a string of exactly 5001 characters>" }`.
+- **Expected result:** (a) 413, body `{ "error": "That request is too large." }`. (b) 400, body `{ "error": "Expected { text } of at most 5000 characters" }`. Neither call changes `investigation.theory` or `investigation.clock`.
+- **Priority:** medium
+
+## TC-57 — UI: Notes page on a closed case hides the theory-filing controls and shows the closed message; textarea is read-only
+
+- **Covers spec point:** 10 (UI reflects investigation/story state) — not one of CaseStart/CaseFile's own screens; included because the change brief's closed-case-matrix note explicitly covers the Notes page's theory controls, and this suite is where the file-read flow that produces `pagesRead`/`storyFlags` for a theory originates.
+- **Preconditions:** 047 with F1 read (via the file screen or the API) and a theory already filed: `PUT /cases/047/theory { "text": "Reyes did it." }` returns 200. Close the case: `POST /cases/047/conclusion { "suspectId": null, "evidenceIds": [] }` returns 200. Browser open at `/case/047/notes`.
+- **Steps / Input:** Load the page. Inspect the theory textarea and the buttons/controls around it. Attempt to type into the textarea.
+- **Expected result:** The theory textarea has the `readOnly` (or `disabled`) attribute and still shows `Reyes did it.` as its value. No "LOG … vs …" contradiction-logging buttons appear anywhere on the page. In place of a `FILE THEORY` button/control, the text `The case is closed. Your theory is on the record as it stands.` is shown. Typing into the textarea changes nothing in the DOM and triggers no `PUT /theory` (or other) request in the network log.
+- **Priority:** low
+
+---
+
+## Superseded by the 2026-09-25 fixes
+
+- **TC-27** — old expectation: the second half of the case (re-reading F1, already read, after the case was closed via `POST /conclusion`) expects status **200** with the cost unchanged. — new expected behaviour: status **422**, body `{ "error": "This case is closed." }`, because `field.service.readPage` calls `assertOpen()` unconditionally before the "already read" check (see TC-47). — which change: this was already superseded by commit `b45dd98` (pre-dates 2026-09-25, first documented in this file's TC-47 on 2026-09-24); listed here for completeness per instruction, not caused by today's fixes. No other existing case in TC-01–TC-49 was found to be affected by the 2026-09-25 changes: this suite's five endpoints (`GET /file`, `POST /file/:pageId/read`, `GET /cases/:caseId`, `GET /investigation`, `POST /reset`) are unchanged today, and none of TC-01–TC-49 references `PUT /theory`, `POST /viewed`, the 413 body-size limit, or the evidence ids touched by today's data changes (E005, E006, E008, E014).
+
+> 2026-09-25: added TC-50..TC-57; superseded expectations are listed above and in docs/qa/SUPERSEDED-2026-09-25.md.

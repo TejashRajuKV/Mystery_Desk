@@ -11,7 +11,8 @@ import './Suspects.css';
 
 /** One claim from a statement, with a control to test it against an exhibit. */
 function Assertion({ assertion }) {
-  const { evidence, contradictionsFound, flagContradiction } = useCase();
+  const { evidence, contradictionsFound, flagContradiction, investigation } = useCase();
+  const closed = Boolean(investigation.conclusion);
   const [evidenceId, setEvidenceId] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
@@ -48,13 +49,13 @@ function Assertion({ assertion }) {
         </div>
       ))}
 
-      <div className="claim__check">
+      {!closed && <div className="claim__check">
         <select className="select" value={evidenceId} onChange={(e) => { setEvidenceId(e.target.value); setResult(null); }} aria-label="Evidence to test this claim against">
           <option value="">Test against evidence…</option>
           {evidence.map((e) => <option key={e.id} value={e.id}>{e.id} · {e.title}</option>)}
         </select>
         <Button small variant="secondary" disabled={!evidenceId || busy} onClick={check}>{busy ? 'CHECKING…' : 'CHECK'}</Button>
-      </div>
+      </div>}
 
       {result && (
         <p className={result.contradiction ? 'claim__result claim__result--yes t-small' : 'claim__result t-small'} role="status">

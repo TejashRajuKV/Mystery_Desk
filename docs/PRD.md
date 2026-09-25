@@ -383,7 +383,7 @@ POST /api/cases/:caseId/conclusion      { "suspectId": "S02", "evidenceIds": ["E
 GET  /api/cases/:caseId/report
 ```
 
-A valid conclusion returns 200 with `{ "suspectId", "evidenceIds", "ending" }` as saved. `suspectId: null` is "cannot determine". A second conclusion is a 422: the first is final. `GET /report` before a conclusion is accepted returns 422.
+A valid conclusion returns 200 with `{ "suspectId", "evidenceIds", "ending" }` as saved. `suspectId: null` is "cannot determine". A second conclusion is a 422: the first is final. Once a conclusion is on file the case is frozen: travel, search, page reads, theory, connection create/delete, logging contradictions and `POST /viewed` return 422 `"This case is closed."` (after the usual 400 and 404 checks), while GETs, Notes, the assistant and reset keep working, so the report can't change after the verdict. `GET /report` before a conclusion is accepted returns 422.
 
 ### Assistant
 
@@ -400,7 +400,7 @@ GET  /api/cases/:caseId/facts/:suspectId      { "suspectId", "name", "lines": [{
 POST /api/cases/:caseId/reset                 the fresh investigation state
 ```
 
-A note is the assistant's response shape plus `promptId`, `title` and, for statement and theory prompts, `facts`. Notes only reason over evidence the player has examined and never say who did it. Unknown prompt: 404; malformed or unknown `items`: 400. Facts list ✓ for what the record shows about a suspect (placements from examined exhibits, contradictions found, innocent explanations on file) and ? for every claim not yet disproved — true claims stay "?" forever, so nothing is given away. Reset wipes every player-state table, restores `defaultUnlockedEvidence`, and returns the investigation state.
+A note is the assistant's response shape plus `promptId`, `title` and, for statement and theory prompts, `facts`. Notes only reason over evidence the player has examined and never say who did it; `POST /assistant/query` uses the same examined-evidence filter for contradictions. Window prompts cover known events on the incident date and inside `incidentWindow`, including after midnight and on later days (dated labels), and keep the `window:HH:MM-HH:MM` id. Unknown prompt: 404; malformed or unknown `items`: 400. Facts list ✓ for what the record shows about a suspect (placements from examined exhibits, contradictions found, innocent explanations on file) and ? for every claim not yet disproved — true claims stay "?" forever, so nothing is given away. Reset wipes every player-state table, restores `defaultUnlockedEvidence`, and returns the investigation state.
 
 ### Interviews
 

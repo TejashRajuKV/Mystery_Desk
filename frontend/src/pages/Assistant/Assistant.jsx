@@ -46,6 +46,7 @@ export default function Assistant() {
   const [error, setError] = useState(null);
   const [pick, setPick] = useState(['', '']);
   const [logged, setLogged] = useState(() => new Set());
+  const closed = Boolean(investigation.conclusion);
   const [theory, setTheory] = useState(investigation.theory);
   const [theoryState, setTheoryState] = useState('saved');
   const topRef = useRef(null);
@@ -141,12 +142,14 @@ export default function Assistant() {
 
           <section className="panel notes__panel">
             <Field label="YOUR WORKING THEORY">
-              <textarea className="textarea" value={theory} placeholder="Optional. Jot down how you think it happened."
-                onChange={(e) => { setTheory(e.target.value); setTheoryState('dirty'); }} />
+              <textarea className="textarea" value={theory} placeholder={closed ? 'No theory was filed.' : 'Optional. Jot down how you think it happened.'}
+                readOnly={closed} onChange={(e) => { setTheory(e.target.value); setTheoryState('dirty'); }} />
             </Field>
-            <Button small variant="secondary" onClick={keepTheory} disabled={theoryState !== 'dirty'}>
-              {theoryState === 'saving' ? 'FILING…' : theoryState === 'saved' ? 'THEORY FILED' : 'FILE THEORY'}
-            </Button>
+            {closed ? <p className="t-small muted">The case is closed. Your theory is on the record as it stands.</p> : (
+              <Button small variant="secondary" onClick={keepTheory} disabled={theoryState !== 'dirty'}>
+                {theoryState === 'saving' ? 'FILING…' : theoryState === 'saved' ? 'THEORY FILED' : 'FILE THEORY'}
+              </Button>
+            )}
           </section>
         </aside>
 
@@ -160,7 +163,7 @@ export default function Assistant() {
               <p className="t-body">Pick a line of enquiry. Your notes only go as far as what you have actually examined, interviewed and connected. They will never tell you who did it.</p>
             </div>
           ) : notes.map((note) => (
-            <Note key={note.n} note={note} logged={logged} lookups={lookups} onLogContradiction={logContradiction} onPin={(ids) => pin(note.n, ids)} />
+            <Note key={note.n} note={note} logged={logged} lookups={lookups} onLogContradiction={closed ? undefined : logContradiction} onPin={(ids) => pin(note.n, ids)} />
           ))}
         </section>
       </div>

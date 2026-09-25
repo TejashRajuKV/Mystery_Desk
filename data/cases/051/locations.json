@@ -48,7 +48,9 @@
         "text": "The probate inventory, in his own hand: 'Medicines received from nurse 10 July: digoxin 0.25mg, 60 tablets.'",
         "consequences": [{ "type": "unlock_evidence", "evidenceId": "E013" }] },
       { "id": "L04-maid", "label": "Ask the housemaid who tidies the library", "text": "'Mr Rory was in here all yesterday afternoon, from twenty to four. Hiding, I'd say, listening at the drawing-room door. He never went in.'",
-        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E014" }] }
+        "consequences": [{ "type": "unlock_evidence", "evidenceId": "E014" }] },
+      {"id": "L04-bankcall", "label": "Ring Ridgeway Savings Bank from the library telephone", "requires": {"evidenceViewed": ["E012"], "flags": {"briefcase.S04": {"eq": true}}}, "text": "With the will read out to him, the manager confirms what he wrote to Mr Fairlie on 2 July: the Ashcombe trust stands £41,212 overdrawn.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E011"}]},
+      {"id": "L04-pardoe", "label": "Ring Mr Pardoe about the probate inventory", "requires": {"evidenceViewed": ["E008"], "flags": {"briefcase.S04": {"eq": true}}}, "text": "An inventory is estate property, not privileged, and the nurse's receipt says what should be on it. Pardoe reads the line down the phone: 'digoxin 0.25mg, 60 tablets. To be destroyed.' Nothing records that they were.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E013"}]}
     ]
   },
   {

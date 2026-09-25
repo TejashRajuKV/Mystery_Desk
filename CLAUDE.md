@@ -187,7 +187,8 @@ POST   /api/cases/:caseId/dialogue/:suspectId/choice   { choiceId } | { presentE
 
 GET never changes state; opening an evidence card is a `POST /viewed`. Responses are
 the resource itself, not wrapped in `{ data: ... }`. Errors are `{ error: "message" }`
-with a real status: 400 malformed, 404 unknown, 422 well-formed but rejected by the
+with a real status: 400 malformed, 404 unknown, 413 a body over the 100 kb JSON limit
+(`{ "error": "That request is too large." }`), 422 well-formed but rejected by the
 game rules (including a report requested before a conclusion is accepted).
 `POST /viewed` and `PUT /theory` return the whole investigation state. Every response
 shape the frontend reads is in the PRD §7; adding a field is fine, renaming one breaks
@@ -250,8 +251,10 @@ It never returns loose prose. Always this shape, with `confidence` one of
 
 `contradictions` is optional (only when `contradiction` is true); the UI turns each
 pair into a "log this contradiction" button. The frontend turns the IDs into
-clickable cards, so every one must exist in the DB and be unlocked — the assistant only
-reasons over evidence in the player's case file. Check before responding. A
+clickable cards, so every one must exist in the DB and be unlocked. Contradictions come only
+from exhibits the player has examined (viewed and unlocked: `examinedContradictions()`, the
+same filter Notes uses); windows and places reason over the player's case file. Check before
+responding. A
 question that fits none of the three kinds returns 200 with `confidence: "low"`, empty
 related lists, and an answer saying what it can help with. The assistant never sees
 `solution.json`.
@@ -260,7 +263,12 @@ related lists, and an answer saying what it can help with. The assistant never s
 
 The accusation is a choice list — `[Accuse <name>]` per suspect, or `[Cannot determine]`
 (`suspectId: null`, no evidence needed) — and it is final: one accepted conclusion closes
-the case, a second `POST /conclusion` is a 422, and interviews stop taking choices. A
+the case, a second `POST /conclusion` is a 422, and the case is frozen: interviews stop
+taking choices, and travel, search, page reads, theory, board links (create and delete),
+logging contradictions and `POST /viewed` are all 422 `"This case is closed."` (checked after
+the 400 for a malformed body and the 404 for an unknown id). Every GET, Notes, the assistant
+and reset still work, so the closed file stays readable and the report can't change. The
+board, People and Notes screens hide their editing controls on a closed case. A
 malformed body is a 400; an unknown suspect or a cited exhibit that doesn't exist or is
 locked is a 422. Every other accusation is accepted, and `ending.service.evaluateEnding`
 fixes one of five endings at that moment (saved on the conclusion as `ending`):
@@ -331,9 +339,16 @@ every ending on fresh databases and in the browser, including phone width. Done 
 - Backend scopes each request to its case with AsyncLocalStorage (`database/caseScope.js`);
   static tables are keyed `(case_id, id)`.
 - Evidence is collected, never handed out. `defaultUnlockedEvidence` is empty in every case.
-  Anything with a `locationId` is found at that place (a search spot's `unlock_evidence`, or an
-  interview there); only paperwork with no place of its own rides on a file page's
-  `attachments` and unlocks when that page is read. `validateDialogue` enforces both. The
+  Anything with a `locationId` can always be found at that place: a search spot there, or someone
+  found there who hands it over. A witness elsewhere may hand it over too, but a search spot only
+  ever turns up exhibits that belong where it is. Only paperwork with no place of its own rides
+  on a file page's `attachments` and unlocks when that page is read. `validateDialogue` enforces
+  all of this at seed time.
+- No single bad choice loses an exhibit for good. `services/dialogue.reachability.js`
+  (`findLockouts`, called from `validateDialogue`) pins each flag value the data can set and
+  checks every exhibit is still reachable; a lockable exhibit needs a second, costlier route
+  (e.g. 049 `L06-solicitor`, 050 `L03-grate`, 051 `sb-start-e005-hostile`, `L04-bankcall`,
+  `L04-pardoe`). Two bad choices combined are not checked. The
   timeline only shows events with no exhibit behind them or one the player holds
   (`knownTimeline`). The seed wipes unlocks for a case the player hasn't started, so stale
   evidence from older seed data can't linger.
@@ -341,6 +356,11 @@ every ending on fresh databases and in the browser, including phone width. Done 
   (street names per grid line, `major`, `water` edge, `parks`, walled `sites` with an optional
   `building`) and each location's `map: { x, y, kind }` in grid units (7 x 5 blocks); `kind`
   picks a building glyph from `MapIcon`. Random detail is seeded by the case id.
+- Notes window prompts cover every known event on the incident date and inside
+  `incidentWindow`, which can cross midnight or span days. Ids stay `window:HH:MM-HH:MM` and are
+  looked up among the windows the server generated (never re-read against one date); windows on
+  another day get dated labels. A typed "between 23:30 and 00:30" crosses midnight when that
+  reading is 12 hours or less.
 - `components/Tutorial` is the How to play casebook, opened from the main menu and the pause
   menu. It explains mechanics only, never a case's content.
 - `utils/motion.js` `keepAnimationsMoving` ticks GSAP on a timer (with lag smoothing off) while

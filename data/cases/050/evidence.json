@@ -31,7 +31,7 @@
     "details": "Ferri Coachworks key board, hook 12 (Castellane spare): 'Sat 17:00 O.H. — back 19:30.'",
     "source": "Ferri's Workshop", "relatedEvidenceIds": ["E008"],
     "facts": [{ "personId": "S01", "action": "took_key", "target": "spare_key", "timestamp": "1984-06-09T17:00:00" }] },
-  { "id": "E008", "type": "photo", "title": "Photographer's Receipt", "timestamp": "1984-06-09T17:30:00", "locationId": "L04", "personIds": ["S01"],
+  { "id": "E008", "type": "photo", "title": "Photographer's Receipt", "timestamp": "1984-06-09T17:30:00", "locationId": null, "personIds": ["S01"],
     "summary": "Oliver had the roadster photographed on Saturday afternoon for a sale brochure.",
     "details": "Fenwick Studio: 'Location shoot, Castellane roadster, Hale House garage, 17:30–19:00. Client: O. Hale.' Contact sheets attached. The car went back in its bay at 19:10.",
     "source": "Fenwick Studio", "relatedEvidenceIds": ["E007"], "facts": [] },

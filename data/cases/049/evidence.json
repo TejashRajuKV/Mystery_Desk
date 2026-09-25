@@ -64,7 +64,7 @@
     "details": "Toll receipt from the ashtray of Thorne's Rover: Millbrook plaza, Saturday 21:40, southbound. The toll authority's own record matches the registration.",
     "source": "Thorne's car; Millbrook toll authority", "relatedEvidenceIds": ["E012"],
     "facts": [{ "personId": "S04", "action": "present", "target": "millbrook_toll", "timestamp": "1984-04-21T21:40:00" }] },
-  { "id": "E014", "type": "message", "title": "Doreen's Note on the Vault Corridor", "timestamp": "1984-04-22T07:10:00", "locationId": "L03", "personIds": ["S05"],
+  { "id": "E014", "type": "message", "title": "Doreen's Note on the Vault Corridor", "timestamp": "1984-04-22T07:10:00", "locationId": "L01", "personIds": ["S05"],
     "summary": "On Sunday morning the vault corridor had already been mopped, and it smelled of bay rum.",
     "details": "Doreen Walsh: 'The corridor down to the vault was already wet when I got there. Someone had mopped it. And it smelled of bay rum, like a barber's. None of our staff wear that.'",
     "source": "Doreen Walsh", "relatedEvidenceIds": ["E003"], "facts": [] },

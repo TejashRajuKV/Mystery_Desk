@@ -75,7 +75,8 @@
       { "id": "L06-car", "label": "Look inside Thorne's Rover in the staff car park", "requires": { "flags": { "lead.car": { "eq": true } } },
         "text": "Spotless, except the ashtray. A Millbrook toll receipt: Saturday 21:40, southbound.",
         "consequences": [{ "type": "unlock_evidence", "evidenceId": "E013" }] },
-      { "id": "L06-records", "label": "Ask Records for Thorne's file", "text": "Twenty years of glowing appraisals. Nothing a man would want to steal a million pounds to get away from. An hour of reading." }
+      { "id": "L06-records", "label": "Ask Records for Thorne's file", "text": "Twenty years of glowing appraisals. Nothing a man would want to steal a million pounds to get away from. An hour of reading." },
+      {"id": "L06-solicitor", "label": "Ring Margaret Thorne's solicitor", "requires": {"evidenceViewed": ["E013"], "flags": {"lead.sister": {"eq": true}, "threatened.S04": {"eq": true}}}, "text": "Her solicitor lets her answer one question once you read him the toll receipt: 'Edwin went out about half past eight. I heard his car come back at three.'", "consequences": [{"type": "unlock_evidence", "evidenceId": "E012"}, {"type": "set_flag", "key": "lead.car", "value": true}]}
     ]
   }
 ]

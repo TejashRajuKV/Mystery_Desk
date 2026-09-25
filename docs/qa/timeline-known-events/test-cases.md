@@ -203,3 +203,149 @@ Spec: `docs/specs/timeline-known-events.md`. Written against the five-case game 
 ---
 
 ## UI cases (need a browser; start with the frontend on :5173 and the backend running)
+
+## Additional cases (added 2026-09-24)
+
+Cross-checked against the current backend source (`investigation.service.js`, `field.service.js`, `case.service.js`) and the frontend `pages/Timeline/Timeline.jsx`, not just the spec text, per the note that commit `b45dd98` changed closed-case and other behaviour. These cases fill three gaps the existing 22 leave open: (a) the spec's point 8 UI behaviour had no cases at all yet, (b) how the timeline's endpoints behave once a case is closed was untested (relevant to `b45dd98`'s "closed cases reject travel/search/page reads/theory" fix — the source shows `POST /viewed` is deliberately **not** in that list, which is worth pinning down explicitly rather than assuming), and (c) a couple of edge cases the spec implies (time cost, id/type cross-matching) but doesn't spell out.
+
+## TC-23 — POST /viewed for a known event is not blocked once the case is closed (unlike legwork)
+
+- **Covers spec point:** 6; cross-references CLAUDE.md ("a second `POST /conclusion` is a 422... interviews stop taking choices") and the `b45dd98` fix that closed cases reject travel/search/page reads/theory.
+- **Preconditions:** 049-FRESH
+- **Steps / Input:** 1) `POST /api/cases/049/conclusion` with body `{"suspectId":null,"evidenceIds":[]}` ("Cannot determine", needs no evidence, so it is always accepted). 2) `GET /api/cases/049/investigation`. 3) `POST /api/cases/049/viewed {"type":"event","id":"T03"}` (T03 needs no exhibit, so it is known even with nothing unlocked). 4) As a control on the same closed case, `POST /api/cases/049/travel {"locationId":"L01"}`.
+- **Expected result:** Step 1: status 200, response has `suspectId: null`, `evidenceIds: []`, and an `ending` key (the exact ending string is not asserted here — only that the case is now closed). Step 2: `conclusion` is non-null. Step 3: status **200** (not 422) — in the current source, `recordViewed` never calls `assertOpen()`, unlike `readPage`, `travel`, `search` and `saveTheory`, which all do — and `eventsViewed` becomes `["T03"]`. Step 4 (control): status 422, body `{"error":"This case is closed."}`. Record this asymmetry explicitly in the report: viewing evidence/suspects/events stays open after a conclusion, legwork does not.
+- **Priority:** high
+
+## TC-24 — GET /timeline is unaffected by a closed case
+
+- **Covers spec point:** 1, 2; touches the `b45dd98` closed-case fix (confirming its scope)
+- **Preconditions:** 049-FRESH, then close the case as in TC-23 step 1 (`POST /conclusion {"suspectId":null,"evidenceIds":[]}`)
+- **Steps / Input:** `GET /api/cases/049/timeline`
+- **Expected result:** Status 200, body is exactly `[T03]` (or whatever was known at the moment of closing), identical to what it would return before closing. Read endpoints are never gated by `conclusion`, only the write endpoints `field.service.js` guards with `assertOpen()`.
+- **Priority:** medium
+
+## TC-25 — Viewing an event does not spend time on the case clock
+
+- **Covers spec point:** 6; clarifies that viewing is not "legwork" under CLAUDE.md's "every action costs minutes on the case clock" (`config.TIME_COST` lists `readPage: 20, travel: 30, search: 15`, no `event`/`viewed` entry)
+- **Preconditions:** 049-FRESH
+- **Steps / Input:** 1) `GET /api/cases/049/investigation`, note `clock.minutesUsed`. 2) `POST /api/cases/049/viewed {"type":"event","id":"T03"}`.
+- **Expected result:** Step 1: `clock.minutesUsed` is `0`. Step 2: the returned `clock.minutesUsed` is still `0` — `recordViewed` never calls `spendTime`, unlike reading a file page (20), travelling (30) or searching (15).
+- **Priority:** medium
+
+## TC-26 — An event id submitted under the wrong `type` is rejected as unknown
+
+- **Covers spec point:** 6 (join on IDs per type, not on the bare string)
+- **Preconditions:** 049-F2 (T12 is known)
+- **Steps / Input:** `POST /api/cases/049/viewed {"type":"evidence","id":"T12"}`, then `POST /api/cases/049/viewed {"type":"suspect","id":"T03"}`.
+- **Expected result:** Both return status 404, body exactly `{"error":"Nothing with that id in this case"}` — `T12`/`T03` are real, known event ids in this case, but `recordViewed`'s per-type existence check (`inCaseFile` for evidence, `getSuspect` for suspect) does not fall back to checking other id types. A following `GET /api/cases/049/investigation` shows `eventsViewed: []`, `evidenceViewed: []`, `suspectsViewed: []`.
+- **Priority:** medium
+
+## TC-27 — [UI] Timeline page shows a loading state, then renders the known events
+
+- **Covers spec point:** 8
+- **Preconditions:** 049-L01 (four known events: T03, T10, T11, T12); frontend on :5173, backend running normally.
+- **Steps / Input:** In the browser, navigate to `/case/049/timeline` (via the dock's Timeline tab or a direct URL) and watch the page from the moment of navigation.
+- **Expected result:** A brief loading state is shown before data resolves (the case-wide `Layout` shell's loading treatment noted in this file's ambiguities section as "PULLING THE FILE" — confirm the exact copy currently rendered and note any mismatch, don't guess it silently). Once resolved, the page shows the `PageTitle` "Timeline" with a meta line containing "4 KNOWN", a scrubber with four marks, and two columns of event cards totalling four `TimelineEvent` cards, with no console errors.
+- **Priority:** medium
+
+## TC-28 — [UI] Empty state has the exact documented copy when no events are known
+
+- **Covers spec point:** 2, 8
+- **Preconditions:** Case 047 freshly reset (`unlockedEvidence: []`; per this file's ground-truth section, 047's fresh timeline is `[]`).
+- **Steps / Input:** In the browser, navigate to `/case/047/timeline`.
+- **Expected result:** The `PageTitle` reads "Timeline" with meta text "NOTHING PINNED DOWN YET". No scrubber and no event columns are rendered. An `EmptyState` is shown with title exactly "No times to go on yet" and body text exactly "Events appear here as you collect the evidence behind them: a log, a receipt, a witness. Go and find some."
+- **Priority:** high
+
+## TC-29 — [UI] Opening a known event marks it viewed and that survives a refresh
+
+- **Covers spec point:** 6, 8
+- **Preconditions:** 049-L01, none of T03/T10/T11/T12 viewed yet (fresh browser session/localStorage irrelevant — viewed state is backend-owned).
+- **Steps / Input:** 1) Navigate to `/case/049/timeline`. 2) Click the T03 event card (or its scrubber mark at 17:30). 3) Note the URL and the detail panel content. 4) Fully reload the browser at the resulting URL.
+- **Expected result:** Step 2/3: the URL gains `?select=T03`; a `tl-detail` panel opens showing title "The branch closes for Easter", its description, and PLACE "The Banking Hall"; the T03 card and scrubber mark pick up the "seen" styling. Step 4: after reload, the detail panel for T03 reopens automatically (the query param persists across reload) and it is still shown as viewed — confirming the viewed flag comes from `GET /investigation` on the backend, not from transient component state. A direct check with `GET /api/cases/049/investigation` (e.g. in a second tab or devtools) shows `eventsViewed` containing `"T03"`.
+- **Priority:** high
+
+## TC-30 — [UI] An event with a null locationId renders a placeholder, not a crash
+
+- **Covers spec point:** 5
+- **Preconditions:** Case 049 with E012 unlocked so that T05 is known (same access path as TC-10, which the runner must derive from `GET /api/cases/049/dialogue/S04` and record; if unreachable, mark this case blocked rather than passed, same as TC-10).
+- **Steps / Input:** In the browser, navigate to `/case/049/timeline` and open the T05 event's detail panel.
+- **Expected result:** The page renders with no error boundary / blank screen and no console error. The detail panel's PLACE row shows "—" (a plain em dash placeholder, since `locationById[event.locationId]` and `event.location` are both null) rather than the literal text "null", "undefined", or an empty cell. The event's title, description and time render normally alongside it.
+- **Priority:** medium (blocked-if-unreachable, same caveat as TC-10)
+
+## TC-31 — [UI] A failed timeline load shows the shell's error state with a working retry
+
+- **Covers spec point:** 8
+- **Preconditions:** 049-L01; backend process stopped (or otherwise made unreachable) before navigating.
+- **Steps / Input:** 1) With the backend down, navigate to `/case/049/timeline`. 2) Observe the page. 3) Restart the backend. 4) Click the shell's retry control.
+- **Expected result:** Step 2: the `Layout` shell's error state is shown (documented in this file's ambiguities section as "FILE UNAVAILABLE" with a TRY AGAIN button) instead of a blank page or an uncaught exception in the console. Step 4: after the backend is back and the retry control is clicked, the timeline loads normally and shows the four known events for 049-L01 (T03, T10, T11, T12).
+- **Priority:** medium
+
+---
+
+**Summary:** 31 test cases total (22 original + 9 added 2026-09-24) — 19 high priority (16 original + 3 added: TC-23, TC-28, TC-29).
+
+## Additional cases (added 2026-09-25)
+
+Cross-checked against `docs/plans/2026-09-25-qa-bug-fixes.md` (approved 2026-09-25) and the current source (`investigation.service.js` `assertOpen`/`recordViewed`, `field.service.js` `getPlace`) plus the case data the change brief names: `data/cases/047/evidence.json`, `data/cases/049/evidence.json`, `data/cases/050/evidence.json`, `data/cases/047/locations.json`, `data/cases/049/locations.json`, `data/cases/047/dialogue.json`, `data/cases/049/dialogue.json`, `data/cases/050/dialogue.json`, and `047/049/050/timeline.json`. These cases cover three things the 2026-09-25 fixes changed: (a) `recordViewed` now also calls `assertOpen()`, so `POST /viewed {type:"event"}` on a closed case is 422 after the existing 400/404 checks — this directly supersedes TC-23 below; (b) `GET /timeline` stays 200 and unaffected, confirming the fix's scope is limited to the write path; (c) the timeline events tied to the four relocated exhibits (047 E005/E006, 049 E014, 050 E008) still become known through their unlock routes now that those routes and the exhibits' `locationId` fields agree, and 049's `T05` is now also reachable through the new `L06-solicitor` spot once S04 has been threatened.
+
+## TC-32 — POST /viewed {type:"event"} on a closed case is now 422, after the 400/404 checks
+
+- **Covers spec point:** 6; supersedes TC-23 (see "Superseded" below); cross-references `investigation.service.js` `recordViewed`, which now calls `assertOpen()` after its 404 existence check (2026-09-25 fix, plan decision D1-A).
+- **Preconditions:** 049-FRESH.
+- **Steps / Input:** 1) `POST /api/cases/049/conclusion` `{"suspectId":null,"evidenceIds":[]}` (Cannot determine, always accepted, closes the case). 2) `POST /api/cases/049/viewed {"type":"event","id":"T99"}` (unknown id). 3) `POST /api/cases/049/viewed {}` (malformed). 4) `POST /api/cases/049/viewed {"type":"event","id":"T03"}` (T03 needs no exhibit, so it was known even on a fresh case). 5) `GET /api/cases/049/investigation`.
+- **Expected result:** Step 1: 200, case closed (`conclusion` non-null). Step 2: still 404 `{"error":"Nothing with that id in this case"}` — the 404 existence check runs before `assertOpen()`, so an unknown id is never reinterpreted as "closed". Step 3: still 400 `{"error":"Expected { type: \"evidence\" | \"suspect\" | \"event\", id }"}` — malformed bodies are rejected before any id lookup or open check. Step 4: status **422**, body exactly `{"error":"This case is closed."}` (not 200, as it returned before the 2026-09-25 fix) — `T03` is a real, known event, so this result proves the close check, not a shape or id problem, is what blocks it. Step 5: `eventsViewed` is `[]` — the closed case never recorded T03.
+- **Priority:** high
+
+## TC-33 — GET /timeline stays 200 and unaffected by a closed case, after the 2026-09-25 fix
+
+- **Covers spec point:** 1, 2; confirms the D1-A fix's scope is limited to the write endpoints named in the plan (`createConnection`, `deleteConnection`, `flagContradiction`, `recordViewed`), not the GETs.
+- **Preconditions:** 049-FRESH, then close the case as in TC-32 step 1.
+- **Steps / Input:** 1) `GET /api/cases/049/timeline`. 2) `GET /api/cases/049/investigation`.
+- **Expected result:** Step 1: status 200, body exactly `[T03]` (T03 is the only event known on a fresh case with nothing unlocked; see TC-02), byte-identical to what it returned before the case closed. Step 2: status 200, `conclusion` non-null, `eventsViewed` still `[]` (nothing was viewed before closing).
+- **Priority:** medium
+
+## TC-34 — 047: event T07 becomes known through E005's existing, now place-consistent search-spot route
+
+- **Covers spec point:** 2, 3; cross-references the 2026-09-25 data fix that moved 047 E005's `locationId` from `L03` to `L02` to match its real unlock route (`047/locations.json` spot `L02-recorder`, itself unchanged by the fix).
+- **Preconditions:** Case 047 freshly reset.
+- **Steps / Input:** 1) `GET /api/cases/047/timeline` (baseline). 2) `POST /api/cases/047/travel {"locationId":"L02"}`. 3) `POST /api/cases/047/places/L02/search {"spotId":"L02-recorder"}` (unlocks E005). 4) `GET /api/cases/047/timeline`.
+- **Expected result:** Step 1: `[]` (047's fresh timeline is empty, per this file's ground-truth section). Step 3: 200. Step 4: contains `T07` (`"Storage Room camera goes dark"`, timestamp `1984-03-09T21:10:00`) with `evidenceIds` exactly `["E005"]` (E010 and E006 are still locked, so absent) and its own `locationId` `"L02"`/`location` `"Communications Room"` unchanged from the seed (the event's own location is independent of the exhibit's relocated `locationId`). `T10` (`"Camera recorder resumes"`, seed `evidenceIds` `["E005"]`) is also now present with `evidenceIds` `["E005"]`. `T01` (seed `evidenceIds` `["E006"]`) is still absent, since E006 is still locked.
+- **Priority:** high
+
+## TC-35 — 047: event T01 becomes known through E006's existing interview route, now consistent with its relocated locationId
+
+- **Covers spec point:** 2, 3; cross-references the 2026-09-25 data fix that moved 047 E006's `locationId` from `L01` to `L02` (Cho's Communications Room, where the interview that unlocks it actually happens: `047/dialogue.json` choice `c-start-e010`, `present: "E010"`, whose consequences unlock `E006`).
+- **Preconditions:** Case 047 freshly reset, with exhibit E010 already unlocked and viewed. (The route to E010 is outside this suite's scope; the runner must derive it from `GET /api/cases/047/places` / `GET /api/cases/047/dialogue/S05`, or note it in the report if unclear — this case only asserts what happens once E010 is in hand.)
+- **Steps / Input:** 1) `POST /api/cases/047/travel {"locationId":"L02"}`. 2) `POST /api/cases/047/dialogue/S05/choice {"presentEvidenceId":"E010"}` (matches Cho's `c-start-e010` reaction). 3) `GET /api/cases/047/timeline`.
+- **Expected result:** Step 2: 200. Step 3: contains `T01` (`"Work order #2291 filed"`, timestamp `1984-03-09T17:30:00`, `locationId` `"L01"`, `location` unchanged from the seed) with `evidenceIds` exactly `["E006"]`. `T07`'s `evidenceIds` now also includes `"E006"` alongside whatever of E005/E010 is unlocked. Neither event's own `locationId`/`location` field is affected by E006's relocation — only the set of exhibits an event can show changes.
+- **Priority:** medium
+
+## TC-36 — 049: event T10 becomes known through E014's existing interview route, now consistent with its relocated locationId
+
+- **Covers spec point:** 2, 3; cross-references the 2026-09-25 data fix that moved 049 E014's `locationId` from `L03` to `L01` (Doreen Walsh's post, where the interview that unlocks it actually happens: `049/dialogue.json` choice `dw-start-e005`, present `E005` to S05, whose consequences unlock both `E006` and `E014`).
+- **Preconditions:** 049-L01 (F2 read, E005 and E007 already unlocked via the two L01 search spots, per this file's ground-truth section).
+- **Steps / Input:** 1) `GET /api/cases/049/timeline` (baseline: `T03, T10, T11, T12`, per TC-06). 2) `POST /api/cases/049/dialogue/S05/choice {"presentEvidenceId":"E005"}`. 3) `GET /api/cases/049/timeline`.
+- **Expected result:** Step 1: `T10.evidenceIds` is `["E005"]` (matches TC-06; E014 still locked). Step 2: 200. Step 3: same four events, but `T10.evidenceIds` is now `["E005","E014"]` (both of its seed exhibits are unlocked). No other event's `evidenceIds` changes, and `T10`'s own `locationId` (`"L01"`) and `location` (`"The Banking Hall"`) are unchanged — the exhibit moved, the event didn't.
+- **Priority:** high
+
+## TC-37 — 050: event T03 becomes known through E008's existing interview route, now that E008 has a null locationId
+
+- **Covers spec point:** 2, 3, 5; cross-references the 2026-09-25 data fix that changed 050 E008's `locationId` from `L04` to `null` (an off-map third-party photographer's receipt, like 048's phone record), and confirms spec point 5's "renders without crashing" also holds when a *cited exhibit*, not just the event itself, has a null `locationId`.
+- **Preconditions:** Case 050 freshly reset, with E007 already unlocked and viewed. (The route to E007 is outside this suite's scope; the runner must derive it from `GET /api/cases/050/places` / `GET /api/cases/050/dialogue/S01`, or note it in the report if unclear.)
+- **Steps / Input:** 1) `GET /api/cases/050/timeline` (baseline: `[]`, per this file's ground-truth section). 2) `POST /api/cases/050/travel {"locationId":"L02"}` (Oliver Hale's location, per `050/locations.json`). 3) `POST /api/cases/050/dialogue/S01/choice {"presentEvidenceId":"E007"}` (matches Oliver Hale's `oh-start-e007` reaction; consequences unlock `E008`). 4) `GET /api/cases/050/timeline`.
+- **Expected result:** Step 1: `[]`. Step 3: 200. Step 4: contains `T03` (`"The spare key goes out"`, timestamp `1984-06-09T17:00:00`, `locationId` `"L04"`, `location` the seed's L04 name, both unchanged by E008's relocation) with `evidenceIds` `["E007","E008"]` (both now unlocked). No 500 and no `null`/`undefined` leaking into `evidenceIds`, even though one of the exhibits behind this event now carries a null `locationId` of its own.
+- **Priority:** medium
+
+## TC-38 — 049: T05 becomes known via the new L06-solicitor route once S04 has been threatened
+
+- **Covers spec point:** 2, 3; cross-references the 2026-09-25 addition of spot `L06-solicitor` in `049/locations.json`, the only route left to E012 once `threatened.S04` is true (the plain `L06-sister` spot requires `threatened.S04: {ne: true}` and is blocked once he's been threatened). Path derived and verified against the current `049/dialogue.json` and `049/locations.json`; if the seed changes again, the runner must re-derive it and note any mismatch rather than assume this still holds, in the same spirit as TC-10.
+- **Preconditions:** 049-FRESH.
+- **Steps / Input:** 1) `POST /api/cases/049/travel {"locationId":"L06"}`. 2) `POST /api/cases/049/dialogue/S04/choice {"choiceId":"et-start-weekend"}` (sets flag `lead.sister`). 3) `POST /api/cases/049/dialogue/S04/choice {"choiceId":"et-start-threat"}` (sets flag `threatened.S04`). 4) `GET /api/cases/049/places/L06`. 5) `POST /api/cases/049/travel {"locationId":"L04"}`. 6) `POST /api/cases/049/dialogue/S03/choice {"choiceId":"wk-start-saw"}` (sets flag `lead.car`, Kemp's alternate route to it). 7) `POST /api/cases/049/travel {"locationId":"L06"}`. 8) `POST /api/cases/049/places/L06/search {"spotId":"L06-car"}` (requires `lead.car`; unlocks E013). 9) `POST /api/cases/049/viewed {"type":"evidence","id":"E013"}` (`L06-solicitor`'s `requires.evidenceViewed` needs E013 *viewed*, not merely unlocked). 10) `GET /api/cases/049/places/L06`. 11) `POST /api/cases/049/places/L06/search {"spotId":"L06-solicitor"}` (requires `evidenceViewed:["E013"]`, `lead.sister:true`, `threatened.S04:true`; unlocks E012). 12) `GET /api/cases/049/timeline`.
+- **Expected result:** Step 4: the `spots` array does not contain `L06-sister` (its `threatened.S04.ne` gate now fails) and does not contain `L06-solicitor` either (its `evidenceViewed:["E013"]` gate isn't met yet) — per the change brief, "gated spots only appear in GET /places/:id when their requires are met". Step 8: 200, E013 unlocked. Step 10: the `spots` array now contains `L06-solicitor`, since its gate is now met. Step 11: 200, unlocks E012. Step 12: the timeline now contains `T05` (`"A car leaves Millbrook"`, timestamp `"1984-04-21T20:30:00"`, `locationId` `null`, `location` `null`, `personIds` `["S04"]`, `evidenceIds` `["E012"]`) — the same field shape as TC-10, reached this time via the threatened path instead of the direct `L06-sister` route. If any step in this derived path returns a status other than the one given here (for example a spot gated differently than read here), mark this case blocked and record the actual `GET /dialogue/S04` / `GET /places/L06` output in the report rather than guessing.
+- **Priority:** high
+
+## Superseded by the 2026-09-25 fixes
+
+- TC-23 — old expectation: step 3 (`POST /viewed {"type":"event","id":"T03"}` on a closed case) returns status **200**, and `eventsViewed` becomes `["T03"]`, because `recordViewed` never called `assertOpen()`. New expected behaviour: status **422**, body `{"error":"This case is closed."}`, and `eventsViewed` stays `[]` — see TC-32. Which change: `docs/plans/2026-09-25-qa-bug-fixes.md` decision D1-A; `investigation.service.js` `recordViewed` now calls `assertOpen()` after its 404 existence check.
+
+> 2026-09-25: added TC-32..TC-38; superseded expectations are listed above and in docs/qa/SUPERSEDED-2026-09-25.md.

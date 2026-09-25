@@ -11,6 +11,10 @@ export function notFound(_req, res) {
 
 // eslint-disable-next-line no-unused-vars
 export function errorHandler(err, _req, res, _next) {
+  if (err.type === 'entity.too.large') {
+    res.status(413).json({ error: 'That request is too large.' });
+    return;
+  }
   const status = err.status ?? 500;
   if (status >= 500) console.error(err);
   const message = status >= 500 ? 'Something went wrong on the server.' : err.message;

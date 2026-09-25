@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCase } from '../../hooks/useCase.jsx';
-import { Button, PageTitle, EmptyState } from '../../components/ui/ui.jsx';
+import { Button, PageTitle, EmptyState, Stamp } from '../../components/ui/ui.jsx';
 import InvestigationNode from '../../components/InvestigationNode/InvestigationNode.jsx';
 import { kindOf } from '../../utils/format.js';
 import { autoPosition, loadBoard, saveBoard } from '../../utils/boardStore.js';
@@ -29,7 +29,8 @@ function BoardLink({ id, x1, y1, x2, y2 }) {
 }
 
 export default function InvestigationBoard() {
-  const { evidence, suspects, timeline, caseInfo, statements, evidenceById, suspectById, eventById, locationById, claimById, connections, addConnection, removeConnection } = useCase();
+  const { evidence, suspects, timeline, caseInfo, statements, evidenceById, suspectById, eventById, locationById, claimById, connections, addConnection, removeConnection, investigation } = useCase();
+  const closed = Boolean(investigation.conclusion);
 
   const [layout, setLayout] = useState(() => loadBoard());
   const [selected, setSelected] = useState(null);
@@ -85,6 +86,7 @@ export default function InvestigationBoard() {
 
   function onNodeClick(id) {
     setError(null);
+    if (closed) return setSelected(selected === id ? null : id);
     if (!selected) return setSelected(id);
     if (selected === id) return setSelected(null);
     setPending({ source: selected, target: id });
@@ -229,6 +231,12 @@ export default function InvestigationBoard() {
         </div>
 
         <aside className="board__panel">
+          {closed && (
+            <section className="panel board__section board__closed">
+              <Stamp variant="alert">CASE CLOSED</Stamp>
+              <p className="t-small muted">The accusation is on file, so the links are part of the record now. You can still pin and arrange cards.</p>
+            </section>
+          )}
           <section className="panel board__section">
             <span className="t-label muted">PIN TO BOARD</span>
             <select className="select" value={pickId} onChange={(e) => setPickId(e.target.value)} aria-label="Choose something to pin">
@@ -246,7 +254,9 @@ export default function InvestigationBoard() {
               </Button>
             )}
             <p className="t-small muted">
-              {selected
+              {closed
+                ? 'Drag cards to arrange them; arrow keys nudge a focused card.'
+                : selected
                 ? `${selected} selected. Click another card to link them.`
                 : 'Click a card, then another, to link them. The board is your theory: it never tells you whether a link is right. Drag cards to arrange; arrow keys nudge a focused card.'}
             </p>
@@ -273,7 +283,7 @@ export default function InvestigationBoard() {
                 {connections.map((c) => (
                   <li key={c.id}>
                     <p className="t-mono">{c.id} · {c.source} → {c.target}</p>
-                    <button type="button" className="board__del" onClick={() => deleteLink(c.id)} aria-label={`Delete link ${c.source} to ${c.target}`}>✕</button>
+                    {!closed && <button type="button" className="board__del" onClick={() => deleteLink(c.id)} aria-label={`Delete link ${c.source} to ${c.target}`}>✕</button>}
                   </li>
                 ))}
               </ul>

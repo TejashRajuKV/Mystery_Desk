@@ -510,4 +510,244 @@ Facts about the seed data these cases rely on. If any of them is wrong, report t
 
 ---
 
-Total: 54 test cases, 27 high priority.
+## Additional cases (added 2026-09-24)
+
+These fill gaps against the current spec and the current source (`backend/src/services/notes.service.js`, `assistant.service.js`, `investigation.service.js`, `frontend/src/pages/Assistant/Assistant.jsx`, `frontend/src/components/AssistantPanel/AssistantPanel.jsx`) that TC-01 to TC-63 do not exercise: spec point 10 (the browser UI) had no coverage at all, one of the assistant's three question kinds ("what ties a suspect to a place") was untested, and the `POST /assistant/query` and closed-case boundaries introduced or clarified around commit b45dd98 ("empty Notes answers are low confidence"; closed-case guards on travel/search/file/theory) were not checked against Detective's Notes specifically. Recipes R0–R6 and the V1 shape check are the same ones defined above.
+
+## TC-64 — [UI] Notes page renders prompt buttons from the API, with no free-text question box
+
+- **Covers spec point:** 10 (and 1: prompts come from `GET /notes`)
+- **Preconditions:** R0. Open `/case/047/notes` in the browser.
+- **Steps / Input:** Load the Detective's Notes page. Inspect the "LINES OF ENQUIRY" panel.
+- **Expected result:** The panel renders one `<button>` per non-`connect` prompt returned by `GET /notes` (`contradictions`, one per suspect statement, any `window:*`, `theory`), each showing that prompt's `label` text. There is no text input, search box or "ask a question" field anywhere on the page. The only free-text control on the page is the "YOUR WORKING THEORY" textarea, which is a separate feature (`PUT /theory`), not a question box. If `GET /notes` fails, this is verified instead by TC-69.
+- **Priority:** high
+
+## TC-65 — [UI] Choosing a prompt shows a busy state, then the answer
+
+- **Covers spec point:** 2, 10
+- **Preconditions:** R2 (E007 viewed, so a contradiction is available). Notes page loaded.
+- **Steps / Input:** Click the "What doesn't add up?" prompt button.
+- **Expected result:** While the request is in flight, a "THINKING IT THROUGH" indicator is shown and prompt buttons are disabled. Once the response arrives, a new note is added at the top of the notebook pane showing the prompt's `title` as a heading and the `answer` text below it, and the page scrolls to it. The confidence badge shows `CONFIDENCE: HIGH` (uppercased). A "CONTRADICTION FOUND" stamp is visible because `contradiction` is `true`.
+- **Priority:** medium
+
+## TC-66 — [UI] The connect prompt offers two dropdowns and disables submission until two distinct clues are chosen
+
+- **Covers spec point:** 1, 3, 10
+- **Preconditions:** R1 (E007 unlocked). Notes page loaded.
+- **Steps / Input:** In the "What connects these two clues?" panel, inspect the two clue selectors, then: (a) leave both empty and check the compare button; (b) pick the same clue in both selectors; (c) pick two different clues (one suspect, one location) and click "COMPARE THEM".
+- **Expected result:** Two `<select>` controls are shown, each grouped by category (at least Evidence, People, Places, Moments, Claims). The "COMPARE THEM" button is disabled for (a) and (b), and enabled only once two different values are selected. Clicking it in case (c) sends `POST /notes {"promptId":"connect","items":[<pick1>,<pick2>]}` and renders a new note the same way as TC-65.
+- **Priority:** medium
+
+## TC-67 — [UI] Related evidence, suspects and events render as clickable cards to their own pages
+
+- **Covers spec point:** 10
+- **Preconditions:** R2. Notes page loaded.
+- **Steps / Input:** Trigger the "What doesn't add up?" prompt (as in TC-65), then inspect the "RELATED EVIDENCE" area and the suspect/event chips on the resulting note.
+- **Expected result:** `E007` renders as a clickable card labelled with its evidence title and "VIEW EVIDENCE →", linking to the case's Evidence Room with `E007` pre-selected. `S02` renders as a clickable chip linking to the Suspects/People page with `S02` pre-selected. `T06` renders as a clickable chip linking to the Timeline page with `T06` pre-selected. No related id is rendered as plain, non-interactive text.
+- **Priority:** medium
+
+## TC-68 — [UI] Logging a contradiction from a note's "log this contradiction" button updates the UI and the backend
+
+- **Covers spec point:** 9, 10
+- **Preconditions:** R2. Notes page loaded, `GET /investigation` confirmed `contradictionsFound: []`.
+- **Steps / Input:** Trigger the "What doesn't add up?" prompt. On the resulting note, click the button labelled `LOG E007 vs ST02-A`.
+- **Expected result:** The button issues `POST /contradictions {"assertionId":"ST02-A","evidenceId":"E007"}`. On success the button becomes disabled and its label changes to `LOGGED E007 · ST02-A` (or equivalent logged state), without a page reload. A subsequent `GET /investigation` (via API, to confirm the UI and backend agree) shows exactly one entry in `contradictionsFound` for that pair, matching TC-34's backend result.
+- **Priority:** high
+
+## TC-69 — [UI] GET /notes network failure shows an error state with working retry
+
+- **Preconditions:** Backend stopped or `GET /api/cases/047/notes` made to fail (e.g. via a blocked network request in devtools). Notes page loaded/reloaded in that condition.
+- **Covers spec point:** 10
+- **Steps / Input:** Load `/case/047/notes` while the notes-prompt request fails. Then restore the backend/network and use the page's retry action.
+- **Expected result:** In place of the prompt list, an error state is shown (not a blank panel, not an infinite spinner). A retry control is present. After the backend/network is restored and retry is used, `GET /notes` is re-issued and the prompt buttons render normally, matching TC-01.
+- **Priority:** medium
+
+## TC-70 — [UI] A failed POST /notes shows an inline error without losing earlier notes or the ability to try again
+
+- **Covers spec point:** 10
+- **Preconditions:** R2. Notes page loaded with at least one note already shown (repeat TC-65 first). Then make the next `POST /notes` call fail (e.g. stop the backend, or block the request in devtools).
+- **Steps / Input:** With the failure condition in place, click a different prompt button.
+- **Expected result:** The busy indicator clears, an inline error message is shown in the notebook pane (not a crash, not a blank page), and the earlier note from TC-65 remains visible and unchanged. After the failure condition is removed, clicking a prompt button again succeeds and adds a new note normally.
+- **Priority:** medium
+
+## TC-71 — [UI] A statement note's "established facts" list matches GET /facts marks
+
+- **Covers spec point:** 7, 10
+- **Preconditions:** R2, plus the contradiction logged as in TC-34. Also fetch `GET /facts/S02` via the API for comparison.
+- **Steps / Input:** Trigger the "Review Alex Reyes's statement" prompt on the Notes page. Inspect the "WHAT YOU'VE ESTABLISHED · ALEX REYES" list on the resulting note.
+- **Expected result:** The list shows one entry per line in `GET /facts/S02`, each prefixed with its `mark` (`✓` or `?`) exactly as returned by the API, and the matching `text`. Lines with `mark: "?"` are visually distinguished (e.g. a muted/"open" style) from `✓` lines. The number of `✓` and `?` lines matches `GET /facts/S02` exactly (2 of each, per TC-43).
+- **Priority:** low
+
+## TC-72 — assistant/query answers "what ties a suspect to a place" from unlocked evidence
+
+- **Covers spec point:** 8 (the third question kind named in CLAUDE.md's Assistant section: "what ties a suspect to a place")
+- **Preconditions:** R1 (E007 unlocked, not viewed; E007 has `locationId: "L05"` and `personIds: ["S02"]`; timeline event T06 at L05 has `evidenceIds: ["E007"]`).
+- **Steps / Input:** `POST /assistant/query {"question":"What ties Alex Reyes to the Parking Garage?"}`
+- **Expected result:** Status 200, the assistant shape. `confidence: "high"`. `contradiction: false`, `contradictions` absent. `relatedEvidence` is `["E007"]`. `relatedSuspects` is `["S02"]`. `relatedEvents` is `["T06"]`. `answer` mentions the exhibit title `Garage Stairwell Door Log` and the id `E007`, and names no other exhibit. This is the first test in the suite to exercise this question kind at all — TC-48 to TC-53 only cover the "contradicts a statement" and "time window" kinds.
+- **Priority:** high
+
+## TC-73 — assistant/query "ties a suspect to a place" with no matching exhibit
+
+- **Covers spec point:** 8
+- **Preconditions:** R0 (fresh; also true with nothing unlocked for this pair in any state, since no exhibit ever places S03 at L02).
+- **Steps / Input:** `POST /assistant/query {"question":"What ties Victor Lang to the Communications Room?"}`
+- **Expected result:** Status 200, the assistant shape. `answer` is exactly `"No exhibit places Victor Lang at Communications Room."`. `confidence` is `"medium"` — not `"low"` — because `answerConnection`'s empty branch always returns `"medium"` regardless of investigation state; this is a different code path from the `/notes` "empty" override described in the TC-06 note, so do not fail this against the TC-06 note. `contradiction: false`, `contradictions` absent. `relatedEvidence` and `relatedEvents` are `[]`. `relatedSuspects` is `["S03"]`.
+- **Priority:** medium
+
+## TC-74 — assistant/query naming a suspect with zero known contradictions returns "medium", not "low"
+
+- **Covers spec point:** 4, 8 (boundary of the b45dd98 "empty Notes answers are low confidence" fix)
+- **Preconditions:** R0 (fresh; nothing unlocked, so no contradiction pairs are known for any suspect).
+- **Steps / Input:** `POST /assistant/query {"question":"Does Nina Okafor's account check out?"}`
+- **Expected result:** Status 200, the assistant shape. `answer` is exactly `"I found no statement from Nina Okafor that conflicts with the records."`. `confidence` is `"medium"`. `contradiction: false`, `contradictions` absent, `relatedEvidence: []`, `relatedEvents: []`, `relatedSuspects: ["S04"]`. This documents that the low-confidence-on-empty fix applied to `POST /notes` (see the TC-06/TC-07/TC-08 notes) was not extended to `POST /assistant/query`'s own `answerContradictions` fallback branch (`backend/src/services/assistant.service.js`), which always returns `"medium"` when no pairs match. Record this as expected/current behaviour, not a defect, since the spec's "confidence is low" language in point 4 is written about `/notes`, not `/assistant/query`.
+- **Priority:** medium
+
+## TC-75 — assistant/query may surface a contradiction from evidence the player has unlocked but never viewed
+
+- **Covers spec point:** 4, 8 (CLAUDE.md, Assistant section: "the assistant only reasons over evidence in the player's case file... Check before responding")
+- **Preconditions:** R1 only — E007 is unlocked but **not** viewed (no `POST /viewed` call). Confirm via `GET /investigation` that `evidenceViewed` does not contain `E007`.
+- **Steps / Input:** `POST /assistant/query {"question":"Does Alex Reyes's statement contradict the records?"}`
+- **Expected result:** Compare against TC-51, which runs the identical question on R0 (nothing unlocked) and expects an empty, non-contradicting answer. Here, `POST /assistant/query`'s `knownPairs()` filters `investigation.findContradictions()` only by `unlockedEvidenceIds()`, not by `evidenceViewed` (unlike `/notes`'s `consult()`, which filters by both — see `examined()` in `notes.service.js`). So the expected-per-spec-intent result is the same as TC-51: `contradiction: false`, `relatedEvidence: []`, no `E007` anywhere in the body, since the player has not examined E007. FAIL and record as a real discrepancy if instead the response has `contradiction: true` with `E007`/`ST02-A` present — that would mean the assistant answers from unlocked-but-unexamined evidence, which the spec's "evidence the player has examined" framing (and the strict `/notes` behaviour in TC-19) says it should not. Do not silently accept either outcome without recording which one was observed.
+
+  **2026-09-25 update:** the source no longer has a `knownPairs()` function — `assistant.service.js` now exports `examinedContradictions()` (viewed ∩ unlocked, the same filter `notes.consult` uses) and `query()` calls it for the contradiction path. The "expected-per-spec-intent" branch above is therefore now the actual, confirmed behaviour rather than an open question; see TC-79 for a definitive before/after check of the same scenario, worded against the current source instead of the old `knownPairs()` description.
+- **Priority:** high
+
+## TC-76 — Notes, facts and assistant/query stay reachable after the case is closed
+
+- **Covers spec point:** 6 (and the b45dd98 closed-case guard added to travel/search/file-read/theory, to establish whether it also covers Detective's Notes)
+- **Preconditions:** R2, then `POST /conclusion {"suspectId":null,"evidenceIds":[]}` returns 200 (case closed, ending `criminal_escapes` — same setup as TC-38).
+- **Steps / Input:** `GET /notes`; `POST /notes {"promptId":"contradictions"}`; `GET /facts/S02`; `POST /assistant/query {"question":"Does Alex Reyes's statement contradict the records?"}`.
+- **Expected result:** All four return status 200, not 422. (`backend/src/services/notes.service.js` and `assistant.service.js` never call `investigation.assertOpen()`/`spendTime()`, unlike `field.service.js`'s `travel`/`search`/`readPage` and the theory update, which do reject a closed case per the recent fix.) This confirms the closed-case guard from that fix was deliberately scoped to legwork/time-costing actions and does not block consulting notes or the assistant after the accusation. Every response body still passes the TC-36 forbidden-substring check.
+
+  **2026-09-25 update:** confirmed as the deliberate, documented scope of the closed-case freeze (CLAUDE.md, "Conclusion and report": "Every GET, Notes, the assistant and reset still work"). The freeze was widened on this date to also cover `POST /connections`, `DELETE /connections/:id`, `POST /contradictions` and `POST /viewed` (422 `"This case is closed."`, checked after the 400/404 checks) — see TC-86 and TC-87, which exercise those endpoints specifically. This case's own four endpoints are unaffected by that widening and this case's expected result is unchanged.
+- **Priority:** high
+
+## TC-77 — A "Named in <exhibit>" fact line appears for evidence that names a suspect with no structured fact
+
+- **Covers spec point:** 7
+- **Preconditions:** R0, then `POST /travel {"locationId":"L03"}`, `POST /places/L03/search {"spotId":"L03-e001"}` (unlocks E001, "Empty Prototype Case", `personIds: ["S01"]`, `facts: []`), then `POST /viewed {"type":"evidence","id":"E001"}`.
+- **Steps / Input:** `GET /facts/S01`
+- **Expected result:** Status 200. Among the lines is exactly one with `mark: "✓"`, `evidenceId: "E001"` and `text: "Named in Empty Prototype Case"`. This exercises `discoveredFacts`'s `mine.length === 0` branch (an exhibit that lists a suspect in `personIds` but has no matching entry in `facts`), which none of TC-40 to TC-46 reach (those all use exhibits with structured `facts`).
+- **Priority:** medium
+
+## TC-78 — Related-id lists never exceed the 6-item cap even when more would qualify
+
+- **Covers spec point:** 5 (structural: ids must exist and be well-formed; this checks the response never silently returns more than the shape allows for)
+- **Preconditions:** The "everything examined" state from TC-36 for case 047 (every reachable exhibit unlocked and viewed, every offered contradiction logged).
+- **Steps / Input:** `POST /notes` for every prompt listed by `GET /notes` in that state (connect with `["S02","L06"]`, the suspect/location pair with the most exhibits in the seed data). Also `POST /assistant/query {"question":"Does Alex Reyes's statement contradict the records?"}`.
+- **Expected result:** In every response, `relatedEvidence.length <= 6` and `relatedEvents.length <= 6` (matching `MAX_RELATED = 6` in `backend/src/services/assistant.service.js`'s `shapeAnswer`). This is a cap-enforcement check, not a claim that this case's data exceeds 6 for any single prompt — record the actual counts observed per prompt so a future case with more evidence per suspect can be checked against the same limit.
+- **Priority:** low
+
+---
+
+Original: 54 test cases (27 high priority). Added: 15 new cases (5 high priority). Total: 69 test cases, 32 high priority.
+
+## Additional cases (added 2026-09-25)
+
+These cover the 2026-09-25 QA bug-fix pass (`docs/plans/2026-09-25-qa-bug-fixes.md`, decisions D1 and D6) as it affects Detective's Notes and `/assistant/query`: `/assistant/query`'s contradiction path now uses only viewed ∩ unlocked exhibits (`assistant.service.js`'s new `examinedContradictions()`, aligning it with `/notes`, per D6); Notes window prompts now cover known events across the whole `incidentWindow`, including ones after midnight or on a later day, looked up by a stable `id` rather than re-parsed against a single date (`notes.service.js`'s rewritten `timeWindows()`); `clockSpans` lets a typed `/assistant/query` time question cross midnight when the overnight reading is 12 hours or less; and the closed-case freeze (D1) was widened to `POST /connections`, `DELETE /connections/:id`, `POST /contradictions` and `POST /viewed`, in the order 400 malformed → 404 unknown id → 422 closed → other game-rule 422s, while every GET, `POST /notes`, `POST /assistant/query` and `POST /reset` stay open. Case ids, evidence ids, spot ids and exact timestamps below were taken from `data/cases/049/{case,timeline,evidence,locations}.json` and `data/cases/050/{case,timeline,evidence,locations}.json`, `backend/src/services/{notes.service,assistant.service,investigation.service}.js` and `backend/src/utils/time.js`. None of these new cases touch or reference any case's `solution.json`.
+
+## TC-79 — assistant/query's contradiction answer now uses only examined (viewed ∩ unlocked) evidence, confirmed before and after viewing
+
+- **Covers spec point:** 4, 8 (CLAUDE.md, "The assistant (Detective's Notes)": "Contradictions come only from exhibits the player has examined (viewed and unlocked: `examinedContradictions()`, the same filter Notes uses)")
+- **Preconditions:** R1 — E007 unlocked via `L05-stairs`, **not** viewed. Confirm via `GET /investigation` that `evidenceViewed` does not contain `E007`.
+- **Steps / Input:**
+  1. `POST /assistant/query {"question":"Does Alex Reyes's statement contradict the records?"}`
+  2. `POST /viewed {"type":"evidence","id":"E007"}` (200)
+  3. Repeat the identical `POST /assistant/query` call from step 1.
+- **Expected result:** Step 1: status 200, the assistant shape. `contradiction: false`, `contradictions` absent, `relatedEvidence: []`, `relatedEvents: []`. `relatedSuspects` is `["S02"]`. `confidence` is `"medium"` (the scoped-empty branch of `answerContradictions`, matching TC-74's pattern — not the `/notes` "low" override, which is a different code path). `answer` is exactly `"I found no statement from Alex Reyes that conflicts with the records."` and contains no `E\d{3}` token. Step 3 (after viewing): status 200, `contradiction: true`, `contradictions` is exactly `[{"assertionId":"ST02-A","evidenceId":"E007"}]`, `confidence: "high"`, `relatedEvidence: ["E007"]`, `relatedEvents: ["T06"]`, `relatedSuspects: ["S02"]`. This is the definitive, source-confirmed version of TC-75's scenario: TC-75 is no longer superseded and no longer speculative, so this case does not replace it, only pins down the exact numbers now that `examinedContradictions()` exists.
+- **Priority:** high
+
+## TC-80 — GET /notes on case 050 lists dated window prompts once T06–T09 are known, in ascending chronological order
+
+- **Covers spec point:** 1 (CLAUDE.md, "Game layer": "Notes window prompts cover every known event on the incident date and inside `incidentWindow`, which can cross midnight or span days... windows on another day get dated labels")
+- **Preconditions:** `POST /api/cases/050/reset`, then: `POST /file/F2/read`, `POST /travel {"locationId":"L01"}`, `POST /places/L01/search {"spotId":"L01-e001"}` (unlocks E001), `POST /places/L01/search {"spotId":"L01-panel"}` (unlocks E003, gated on `file.F2` which step 1 set), `POST /places/L01/search {"spotId":"L01-bay"}` (unlocks E004), `POST /places/L01/search {"spotId":"L01-neighbour"}` (unlocks E005). This makes T04 (23:00), T05 (23:45), T06 (02:04), T07 (02:20), T08 (02:30) and T09 (07:00) known, alongside T01 (already known once E002 unlocks via the F2 attachment).
+- **Steps / Input:** `GET /api/cases/050/notes`
+- **Expected result:** Status 200. The `window:*` items appear in this order, interleaved correctly among the fixed prompts (after all `statement:*` items, before `connect`):
+  1. `{ "id": "window:23:00-23:30", "label": "Review the 23:00–23:30 timeline" }` (same incident date as `incidentWindow.from`, 1984-06-09, so not dated)
+  2. `{ "id": "window:23:30-00:00", "label": "Review the 23:30–00:00 timeline" }` (also 06-09, not dated, despite ending at midnight)
+  3. `{ "id": "window:02:00-02:30", "label": "Review Sun 10 Jun, 02:00–02:30" }` (a later date, so dated)
+  4. `{ "id": "window:02:30-03:00", "label": "Review Sun 10 Jun, 02:30–03:00" }`
+  5. `{ "id": "window:07:00-07:30", "label": "Review Sun 10 Jun, 07:00–07:30" }`
+  No two window ids collide and no window id contains a date-qualified id form (`window:YYYY-MM-DDTHH:MM-HH:MM`), since none of these spans repeats. Every id and label above is byte-exact, including the en dash (U+2013) and the exact weekday/date wording, since these dated labels are exactly the ones named in the 2026-09-25 change brief.
+- **Priority:** medium
+
+## TC-81 — 050's window:23:30-00:00 prompt is looked up by id and returns T05, not re-derived from the clock string
+
+- **Covers spec point:** 2, 5 (CLAUDE.md: "The server resolves an id by looking it up among the windows it generated. It never re-parses HH:MM against a single date again.")
+- **Preconditions:** Same recipe as TC-80 (T04–T09 known on case 050).
+- **Steps / Input:** `POST /api/cases/050/notes {"promptId":"window:23:30-00:00"}`
+- **Expected result:** Status 200. V1 passes. `title` is `"Review the 23:30–00:00 timeline"`. `answer` is exactly `"Between 23:30 and 00:00: 23:45 A Bentley on the lane."` (T05's title, undated, since T05's own timestamp — 1984-06-09T23:45:00 — falls on the incident date, so `answerWindow`'s `dated` flag is false even though the window's own end crosses midnight). `confidence` is `"high"`. `relatedEvents` is `["T05"]`. `relatedEvidence` is `["E005"]` only — `E009` (also behind T05) is filtered out because it was never unlocked in this recipe (`L06-porter` was not visited). `relatedSuspects` is `["S05"]`. `contradiction: false`, `contradictions` absent. This is a regression check for the bug this window prompt was fixed to catch: before the fix, resolving `window:23:30-00:00` by re-parsing `23:30`/`00:00` against a single day could miss or misplace an event that actually falls just before midnight.
+- **Priority:** high
+
+## TC-82 — A typed midnight-crossing question on assistant/query matches the equivalent window prompt
+
+- **Covers spec point:** 8 (CLAUDE.md: "A typed 'between 23:30 and 00:30' crosses midnight when that reading is 12 hours or less")
+- **Preconditions:** Same recipe as TC-80 (T04–T09 known on case 050, so E005 and E009's underlying events are reachable via `getTimelineBetween`; only `E005` is unlocked).
+- **Steps / Input:** `POST /api/cases/050/assistant/query {"question":"What happened between 23:30 and 00:30?"}`
+- **Expected result:** Status 200, the assistant shape. `answer` starts with `"Between 23:30 and 00:30: 23:45 A Bentley on the lane."` (T05 is the only known event in that span across every date in `incidentWindow`). `confidence: "high"`. `relatedEvents` is `["T05"]`. `relatedEvidence` is `["E005"]`. `relatedSuspects` is `["S05"]`. `contradiction: false`. This confirms `clockSpans` builds one span per day of `incidentWindow` and, because the overnight reading (`23:30` to `00:30` = 1 hour) is ≤ 12 hours, treats `00:30` as belonging to the following day rather than swapping the times — the opposite of the same-day-reversed handling in TC-84.
+- **Priority:** medium
+
+## TC-83 — Case 049 offers dated window prompts spanning several days of the incident window
+
+- **Covers spec point:** 1 (CLAUDE.md: window prompts "can cross midnight or span days"; 049's `incidentWindow` runs 1984-04-19T17:30 to 1984-04-24T09:05, five calendar days)
+- **Preconditions:** `POST /api/cases/049/reset`, then `POST /file/F2/read` (unlocks E002 via the F2 attachment, making T12 known), `POST /travel {"locationId":"L03"}`, `POST /places/L03/search {"spotId":"L03-panel"}` (requires `file.F2 eq true`, satisfied; unlocks E003, making T04 known).
+- **Steps / Input:** `GET /api/cases/049/notes`, then `POST /notes {"promptId":"window:23:00-23:30"}` and `POST /notes {"promptId":"window:09:00-09:30"}`.
+- **Expected result:** `GET /notes` includes `{ "id": "window:23:00-23:30", "label": "Review Sat 21 Apr, 23:00–23:30" }` (from T04 at 1984-04-21T23:08:00) and `{ "id": "window:09:00-09:30", "label": "Review Tue 24 Apr, 09:00–09:30" }` (from T12 at 1984-04-24T09:05:00) — both dated, because 049's incident date (`datePart(incidentWindow.from)` = 1984-04-19) differs from both event dates. The `window:23:00-23:30` POST returns `relatedEvents: ["T04"]` and `relatedEvidence` containing `E003` (E010, also behind T04, is filtered out since not unlocked here). The `window:09:00-09:30` POST returns `relatedEvents: ["T12"]` and `relatedEvidence` containing `E002` (E001, also behind T12, is filtered out since not unlocked here). Both `answer` strings are stamped with the dated form (`dayLabel` + `hhmm`, e.g. `"Sat 21 Apr 23:08 ..."`) rather than a bare `HH:MM`, because `answerWindow`'s `dated` check is true whenever any matched event's date differs from the case's incident date.
+- **Priority:** medium
+
+## TC-84 — Regression: a same-day reversed time question is unchanged, and malformed times still fall back to the help answer
+
+- **Covers spec point:** 8 (CLAUDE.md: "'between 21:14 and 21:00' still means 21:00–21:14"; "Malformed times → `null` → help answer (EC-38 unchanged)")
+- **Preconditions:** R2 (case 047, E007 viewed; T06 at 21:07 known).
+- **Steps / Input:**
+  1. `POST /assistant/query {"question":"What happened between 21:14 and 21:00?"}`
+  2. `POST /assistant/query {"question":"What happened between 25:00 and 26:99?"}`
+- **Expected result:** Step 1: status 200, the assistant shape, `answer` starting `"Between 21:00 and 21:14: ..."`, `relatedEvents` containing `T06`, `confidence: "high"` — the same result as asking `"between 21:00 and 21:14"`, since a same-day reversed pair (end before start, with the "crossing midnight" reading ruled out because the reversed order here isn't in the 23:xx/00:xx boundary case relevant to TC-82) is just swapped, not treated as crossing midnight. Step 2: status 200, the off-topic/help shape — `confidence: "low"`, `relatedEvidence`, `relatedSuspects` and `relatedEvents` all `[]`, `contradiction: false`, `answer` equal to the same help text as TC-48 — because `25:00` fails `toTimestamp`'s `+m[1] > 23` check and `clockSpans` returns `null`.
+- **Priority:** low
+
+## TC-85 — [UI] On a closed case, the Notes page hides "log this contradiction" buttons and makes the theory field read-only with closing copy
+
+- **Covers spec point:** 9, 10 (2026-09-25 closed-case freeze, `pages/Assistant/Assistant.jsx`: "hide 'log this contradiction' buttons when closed... check the theory editor... make it read-only")
+- **Preconditions:** R2 (case 047, E007 viewed, a contradiction available). In the browser, trigger the "What doesn't add up?" prompt so a note with a "LOG E007 vs ST02-A" button is visible (as in TC-68). Then submit an accusation to close the case (e.g. "Cannot determine"), or call `POST /conclusion {"suspectId":null,"evidenceIds":[]}` directly and reload the Notes page.
+- **Steps / Input:** With the case closed, reload `/case/047/notes`. Re-trigger the "What doesn't add up?" prompt. Inspect the resulting note and the "YOUR WORKING THEORY" panel.
+- **Expected result:** `GET /notes` and `POST /notes` still return 200 (per TC-76) and the note renders with its `answer`, related cards and confidence badge exactly as before closing, but with **no** "LOG ... vs ..." button anywhere on the page — logging a contradiction is not offered once the case is closed. The theory textarea is `readOnly` (its current saved text is still shown, but it cannot be edited), and the "FILE THEORY" button is replaced by static text reading exactly: `"The case is closed. Your theory is on the record as it stands."`. No JavaScript error and no blank panel.
+- **Priority:** medium
+
+## TC-86 — POST /contradictions on a closed case: 400/404 checks still run first, then 422 "This case is closed."
+
+- **Covers spec point:** 5, 9 (2026-09-25 closed-case freeze: "Order: 400 malformed body, then 404 unknown id..., then 422 closed, then other game-rule 422s")
+- **Preconditions:** R2 (case 047, E007 viewed). `POST /conclusion {"suspectId":null,"evidenceIds":[]}` returns 200 (case closed).
+- **Steps / Input:**
+  1. `POST /contradictions {}`
+  2. `POST /contradictions {"assertionId":"ST99-A","evidenceId":"E007"}` (assertion id does not exist in any case statement)
+  3. `POST /contradictions {"assertionId":"ST02-A","evidenceId":"E007"}` (a real pair — the same one TC-34 successfully logs on an open case)
+- **Expected result:** Step 1: status 400 with `{ "error": "Expected { assertionId, evidenceId }" }` — the malformed-body check runs before the closed-case check. Step 2: status 404 with `{ "error": "Unknown statement or exhibit" }` — the unknown-id check also runs before the closed-case check. Step 3: status 422 with exactly `{ "error": "This case is closed." }`, not the "doesn't contradict" message from TC-32 and not 200 — even though this pair would have been accepted before the accusation. This confirms `POST /contradictions` is one of the four endpoints the 2026-09-25 fix froze, and that logging a contradiction can never happen after the verdict.
+- **Priority:** high
+
+## TC-87 — POST /viewed on a closed case is frozen (with the same 400/404/422 order), and GET /facts stays exactly as it was at closing
+
+- **Covers spec point:** 7 (facts marks must reflect only what was actually recorded) and the 2026-09-25 closed-case freeze
+- **Preconditions:** R1 (case 047, E007 unlocked via `L05-stairs`, **not yet viewed**). Confirm via `GET /facts/S02` that all 3 lines are `?` and none has `evidenceId: "E007"`. Then `POST /conclusion {"suspectId":null,"evidenceIds":[]}` returns 200 (case closed) — note the accusation itself does not require E007 to have been viewed.
+- **Steps / Input:**
+  1. `POST /viewed {}`
+  2. `POST /viewed {"type":"evidence","id":"E999"}` (not a real exhibit id in this case)
+  3. `POST /viewed {"type":"evidence","id":"E007"}` (a real, unlocked, not-yet-viewed exhibit — this would have succeeded before closing, per TC-42)
+  4. `GET /facts/S02`
+- **Expected result:** Step 1: status 400 with `{ "error": "Expected { type: \"evidence\" | \"suspect\" | \"event\", id }" }`. Step 2: status 404 with `{ "error": "Nothing with that id in this case" }`. Step 3: status 422 with exactly `{ "error": "This case is closed." }`, not 200 — the view never takes effect. Step 4: `GET /facts/S02` still shows exactly 3 lines, all `mark: "?"`, none with `evidenceId: "E007"` — identical to its pre-closing state, because the frozen `POST /viewed` in step 3 never recorded anything. This demonstrates that while `GET /facts`, `GET /notes`, `POST /notes` and `POST /assistant/query` all stay reachable and correct on a closed case (TC-76), the underlying investigation state — and therefore what Notes and facts can ever report — is frozen at the moment of closing.
+- **Priority:** high
+
+---
+
+## Superseded by the 2026-09-25 fixes
+
+No existing case in this suite (TC-01 through TC-78) has an expected result that is now wrong because of the 2026-09-25 fixes. In particular:
+
+- **TC-75** was written as an open question ("record which outcome was observed") about whether `POST /assistant/query` reasons over unlocked-but-unviewed evidence. The 2026-09-25 fix (D6: align `/assistant/query` with Notes) makes TC-75's "expected-per-spec-intent" branch the actual, confirmed behaviour. TC-75 itself is not wrong and is not superseded — its own text already anticipated this outcome — but it is now definitively answered rather than open; TC-75 has been annotated in place (its own line kept, an update appended immediately under it) and TC-79 above pins down the exact before/after numbers against the current source.
+- **TC-76** ("Notes, facts and assistant/query stay reachable after the case is closed") is unaffected: the 2026-09-25 closed-case freeze was deliberately scoped to leave `GET /notes`, `POST /notes`, `GET /facts`, `POST /assistant/query` and `POST /reset` open, and only widened the freeze to `POST /connections`, `DELETE /connections/:id`, `POST /contradictions` and `POST /viewed` — none of which TC-76 exercises. TC-76 has been annotated in place with a pointer to TC-86/TC-87, which cover those four endpoints.
+- No case in this suite enumerates an exact, now-stale prompt list for 049's or 050's non-fresh states (TC-01's exact 8-item list is for case 047 on a *fresh* investigation, where no window is known either before or after this fix; TC-10 and TC-30's per-case prompt-count assertions are deliberately non-exhaustive and already accommodate a variable number of `window:*` prompts).
+- No case in this suite references case 047's E005/E006/E011, case 048's E005, case 049's E014 or case 050's E008 `locationId` values, the new `L05-permit`, `L06-solicitor`, `L03-grate`, `L04-bankcall` or `L04-pardoe` spots, or the 051 hostile-gardener route — those data and place-rule fixes are covered by the city-map-and-places and evidence-collection suites instead.
+- The oversized-body 413 response (D3), the `presentEvidenceId: null` fix (D2) and the 051 hostile-gardener strengthening (D5) do not touch any endpoint this suite exercises.
+
+See `docs/qa/SUPERSEDED-2026-09-25.md` for the full cross-suite list, including board-and-connections TC-43/TC-44, accusation-and-endings TC-76, and edge-cases EC-20/EC-48/EC-59/EC-54, none of which belong to this suite.
+
+> 2026-09-25: added TC-79..TC-87; superseded expectations are listed above and in docs/qa/SUPERSEDED-2026-09-25.md.

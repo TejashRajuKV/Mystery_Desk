@@ -37,7 +37,8 @@
       { "id": "L03-bureau", "label": "Go through the bureau", "requires": { "flags": { "lead.buyer": { "eq": true }, "burned.S03": { "ne": true } } },
         "text": "Under the road atlas, a letter from Rotterdam in careful English: 'We can take a 1961 Castellane Sprint, no papers required, on delivery.' Addressed to T.R.",
         "consequences": [{ "type": "unlock_evidence", "evidenceId": "E011" }] },
-      { "id": "L03-window", "label": "Look out of the window", "text": "A clear view of the garage doors and the lane. Anyone awake in here would have seen everything." }
+      { "id": "L03-window", "label": "Look out of the window", "text": "A clear view of the garage doors and the lane. Anyone awake in here would have seen everything." },
+      {"id": "L03-grate", "label": "Go through the ashes in the grate", "requires": {"evidenceViewed": ["E012"], "flags": {"lead.buyer": {"eq": true}, "burned.S03": {"eq": true}}}, "text": "Most of it is ash. One scorched corner survived under the fire-irons: a Rotterdam letterhead and '...Castellane Sprint, no papers required...'. With the Harwich job sheet in mind, you know what you're holding.", "consequences": [{"type": "unlock_evidence", "evidenceId": "E011"}]}
     ]
   },
   {

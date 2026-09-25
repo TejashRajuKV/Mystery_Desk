@@ -2,6 +2,7 @@ import * as cases from '../models/case.model.js';
 import * as inv from '../models/investigation.model.js';
 import * as investigation from './investigation.service.js';
 import { FLAG_OPS, MOODS, REQUIRE_KEYS, meets, playerContext, resolveNode } from './dialogue.rules.js';
+import { findLockouts } from './dialogue.reachability.js';
 import { transaction } from '../database/db.js';
 import { HttpError } from '../middleware/errorHandler.js';
 
@@ -96,7 +97,7 @@ export function applyChoice(suspectId, body) {
   let choice;
   let presented = null;
 
-  if (presentId !== undefined) {
+  if (typeof presentId === 'string') {
     if (!node.presentable) throw new HttpError(422, 'That isn\'t something you can do at this point in the interview.');
     if (!inv.listUnlocked().includes(presentId) || !cases.getEvidence(presentId)) throw new HttpError(422, 'That exhibit isn\'t in your case file.');
     presented = { id: presentId, title: cases.getEvidence(presentId).title };
@@ -171,6 +172,8 @@ export function validateDialogue(dialogue, { locations = [], file = [] } = {}) {
         if (!['unlock_evidence', 'set_flag'].includes(q.type)) problems.push(at(`a search can only unlock_evidence or set_flag, not ${q.type}`));
         if (q.type === 'unlock_evidence') {
           if (!evidenceIds.has(q.evidenceId)) problems.push(at(`unknown evidence ${q.evidenceId}`));
+          const home = cases.getEvidence(q.evidenceId)?.locationId;
+          if (home && home !== place.id) problems.push(at(`turns up ${q.evidenceId}, which belongs to ${home}; search there instead`));
           reachable.add(q.evidenceId);
         }
       }
@@ -237,6 +240,18 @@ export function validateDialogue(dialogue, { locations = [], file = [] } = {}) {
   for (const id of evidenceIds) {
     if (!reachable.has(id)) problems.push(`${id} is never unlocked: attach it to a file page or add an unlock_evidence consequence`);
   }
+
+  // Evidence with a place of its own can always be found at that place: a search spot there, or
+  // someone found there who hands it over. A witness elsewhere may hand it over too.
+  for (const e of cases.listEvidence().filter((x) => x.locationId)) {
+    const place = locations.find((l) => l.id === e.locationId);
+    const bySpot = (place?.spots ?? []).some((s) => (s.consequences ?? []).some((q) => q.type === 'unlock_evidence' && q.evidenceId === e.id));
+    const byWitness = (place?.people ?? []).some((sid) => Object.values(dialogue.interviews?.[sid]?.nodes ?? {})
+      .some((n) => (n.choices ?? []).some((c) => (c.consequences ?? []).some((q) => q.type === 'unlock_evidence' && q.evidenceId === e.id))));
+    if (!bySpot && !byWitness) problems.push(`${e.id} belongs to ${e.locationId} but can't be found there: add a search spot there, or have someone there hand it over`);
+  }
+
+  problems.push(...findLockouts({ dialogue, locations, file, evidenceIds }));
 
   if (problems.length) throw new Error(`data/dialogue.json has ${problems.length} problem(s):\n  ${problems.join('\n  ')}`);
 }
